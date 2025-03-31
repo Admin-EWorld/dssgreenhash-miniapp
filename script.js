@@ -255,6 +255,3 @@ copyLinkBtn.addEventListener("click", () => {
         window.Telegram.WebApp.showAlert("Referral link copied!");
     });
 });
-window.Telegram.WebApp.CloudStorage.removeItem("userData", () => {
-    window.Telegram.WebApp.showAlert("User data cleared! Refresh the app.");
-});
