@@ -41,6 +41,14 @@ h1 {
     font-weight: bold;
     color: #fff;
     border: 2px solid #76FF03;
+    transition: transform 0.1s;
+}
+.mining-circle.active {
+    animation: spin 2s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 button, select {
     background: #4CAF50;
