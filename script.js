@@ -97,11 +97,12 @@ const saveUserData = () => {
 
 // Show the initial tab
 const showInitialTab = () => {
-    console.log("Checking user data for initial tab display");
+    console.log("Checking user data to determine initial tab...");
     window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
         if (err) {
             console.error("Error checking user data:", err);
             landingPage.classList.add("active");
+            console.log("Showing landing page due to error");
             return;
         }
         if (savedData) {
@@ -110,10 +111,12 @@ const showInitialTab = () => {
             navBar.style.display = "flex";
             tabContents.forEach(content => content.classList.remove("active"));
             const homeTab = document.getElementById("homeTab");
+            homeTab.style.display = "block"; // Explicitly set to block
             homeTab.classList.add("active");
             navItems.forEach(item => item.classList.remove("active"));
             navItems[0].classList.add("active");
             loadUserData();
+            console.log("Home tab should now be visible");
         } else {
             console.log("No user data, showing landing page");
             landingPage.classList.add("active");
@@ -129,34 +132,24 @@ proceedBtn.addEventListener("click", () => {
     console.log("Proceed button clicked");
     selectedCoin = coinSelection.value;
     console.log("Selected coin:", selectedCoin);
-
-    // Update coin displays
     coinTypeDisplay.textContent = selectedCoin;
     coinTypeRewardsDisplay.textContent = selectedCoin;
     coinTypeEarningsDisplay.textContent = selectedCoin;
     coinTypeCostDisplay.textContent = selectedCoin;
     miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
-
-    // Hide landing page and show navigation bar
     landingPage.style.display = "none";
+    console.log("Landing page hidden");
     navBar.style.display = "flex";
-
-    // Ensure all other tabs are hidden and show home tab
-    tabContents.forEach(content => {
-        content.classList.remove("active");
-        content.style.display = "none"; // Explicitly hide all tabs
-    });
+    console.log("Navigation bar displayed");
+    tabContents.forEach(content => content.classList.remove("active"));
+    console.log("All tabs hidden");
     const homeTab = document.getElementById("homeTab");
-    homeTab.style.display = "block"; // Explicitly show home tab
+    homeTab.style.display = "block"; // Explicitly set to block to override inline style
     homeTab.classList.add("active");
-    console.log("Home tab set to display: block and active class added");
-
-    // Update navigation bar
+    console.log("Home tab set to active");
     navItems.forEach(item => item.classList.remove("active"));
     navItems[0].classList.add("active");
-    console.log("Navigation bar updated, Home tab active");
-
-    // Save user data
+    console.log("Home nav item set to active");
     saveUserData();
     console.log("User data saved after coin selection");
 });
@@ -168,15 +161,11 @@ referralLinkDisplay.textContent = `t.me/dssgreenhash_bot/start?startapp=${userId
 // Navigation
 navItems.forEach(item => {
     item.addEventListener("click", () => {
-        console.log("Nav item clicked:", item.dataset.tab);
         navItems.forEach(i => i.classList.remove("active"));
-        tabContents.forEach(content => {
-            content.classList.remove("active");
-            content.style.display = "none"; // Explicitly hide all tabs
-        });
+        tabContents.forEach(content => content.classList.remove("active"));
         item.classList.add("active");
         const targetTab = document.getElementById(item.dataset.tab);
-        targetTab.style.display = "block"; // Explicitly show the target tab
+        targetTab.style.display = "block"; // Explicitly set to block
         targetTab.classList.add("active");
         console.log("Navigated to tab:", item.dataset.tab);
     });
