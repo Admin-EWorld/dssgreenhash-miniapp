@@ -5,6 +5,11 @@ let earnings = 0;
 let rewards = 0;
 let selectedCoin = "TON";
 let miningInterval;
+let coinPrices = {
+    TON: 4.12,  // Default price, will be updated by fetch
+    BTC: 60000,  // Approximate price in USD
+    USDT: 1      // Stablecoin, pegged to USD
+};
 
 const hashPowerDisplay = document.getElementById("hashPower");
 const balanceDisplay = document.getElementById("balance");
@@ -70,7 +75,7 @@ const loadUserData = () => {
             coinTypeRewardsDisplay.textContent = selectedCoin;
             coinTypeEarningsDisplay.textContent = selectedCoin;
             coinTypeCostDisplay.textContent = selectedCoin;
-            miningRateDisplay.textContent = `+${(miningRate / 1000).toFixed(8)} ${selectedCoin}`;
+            miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
         } else {
             console.log("No user data found");
         }
@@ -95,6 +100,30 @@ const saveUserData = () => {
     });
 };
 
+// Fetch coin prices from CoinGecko
+const fetchCoinPrices = async () => {
+    try {
+        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=the-open-network,bitcoin,usdt&vs_currencies=usd");
+        const data = await response.json();
+        coinPrices.TON = data["the-open-network"].usd;
+        coinPrices.BTC = data["bitcoin"].usd;
+        coinPrices.USDT = data["usdt"].usd;
+        tonPriceDisplay.textContent = coinPrices.TON.toFixed(2);
+        console.log("Coin prices fetched:", coinPrices);
+    } catch (error) {
+        console.error("Error fetching coin prices:", error);
+        tonPriceDisplay.textContent = coinPrices.TON.toFixed(2);
+    }
+};
+fetchCoinPrices();
+
+// Calculate mining rate based on coin price
+const calculateMiningRate = () => {
+    const baseRateUsd = 0.0001; // Base mining rate in USD per hour
+    const rateInCoin = baseRateUsd / coinPrices[selectedCoin];
+    return rateInCoin;
+};
+
 // Show the initial tab
 const showInitialTab = () => {
     console.log("Checking user data to determine initial tab...");
@@ -111,7 +140,6 @@ const showInitialTab = () => {
             navBar.style.display = "flex";
             tabContents.forEach(content => content.classList.remove("active"));
             const homeTab = document.getElementById("homeTab");
-            homeTab.style.display = "block"; // Explicitly set to block
             homeTab.classList.add("active");
             navItems.forEach(item => item.classList.remove("active"));
             navItems[0].classList.add("active");
@@ -144,7 +172,6 @@ proceedBtn.addEventListener("click", () => {
     tabContents.forEach(content => content.classList.remove("active"));
     console.log("All tabs hidden");
     const homeTab = document.getElementById("homeTab");
-    homeTab.style.display = "block"; // Explicitly set to block to override inline style
     homeTab.classList.add("active");
     console.log("Home tab set to active");
     navItems.forEach(item => item.classList.remove("active"));
@@ -161,11 +188,16 @@ referralLinkDisplay.textContent = `t.me/dssgreenhash_bot/start?startapp=${userId
 // Navigation
 navItems.forEach(item => {
     item.addEventListener("click", () => {
+        // Remove active class from all nav items and tabs
         navItems.forEach(i => i.classList.remove("active"));
-        tabContents.forEach(content => content.classList.remove("active"));
+        tabContents.forEach(content => {
+            content.classList.remove("active");
+            content.style.display = "none"; // Explicitly hide to clear any inline styles
+        });
+
+        // Add active class to the clicked nav item and corresponding tab
         item.classList.add("active");
         const targetTab = document.getElementById(item.dataset.tab);
-        targetTab.style.display = "block"; // Explicitly set to block
         targetTab.classList.add("active");
         console.log("Navigated to tab:", item.dataset.tab);
     });
@@ -174,21 +206,21 @@ navItems.forEach(item => {
 // Start mining
 startBtn.addEventListener("click", () => {
     if (miningRate === 0) {
-        miningRate = 0.0001;
+        miningRate = calculateMiningRate();
         hashPower = hashPower || 1;
         startBtn.textContent = "Mining...";
         startBtn.style.display = "none";
         stopBtn.style.display = "block";
         miningCircle.classList.add("active");
         miningInterval = setInterval(() => {
-            balance += 0.00001;
-            rewards += 0.00001;
-            earnings += 0.01;
+            balance += miningRate;
+            rewards += miningRate;
+            earnings += miningRate * 720; // Approximate monthly earnings (30 days * 24 hours)
             hashPower += 0.5;
             hashPowerDisplay.textContent = hashPower.toFixed(2);
             balanceDisplay.textContent = balance.toFixed(4);
             rewardsDisplay.textContent = rewards.toFixed(4);
-            miningRateDisplay.textContent = `+${(miningRate / 1000).toFixed(8)} ${selectedCoin}`;
+            miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
             earningsDisplay.textContent = earnings.toFixed(2);
             boostHashPowerDisplay.textContent = hashPower.toFixed(2);
             saveUserData();
