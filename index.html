@@ -9,17 +9,29 @@
 </head>
 <body>
     <div class="container">
+        <!-- Landing Page -->
+        <div id="landingPage" class="tab-content">
+            <h1>🌿 Welcome to DSS Green Hash Mining</h1>
+            <p>Choose the coin you want to mine:</p>
+            <select id="coinSelection">
+                <option value="TON">TON</option>
+                <option value="BTC">BTC</option>
+                <option value="USDT">USDT</option>
+            </select>
+            <button id="proceedBtn" class="action-btn">Proceed</button>
+        </div>
+
         <!-- Home Tab -->
-        <div id="homeTab" class="tab-content">
+        <div id="homeTab" class="tab-content" style="display: none;">
             <h1>🌿 DSS Green Hash Mining</h1>
             <div class="stats">
                 <p>Hash Power: <span id="hashPower">0</span> TH/s ⚡</p>
-                <p>Balance: <span id="balance">0.0000</span> TON 💎</p>
-                <p>Rewards: <span id="rewards">0.0000</span> TON 🎁</p>
+                <p>Balance: <span id="balance">0.0000</span> <span id="coinType">TON</span> 💎</p>
+                <p>Rewards: <span id="rewards">0.0000</span> <span id="coinTypeRewards">TON</span> 🎁</p>
                 <div class="mining-circle" id="miningCircle">
                     <span id="miningRate">+0.0000 TON</span>
                 </div>
-                <p>Earnings per Month: <span id="earnings">0.00</span> TON</p>
+                <p>Earnings per Month: <span id="earnings">0.00</span> <span id="coinTypeEarnings">TON</span></p>
                 <p>TON Price: <span id="tonPrice">4.12</span> USDT</p>
             </div>
             <button id="startBtn">Start Mining</button>
@@ -37,7 +49,7 @@
                 <img src="https://via.placeholder.com/150" alt="Miner" class="miner-img">
                 <h3>#Eco Miner Z9</h3>
                 <p>Hashrate: 10 TH/s ⚡</p>
-                <p>Cost: 3 TON (Monthly) 💎</p>
+                <p>Cost: 3 <span id="coinTypeCost">TON</span> (Monthly) 💎</p>
                 <select id="paymentCurrency">
                     <option value="BTC">Pay with BTC</option>
                     <option value="USDT">Pay with USDT</option>
@@ -98,7 +110,7 @@
         </div>
 
         <!-- Navigation Bar -->
-        <div class="nav-bar">
+        <div class="nav-bar" style="display: none;">
             <div class="nav-item" data-tab="homeTab">🏠 Home</div>
             <div class="nav-item" data-tab="boostTab">🚀 Boost</div>
             <div class="nav-item" data-tab="friendsTab">👥 Friends</div>
