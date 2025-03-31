@@ -1,58 +1,113 @@
 body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #1B5E20, #2E2E2E);
+    background-color: #1a1a1a;
     color: #fff;
     margin: 0;
     padding: 0;
-    height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    min-height: 100vh;
 }
-.container {
-    background: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    max-width: 400px;
+
+.tab-content {
+    display: none;
     width: 100%;
-    height: 90vh;
-    overflow-y: auto;
-    position: relative;
+    max-width: 600px;
+    padding: 20px;
+    text-align: center;
 }
-h1 {
-    color: #76FF03;
-    font-size: 24px;
+
+.tab-content.active {
+    display: block;
 }
-.stats p, p {
-    font-size: 18px;
-    margin: 10px 0;
+
+.nav-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-around;
+    background-color: #2a2a2a;
+    padding: 10px 0;
 }
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #888;
+    cursor: pointer;
+}
+
+.nav-item.active {
+    color: #fff;
+}
+
+.nav-item img {
+    width: 24px;
+    height: 24px;
+}
+
+.nav-item span {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
 .mining-circle {
     width: 150px;
     height: 150px;
-    background: radial-gradient(circle, #76FF03 0%, #1B5E20 70%);
+    background-color: #333;
     border-radius: 50%;
-    display:  flex;
+    display: flex;
     justify-content: center;
     align-items: center;
     margin: 20px auto;
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    border: 2px solid #76FF03;
-    transition: transform 0.1s;
+    position: relative;
 }
+
 .mining-circle.active {
-    animation: spin 2s linear infinite;
+    background: radial-gradient(circle, #00ff00 0%, #333 70%);
+    animation: pulse 2s infinite;
 }
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+
+.inner-circle {
+    width: 120px;
+    height: 120px;
+    background-color: #1a1a1a;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
-button, select {
-    background: #4CAF50;
-    color: white;
+
+.inner-circle span {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.inner-circle p {
+    margin: 0;
+    font-size: 14px;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 20px rgba(0, 255, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 0, 0);
+    }
+}
+
+button {
+    background-color: #00ff00;
+    color: #000;
     border: none;
     padding: 10px 20px;
     margin: 10px;
@@ -60,66 +115,42 @@ button, select {
     cursor: pointer;
     font-size: 16px;
 }
-button:hover, select:hover {
-    background: #76FF03;
-    color: #000;
+
+button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
 }
-#stopBtn {
-    background: #f44336;
-}
-#stopBtn:hover {
-    background: #ff6659;
-    color: #fff;
-}
-.action-btn {
-    background: #4CAF50;
-}
-.action-btn.swap {
-    background: #FFA500;
-}
-.miner-card {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 10px;
+
+.balance, .earnings {
     margin: 20px 0;
 }
-.miner-img {
-    width: 100px;
-    height: 100px;
-    margin: 10px auto;
-    display: block;
+
+.balance p, .earnings p {
+    margin: 5px 0;
 }
-.task, .info-item {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 10px;
-    border-radius: 5px;
-    margin: 10px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.nav-bar {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    max-width: 400px;
-    background: #1B5E20;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
-    border-top: 1px solid #76FF03;
-}
-.nav-item {
+
+select {
+    padding: 5px;
+    margin: 10px;
+    background-color: #333;
     color: #fff;
-    font-size: 14px;
-    cursor: pointer;
+    border: none;
+    border-radius: 5px;
 }
-.nav-item.active {
-    color: #76FF03;
+
+/* Styles for More tab sections */
+.more-section {
+    margin: 20px 0;
 }
-.tab-content {
-    display: none;
+
+.change-coin-section {
+    margin: 20px 0;
 }
-.tab-content.active {
-    display: block;
+
+.change-coin-section h3 {
+    margin-bottom: 10px;
+}
+
+.change-coin-section select {
+    margin-right: 10px;
 }
