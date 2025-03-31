@@ -97,6 +97,7 @@ const saveUserData = () => {
 
 // Show the initial tab
 const showInitialTab = () => {
+    console.log("Checking user data for initial tab display");
     window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
         if (err) {
             console.error("Error checking user data:", err);
@@ -128,20 +129,36 @@ proceedBtn.addEventListener("click", () => {
     console.log("Proceed button clicked");
     selectedCoin = coinSelection.value;
     console.log("Selected coin:", selectedCoin);
+
+    // Update coin displays
     coinTypeDisplay.textContent = selectedCoin;
     coinTypeRewardsDisplay.textContent = selectedCoin;
     coinTypeEarningsDisplay.textContent = selectedCoin;
     coinTypeCostDisplay.textContent = selectedCoin;
     miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
+
+    // Hide landing page and show navigation bar
     landingPage.style.display = "none";
     navBar.style.display = "flex";
-    tabContents.forEach(content => content.classList.remove("active"));
+
+    // Ensure all other tabs are hidden and show home tab
+    tabContents.forEach(content => {
+        content.classList.remove("active");
+        content.style.display = "none"; // Explicitly hide all tabs
+    });
     const homeTab = document.getElementById("homeTab");
+    homeTab.style.display = "block"; // Explicitly show home tab
     homeTab.classList.add("active");
+    console.log("Home tab set to display: block and active class added");
+
+    // Update navigation bar
     navItems.forEach(item => item.classList.remove("active"));
     navItems[0].classList.add("active");
+    console.log("Navigation bar updated, Home tab active");
+
+    // Save user data
     saveUserData();
-    console.log("Home tab should now be visible");
+    console.log("User data saved after coin selection");
 });
 
 // Set initial referral link
@@ -151,10 +168,15 @@ referralLinkDisplay.textContent = `t.me/dssgreenhash_bot/start?startapp=${userId
 // Navigation
 navItems.forEach(item => {
     item.addEventListener("click", () => {
+        console.log("Nav item clicked:", item.dataset.tab);
         navItems.forEach(i => i.classList.remove("active"));
-        tabContents.forEach(content => content.classList.remove("active"));
+        tabContents.forEach(content => {
+            content.classList.remove("active");
+            content.style.display = "none"; // Explicitly hide all tabs
+        });
         item.classList.add("active");
         const targetTab = document.getElementById(item.dataset.tab);
+        targetTab.style.display = "block"; // Explicitly show the target tab
         targetTab.classList.add("active");
         console.log("Navigated to tab:", item.dataset.tab);
     });
