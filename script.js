@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("startBtn:", startBtn);
     console.log("navItems:", navItems);
     console.log("changeCoinBtn:", changeCoinBtn);
+    console.log("changeCoinSelection:", changeCoinSelection);
     console.log("proceedBtn:", proceedBtn);
 
     // Initialize Telegram Web App
@@ -254,6 +255,35 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     } else {
         console.error("proceedBtn not found in DOM");
+    }
+
+    // Change coin in More tab
+    if (changeCoinBtn) {
+        changeCoinBtn.addEventListener("click", () => {
+            console.log("Change coin button clicked");
+            const newCoin = changeCoinSelection.value;
+            console.log("New coin selected:", newCoin);
+            if (newCoin === selectedCoin) {
+                window.Telegram.WebApp.showAlert("You are already mining " + newCoin + "!");
+                return;
+            }
+            selectedCoin = newCoin;
+            coinTypeDisplay.textContent = selectedCoin;
+            coinTypeRewardsDisplay.textContent = selectedCoin;
+            coinTypeEarningsDisplay.textContent = selectedCoin;
+            coinTypeCostDisplay.textContent = selectedCoin;
+            miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
+            if (miningRate > 0) {
+                // Recalculate mining rate if mining is active
+                miningRate = calculateMiningRate();
+                miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
+            }
+            saveUserData();
+            window.Telegram.WebApp.showAlert("Coin changed to " + selectedCoin + "!");
+            console.log("Coin changed to:", selectedCoin);
+        });
+    } else {
+        console.error("changeCoinBtn not found in DOM");
     }
 
     // Set initial referral link
