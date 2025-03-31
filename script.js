@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const miningRateDisplay = document.getElementById("miningRate");
     const miningCircle = document.getElementById("miningCircle");
     const earningsDisplay = document.getElementById("earnings");
-    const tonPriceDisplay = document.getElementById("tonPrice");
+    const coinPriceLabel = document.getElementById("coinPriceLabel");
+    const coinPriceDisplay = document.getElementById("coinPrice");
     const boostHashPowerDisplay = document.getElementById("boostHashPower");
     const referralBalanceDisplay = document.getElementById("referralBalance");
     const referralLinkDisplay = document.getElementById("referralLink");
@@ -48,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const navBar = document.querySelector(".nav-bar");
     const changeCoinSelection = document.getElementById("changeCoinSelection");
     const changeCoinBtn = document.getElementById("changeCoinBtn");
+    const moreTab = document.getElementById("moreTab");
 
     // Debug: Check if critical elements are found
     console.log("startBtn:", startBtn);
@@ -55,7 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("navItems:", navItems);
     console.log("changeCoinBtn:", changeCoinBtn);
     console.log("changeCoinSelection:", changeCoinSelection);
+    console.log("moreTab:", moreTab);
     console.log("proceedBtn:", proceedBtn);
+    console.log("coinPriceLabel:", coinPriceLabel);
+    console.log("coinPriceDisplay:", coinPriceDisplay);
 
     // Initialize Telegram Web App
     if (window.Telegram && window.Telegram.WebApp) {
@@ -97,6 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 coinTypeEarningsDisplay.textContent = selectedCoin;
                 coinTypeCostDisplay.textContent = selectedCoin;
                 miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
+                // Update coin price label and display
+                coinPriceLabel.textContent = selectedCoin;
+                coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
             } else {
                 console.log("No user data found");
             }
@@ -122,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // Fetch coin prices from CoinGecko
+    // Fetch coin prices from CoinGecko and update display
     const fetchCoinPrices = async () => {
         try {
             console.log("Fetching coin prices...");
@@ -131,11 +139,14 @@ document.addEventListener("DOMContentLoaded", () => {
             coinPrices.TON = data["the-open-network"].usd;
             coinPrices.BTC = data["bitcoin"].usd;
             coinPrices.USDT = data["usdt"].usd;
-            tonPriceDisplay.textContent = coinPrices.TON.toFixed(2);
+            // Update the price display for the currently selected coin
+            coinPriceLabel.textContent = selectedCoin;
+            coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
             console.log("Coin prices fetched:", coinPrices);
         } catch (error) {
             console.error("Error fetching coin prices:", error);
-            tonPriceDisplay.textContent = coinPrices.TON.toFixed(2);
+            coinPriceLabel.textContent = selectedCoin;
+            coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
         }
     };
     fetchCoinPrices();
@@ -208,6 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 coinTypeEarningsDisplay.textContent = "TON";
                 coinTypeCostDisplay.textContent = "TON";
                 miningRateDisplay.textContent = "+0.0000 TON";
+                coinPriceLabel.textContent = "TON";
+                coinPriceDisplay.textContent = coinPrices.TON.toFixed(2);
                 // Show landing page
                 tabContents.forEach(content => {
                     content.classList.remove("active");
@@ -235,6 +248,8 @@ document.addEventListener("DOMContentLoaded", () => {
             coinTypeEarningsDisplay.textContent = selectedCoin;
             coinTypeCostDisplay.textContent = selectedCoin;
             miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
+            coinPriceLabel.textContent = selectedCoin;
+            coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
             landingPage.style.display = "none";
             console.log("Landing page hidden");
             navBar.style.display = "flex";
@@ -281,6 +296,8 @@ document.addEventListener("DOMContentLoaded", () => {
         coinTypeEarningsDisplay.textContent = selectedCoin;
         coinTypeCostDisplay.textContent = selectedCoin;
         miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
+        coinPriceLabel.textContent = selectedCoin;
+        coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
         if (miningRate > 0) {
             console.log("Mining is active, recalculating mining rate...");
             miningRate = calculateMiningRate();
@@ -301,25 +318,48 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // Use event delegation to handle the click on changeCoinBtn
+    if (moreTab) {
+        moreTab.addEventListener("click", (e) => {
+            const target = e.target;
+            console.log("Click event in moreTab, target:", target);
+            if (target.id === "changeCoinBtn") {
+                console.log("Change coin button clicked via event delegation");
+                handleChangeCoin();
+            }
+        });
+        moreTab.addEventListener("touchstart", (e) => {
+            const target = e.target;
+            console.log("Touchstart event in moreTab, target:", target);
+            if (target.id === "changeCoinBtn") {
+                e.preventDefault(); // Prevent default touch behavior
+                console.log("Change coin button touched via event delegation");
+                handleChangeCoin();
+            }
+        });
+    } else {
+        console.error("moreTab not found in DOM");
+        window.Telegram.WebApp.showAlert("Error: More tab not found.");
+    }
+
+    // Fallback: Direct event listeners on changeCoinBtn
     if (changeCoinBtn) {
-        console.log("Attaching event listeners to changeCoinBtn");
-        // Try multiple event types for Telegram compatibility
+        console.log("Attaching direct event listeners to changeCoinBtn");
         changeCoinBtn.addEventListener("click", (e) => {
-            console.log("Click event on changeCoinBtn");
+            console.log("Direct click event on changeCoinBtn");
             handleChangeCoin();
         });
         changeCoinBtn.addEventListener("touchstart", (e) => {
-            e.preventDefault(); // Prevent default touch behavior
-            console.log("Touchstart event on changeCoinBtn");
+            e.preventDefault();
+            console.log("Direct touchstart event on changeCoinBtn");
             handleChangeCoin();
         });
         changeCoinBtn.addEventListener("mousedown", (e) => {
-            console.log("Mousedown event on changeCoinBtn");
+            console.log("Direct mousedown event on changeCoinBtn");
             handleChangeCoin();
         });
-        // Fallback: Add an onclick attribute directly to the button
         changeCoinBtn.onclick = () => {
-            console.log("Onclick attribute triggered on changeCoinBtn");
+            console.log("Direct onclick attribute triggered on changeCoinBtn");
             handleChangeCoin();
         };
     } else {
