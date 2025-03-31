@@ -59,3 +59,12 @@ upgradeBtn.addEventListener("click", () => {
     rateDisplay.textContent = miningRate.toFixed(4);
     window.Telegram.WebApp.showAlert("Miner upgraded! New rate: " + miningRate.toFixed(4) + " BTC/hour");
 });
+upgradeBtn.addEventListener("click", () => {
+    window.Telegram.WebApp.openInvoice("200_stars_upgrade", (status) => {
+        if (status === "paid") {
+            miningRate += 0.00005;
+            rateDisplay.textContent = miningRate.toFixed(4);
+            window.Telegram.WebApp.showAlert("Miner upgraded! New rate: " + miningRate.toFixed(4) + " BTC/hour");
+        }
+    });
+});
