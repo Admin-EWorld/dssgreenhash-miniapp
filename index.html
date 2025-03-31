@@ -9,28 +9,100 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌿 DSS Green Hash Mining</h1>
-        <div class="stats">
-            <p>Mining Rate: <span id="rate">0.0000</span> BTC/hour</p>
-            <p>Hash Power: <span id="hashPower">0</span> TH/s</p>
-            <p>Total Mined: <span id="total">0.0000</span> BTC</p>
-            <p>Energy Used: <span id="energy">0</span> kWh (Eco-Friendly)</p>
-            <p>Rewards: <span id="rewards">0.0000</span> BTC</p>
+        <!-- Home Tab -->
+        <div id="homeTab" class="tab-content">
+            <h1>🌿 DSS Green Hash Mining</h1>
+            <div class="stats">
+                <p>Hash Power: <span id="hashPower">0</span> TH/s ⚡</p>
+                <p>Balance: <span id="balance">0.0000</span> TON 💎</p>
+                <div class="mining-circle">
+                    <span id="miningRate">+0.0000 BTC</span>
+                </div>
+                <p>Earnings per Month: <span id="earnings">0.00</span> TON</p>
+                <p>TON Price: <span id="tonPrice">4.12</span> USDT</p>
+            </div>
+            <button id="startBtn">Start Mining</button>
+            <button id="stopBtn" style="display: none;">Stop Mining</button>
+            <button id="withdrawBtn" class="action-btn">Withdraw ↓</button>
+            <button id="swapBtn" class="action-btn swap">Swap coin</button>
         </div>
-        <button id="startBtn">Start Mining</button>
-        <button id="stopBtn" style="display: none;">Stop Mining</button>
-        <select id="paymentCurrency">
-            <option value="BTC">Pay with BTC</option>
-            <option value="USDT">Pay with USDT</option>
-            <option value="TON">Pay with TON</option>
-        </select>
-        <button id="upgradeBtn">Upgrade Miner (0.0001 BTC)</button>
-        <select id="rewardCurrency">
-            <option value="BTC">Claim in BTC</option>
-            <option value="USDT">Claim in USDT</option>
-            <option value="TON">Claim in TON</option>
-        </select>
-        <button id="claimBtn">Claim Rewards</button>
+
+        <!-- Boost Tab -->
+        <div id="boostTab" class="tab-content" style="display: none;">
+            <h1>🌿 Upgrade Your Miner</h1>
+            <p>Your current hashrate: <span id="boostHashPower">0</span> TH/s ⚡</p>
+            <div class="miner-card">
+                <img src="https://via.placeholder.com/150" alt="Miner" class="miner-img">
+                <h3>#Eco Miner Z9</h3>
+                <p>Hashrate: 10 TH/s ⚡</p>
+                <p>Cost: 3 TON (Monthly) 💎</p>
+                <select id="paymentCurrency">
+                    <option value="BTC">Pay with BTC</option>
+                    <option value="USDT">Pay with USDT</option>
+                    <option value="TON">Pay with TON</option>
+                </select>
+                <button id="buyMinerBtn" class="action-btn">Buy Miner $</button>
+            </div>
+        </div>
+
+        <!-- Friends Tab -->
+        <div id="friendsTab" class="tab-content" style="display: none;">
+            <h1>🌿 Invite Friends</h1>
+            <p>You can get 10% from referral purchases</p>
+            <p>Balance: <span id="referralBalance">0.00</span> USDT 💎</p>
+            <button id="referralWithdrawBtn" class="action-btn">Withdraw ↓</button>
+            <p>Your referral link:</p>
+            <p id="referralLink">t.me/dssgreenhash_bot/start?startapp=123</p>
+            <button id="copyLinkBtn" class="action-btn swap">Copy link 🔗</button>
+        </div>
+
+        <!-- Earn Tab -->
+        <div id="earnTab" class="tab-content" style="display: none;">
+            <h1>🌿 Get Bonus for Tasks</h1>
+            <div class="task">
+                <p>Invite your first friend ✈️</p>
+                <p>1 TH/s ⚡</p>
+            </div>
+            <div class="task">
+                <p>Invite your 5 friends ✈️</p>
+                <p>3 TH/s ⚡</p>
+            </div>
+            <div class="task">
+                <p>Invite your 15 friends ✈️</p>
+                <p>5 TH/s ⚡</p>
+            </div>
+            <div class="task">
+                <p>Invite your 50 friends ✈️</p>
+                <p>10 TH/s ⚡</p>
+            </div>
+            <div class="task">
+                <p>Invite your 100 friends ✈️</p>
+                <p>20 TH/s ⚡</p>
+            </div>
+        </div>
+
+        <!-- More Tab -->
+        <div id="moreTab" class="tab-content" style="display: none;">
+            <h1>🌿 More Info About Us</h1>
+            <div class="info-item">
+                <p>🎧 Contact Support</p>
+            </div>
+            <div class="info-item">
+                <p>📖 Legal Information</p>
+            </div>
+            <div class="info-item">
+                <p>📖 FAQ</p>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="nav-item" data-tab="homeTab">🏠 Home</div>
+            <div class="nav-item" data-tab="boostTab">🚀 Boost</div>
+            <div class="nav-item" data-tab="friendsTab">👥 Friends</div>
+            <div class="nav-item" data-tab="earnTab">🎁 Earn</div>
+            <div class="nav-item" data-tab="moreTab">⋯ More</div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
