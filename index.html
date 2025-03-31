@@ -15,14 +15,16 @@
             <div class="stats">
                 <p>Hash Power: <span id="hashPower">0</span> TH/s ⚡</p>
                 <p>Balance: <span id="balance">0.0000</span> TON 💎</p>
-                <div class="mining-circle">
-                    <span id="miningRate">+0.0000 BTC</span>
+                <p>Rewards: <span id="rewards">0.0000</span> TON 🎁</p>
+                <div class="mining-circle" id="miningCircle">
+                    <span id="miningRate">+0.0000 TON</span>
                 </div>
                 <p>Earnings per Month: <span id="earnings">0.00</span> TON</p>
                 <p>TON Price: <span id="tonPrice">4.12</span> USDT</p>
             </div>
             <button id="startBtn">Start Mining</button>
             <button id="stopBtn" style="display: none;">Stop Mining</button>
+            <button id="claimBtn" class="action-btn">Claim Rewards</button>
             <button id="withdrawBtn" class="action-btn">Withdraw ↓</button>
             <button id="swapBtn" class="action-btn swap">Swap coin</button>
         </div>
