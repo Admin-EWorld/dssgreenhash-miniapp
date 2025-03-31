@@ -12,11 +12,13 @@
         <h1>🌿 DSS Green Hash Mining</h1>
         <div class="stats">
             <p>Mining Rate: <span id="rate">0.0000</span> BTC/hour</p>
+            <p>Hash Power: <span id="hashPower">0</span> TH/s</p>
             <p>Total Mined: <span id="total">0.0000</span> BTC</p>
             <p>Energy Used: <span id="energy">0</span> kWh (Eco-Friendly)</p>
             <p>Rewards: <span id="rewards">0.0000</span> BTC</p>
         </div>
         <button id="startBtn">Start Mining</button>
+        <button id="stopBtn" style="display: none;">Stop Mining</button>
         <select id="paymentCurrency">
             <option value="BTC">Pay with BTC</option>
             <option value="USDT">Pay with USDT</option>
