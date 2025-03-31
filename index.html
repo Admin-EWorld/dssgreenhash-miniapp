@@ -14,10 +14,21 @@
             <p>Mining Rate: <span id="rate">0.0000</span> BTC/hour</p>
             <p>Total Mined: <span id="total">0.0000</span> BTC</p>
             <p>Energy Used: <span id="energy">0</span> kWh (Eco-Friendly)</p>
+            <p>Rewards: <span id="rewards">0.0000</span> BTC</p>
         </div>
         <button id="startBtn">Start Mining</button>
-        <button id="upgradeBtn">Upgrade Miner (200 Stars - Coming Soon)</button>
-        <p id="starsMessage" style="color: #76FF03;">Telegram Stars payments are coming soon!</p>
+        <select id="paymentCurrency">
+            <option value="BTC">Pay with BTC</option>
+            <option value="USDT">Pay with USDT</option>
+            <option value="TON">Pay with TON</option>
+        </select>
+        <button id="upgradeBtn">Upgrade Miner (0.0001 BTC)</button>
+        <select id="rewardCurrency">
+            <option value="BTC">Claim in BTC</option>
+            <option value="USDT">Claim in USDT</option>
+            <option value="TON">Claim in TON</option>
+        </select>
+        <button id="claimBtn">Claim Rewards</button>
     </div>
     <script src="script.js"></script>
 </body>
