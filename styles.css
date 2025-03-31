@@ -19,6 +19,12 @@ body {
     height: 90vh;
     overflow-y: auto;
     position: relative;
+    animation: gradientShift 10s ease infinite;
+}
+@keyframes gradientShift {
+    0% { background: rgba(0, 0, 0, 0.7); }
+    50% { background: rgba(27, 94, 32, 0.7); }
+    100% { background: rgba(0, 0, 0, 0.7); }
 }
 h1 {
     color: #76FF03;
