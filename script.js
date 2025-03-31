@@ -2,14 +2,14 @@ let miningRate = 0;
 let hashPower = 0;
 let balance = 0;
 let earnings = 0;
-let totalMined = 0;
-let energyUsed = 0;
 let rewards = 0;
 let miningInterval;
 
 const hashPowerDisplay = document.getElementById("hashPower");
 const balanceDisplay = document.getElementById("balance");
+const rewardsDisplay = document.getElementById("rewards");
 const miningRateDisplay = document.getElementById("miningRate");
+const miningCircle = document.getElementById("miningCircle");
 const earningsDisplay = document.getElementById("earnings");
 const tonPriceDisplay = document.getElementById("tonPrice");
 const boostHashPowerDisplay = document.getElementById("boostHashPower");
@@ -17,6 +17,7 @@ const referralBalanceDisplay = document.getElementById("referralBalance");
 const referralLinkDisplay = document.getElementById("referralLink");
 const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
+const claimBtn = document.getElementById("claimBtn");
 const withdrawBtn = document.getElementById("withdrawBtn");
 const swapBtn = document.getElementById("swapBtn");
 const paymentCurrency = document.getElementById("paymentCurrency");
@@ -34,6 +35,37 @@ if (!window.Telegram.WebApp.initDataUnsafe.user) {
     window.Telegram.WebApp.showAlert("Please set up your Telegram Wallet to proceed. Start @Wallet to begin.");
     window.Telegram.WebApp.openTelegramLink("https://t.me/Wallet");
 }
+
+// Load user data from Telegram storage
+const loadUserData = () => {
+    const savedData = window.Telegram.WebApp.CloudStorage.getItem("userData");
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        hashPower = data.hashPower || 0;
+        balance = data.balance || 0;
+        earnings = data.earnings || 0;
+        rewards = data.rewards || 0;
+        hashPowerDisplay.textContent = hashPower.toFixed(2);
+        balanceDisplay.textContent = balance.toFixed(4);
+        rewardsDisplay.textContent = rewards.toFixed(4);
+        earningsDisplay.textContent = earnings.toFixed(2);
+        boostHashPowerDisplay.textContent = hashPower.toFixed(2);
+    }
+};
+
+// Save user data to Telegram storage
+const saveUserData = () => {
+    const data = {
+        hashPower: hashPower,
+        balance: balance,
+        earnings: earnings,
+        rewards: rewards,
+    };
+    window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data));
+};
+
+// Load initial data
+loadUserData();
 
 // Set initial referral link
 const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || "123";
@@ -55,20 +87,23 @@ document.getElementById("homeTab").classList.add("active");
 startBtn.addEventListener("click", () => {
     if (miningRate === 0) {
         miningRate = 0.0001;
-        hashPower = 1;
+        hashPower = hashPower || 1;
+        startBtn.textContent = "Mining...";
         startBtn.style.display = "none";
         stopBtn.style.display = "block";
+        miningCircle.classList.add("active");
         miningInterval = setInterval(() => {
-            totalMined += miningRate;
             balance += 0.00001;
             rewards += 0.00001;
             earnings += 0.01;
             hashPower += 0.5;
             hashPowerDisplay.textContent = hashPower.toFixed(2);
             balanceDisplay.textContent = balance.toFixed(4);
+            rewardsDisplay.textContent = rewards.toFixed(4);
             miningRateDisplay.textContent = `+${(miningRate / 1000).toFixed(8)} TON`;
             earningsDisplay.textContent = earnings.toFixed(2);
             boostHashPowerDisplay.textContent = hashPower.toFixed(2);
+            saveUserData();
         }, 3600000); // Update every hour
     }
 });
@@ -78,9 +113,29 @@ stopBtn.addEventListener("click", () => {
     clearInterval(miningInterval);
     miningRate = 0;
     miningRateDisplay.textContent = "+0.0000 TON";
+    miningCircle.classList.remove("active");
     stopBtn.style.display = "none";
     startBtn.style.display = "block";
+    startBtn.textContent = "Start Mining";
     startBtn.disabled = false;
+    saveUserData();
+});
+
+// Claim rewards
+claimBtn.addEventListener("click", () => {
+    if (rewards <= 0) {
+        window.Telegram.WebApp.showAlert("No rewards to claim!");
+        return;
+    }
+    window.Telegram.WebApp.showAlert(`Sending ${rewards.toFixed(4)} TON to your Telegram Wallet...`);
+    setTimeout(() => {
+        balance += rewards;
+        rewards = 0;
+        balanceDisplay.textContent = balance.toFixed(4);
+        rewardsDisplay.textContent = rewards.toFixed(4);
+        window.Telegram.WebApp.showAlert(`Successfully sent ${rewards.toFixed(4)} TON to your Wallet!`);
+        saveUserData();
+    }, 2000);
 });
 
 // Withdraw (simulated)
@@ -105,6 +160,7 @@ buyMinerBtn.addEventListener("click", () => {
         hashPowerDisplay.textContent = hashPower.toFixed(2);
         boostHashPowerDisplay.textContent = hashPower.toFixed(2);
         window.Telegram.WebApp.showAlert("Payment successful! Miner upgraded! New hashrate: " + hashPower.toFixed(2) + " TH/s");
+        saveUserData();
     }, 2000);
 });
 
