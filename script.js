@@ -3,6 +3,7 @@ let hashPower = 0;
 let balance = 0;
 let earnings = 0;
 let rewards = 0;
+let selectedCoin = "TON";
 let miningInterval;
 
 const hashPowerDisplay = document.getElementById("hashPower");
@@ -15,6 +16,10 @@ const tonPriceDisplay = document.getElementById("tonPrice");
 const boostHashPowerDisplay = document.getElementById("boostHashPower");
 const referralBalanceDisplay = document.getElementById("referralBalance");
 const referralLinkDisplay = document.getElementById("referralLink");
+const coinTypeDisplay = document.getElementById("coinType");
+const coinTypeRewardsDisplay = document.getElementById("coinTypeRewards");
+const coinTypeEarningsDisplay = document.getElementById("coinTypeEarnings");
+const coinTypeCostDisplay = document.getElementById("coinTypeCost");
 const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
 const claimBtn = document.getElementById("claimBtn");
@@ -26,6 +31,10 @@ const referralWithdrawBtn = document.getElementById("referralWithdrawBtn");
 const copyLinkBtn = document.getElementById("copyLinkBtn");
 const navItems = document.querySelectorAll(".nav-item");
 const tabContents = document.querySelectorAll(".tab-content");
+const landingPage = document.getElementById("landingPage");
+const coinSelection = document.getElementById("coinSelection");
+const proceedBtn = document.getElementById("proceedBtn");
+const navBar = document.querySelector(".nav-bar");
 
 // Initialize Telegram Web App
 window.Telegram.WebApp.ready();
@@ -38,19 +47,26 @@ if (!window.Telegram.WebApp.initDataUnsafe.user) {
 
 // Load user data from Telegram storage
 const loadUserData = () => {
-    const savedData = window.Telegram.WebApp.CloudStorage.getItem("userData");
-    if (savedData) {
-        const data = JSON.parse(savedData);
-        hashPower = data.hashPower || 0;
-        balance = data.balance || 0;
-        earnings = data.earnings || 0;
-        rewards = data.rewards || 0;
-        hashPowerDisplay.textContent = hashPower.toFixed(2);
-        balanceDisplay.textContent = balance.toFixed(4);
-        rewardsDisplay.textContent = rewards.toFixed(4);
-        earningsDisplay.textContent = earnings.toFixed(2);
-        boostHashPowerDisplay.textContent = hashPower.toFixed(2);
-    }
+    window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            hashPower = data.hashPower || 0;
+            balance = data.balance || 0;
+            earnings = data.earnings || 0;
+            rewards = data.rewards || 0;
+            selectedCoin = data.selectedCoin || "TON";
+            hashPowerDisplay.textContent = hashPower.toFixed(2);
+            balanceDisplay.textContent = balance.toFixed(4);
+            rewardsDisplay.textContent = rewards.toFixed(4);
+            earningsDisplay.textContent = earnings.toFixed(2);
+            boostHashPowerDisplay.textContent = hashPower.toFixed(2);
+            coinTypeDisplay.textContent = selectedCoin;
+            coinTypeRewardsDisplay.textContent = selectedCoin;
+            coinTypeEarningsDisplay.textContent = selectedCoin;
+            coinTypeCostDisplay.textContent = selectedCoin;
+            miningRateDisplay.textContent = `+${(miningRate / 1000).toFixed(8)} ${selectedCoin}`;
+        }
+    });
 };
 
 // Save user data to Telegram storage
@@ -60,12 +76,48 @@ const saveUserData = () => {
         balance: balance,
         earnings: earnings,
         rewards: rewards,
+        selectedCoin: selectedCoin,
     };
     window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data));
 };
 
-// Load initial data
-loadUserData();
+// Check if user has already selected a coin
+window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
+    if (savedData) {
+        landingPage.style.display = "none";
+        navBar.style.display = "flex";
+        document.getElementById("homeTab").classList.add("active");
+        loadUserData();
+    } else {
+        landingPage.classList.add("active");
+    }
+});
+
+// Proceed after coin selection
+proceedBtn.addEventListener("click", () => {
+    selectedCoin = coinSelection.value;
+    coinTypeDisplay.textContent = selectedCoin;
+    coinTypeRewardsDisplay.textContent = selectedCoin;
+    coinTypeEarningsDisplay.textContent = selectedCoin;
+    coinTypeCostDisplay.textContent = selectedCoin;
+    landingPage.style.display = "none";
+    navBar.style.display = "flex";
+    document.getElementById("homeTab").classList.add("active");
+    saveUserData();
+});
+
+// Fetch TON price from CoinGecko
+const fetchTonPrice = async () => {
+    try {
+        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd");
+        const data = await response.json();
+        const tonPrice = data["the-open-network"].usd;
+        tonPriceDisplay.textContent = tonPrice.toFixed(2);
+    } catch (error) {
+        console.error("Error fetching TON price:", error);
+    }
+};
+fetchTonPrice();
 
 // Set initial referral link
 const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || "123";
@@ -81,7 +133,6 @@ navItems.forEach(item => {
     });
 });
 navItems[0].classList.add("active");
-document.getElementById("homeTab").classList.add("active");
 
 // Start mining
 startBtn.addEventListener("click", () => {
@@ -100,7 +151,7 @@ startBtn.addEventListener("click", () => {
             hashPowerDisplay.textContent = hashPower.toFixed(2);
             balanceDisplay.textContent = balance.toFixed(4);
             rewardsDisplay.textContent = rewards.toFixed(4);
-            miningRateDisplay.textContent = `+${(miningRate / 1000).toFixed(8)} TON`;
+            miningRateDisplay.textContent = `+${(miningRate / 1000).toFixed(8)} ${selectedCoin}`;
             earningsDisplay.textContent = earnings.toFixed(2);
             boostHashPowerDisplay.textContent = hashPower.toFixed(2);
             saveUserData();
@@ -112,7 +163,7 @@ startBtn.addEventListener("click", () => {
 stopBtn.addEventListener("click", () => {
     clearInterval(miningInterval);
     miningRate = 0;
-    miningRateDisplay.textContent = "+0.0000 TON";
+    miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
     miningCircle.classList.remove("active");
     stopBtn.style.display = "none";
     startBtn.style.display = "block";
@@ -127,13 +178,13 @@ claimBtn.addEventListener("click", () => {
         window.Telegram.WebApp.showAlert("No rewards to claim!");
         return;
     }
-    window.Telegram.WebApp.showAlert(`Sending ${rewards.toFixed(4)} TON to your Telegram Wallet...`);
+    window.Telegram.WebApp.showAlert(`Sending ${rewards.toFixed(4)} ${selectedCoin} to your Telegram Wallet...`);
     setTimeout(() => {
         balance += rewards;
         rewards = 0;
         balanceDisplay.textContent = balance.toFixed(4);
         rewardsDisplay.textContent = rewards.toFixed(4);
-        window.Telegram.WebApp.showAlert(`Successfully sent ${rewards.toFixed(4)} TON to your Wallet!`);
+        window.Telegram.WebApp.showAlert(`Successfully sent ${rewards.toFixed(4)} ${selectedCoin} to your Wallet!`);
         saveUserData();
     }, 2000);
 });
@@ -151,7 +202,7 @@ swapBtn.addEventListener("click", () => {
 // Buy miner (simulated payment)
 buyMinerBtn.addEventListener("click", () => {
     const selectedCurrency = paymentCurrency.value;
-    const amount = 3; // Cost in TON
+    const amount = 3; // Cost in selected coin
 
     window.Telegram.WebApp.showAlert(`Initiating payment of ${amount} ${selectedCurrency} via Wallet Pay...`);
 
