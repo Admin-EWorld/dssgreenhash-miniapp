@@ -258,29 +258,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Change coin in More tab
+    const handleChangeCoin = () => {
+        console.log("Change coin function triggered");
+        if (!changeCoinSelection) {
+            console.error("changeCoinSelection element not found");
+            return;
+        }
+        const newCoin = changeCoinSelection.value;
+        console.log("New coin selected:", newCoin);
+        if (newCoin === selectedCoin) {
+            console.log("Same coin selected, showing alert");
+            window.Telegram.WebApp.showAlert("You are already mining " + newCoin + "!");
+            return;
+        }
+        console.log("Updating selectedCoin from", selectedCoin, "to", newCoin);
+        selectedCoin = newCoin;
+        console.log("Updating coin displays...");
+        coinTypeDisplay.textContent = selectedCoin;
+        coinTypeRewardsDisplay.textContent = selectedCoin;
+        coinTypeEarningsDisplay.textContent = selectedCoin;
+        coinTypeCostDisplay.textContent = selectedCoin;
+        miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
+        if (miningRate > 0) {
+            console.log("Mining is active, recalculating mining rate...");
+            miningRate = calculateMiningRate();
+            miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
+        }
+        console.log("Saving user data after coin change...");
+        saveUserData();
+        console.log("Showing confirmation alert...");
+        window.Telegram.WebApp.showAlert("Coin changed to " + selectedCoin + "!");
+        console.log("Coin changed successfully to:", selectedCoin);
+        // Force UI refresh
+        const homeTab = document.getElementById("homeTab");
+        if (homeTab.classList.contains("active")) {
+            homeTab.style.display = "none";
+            setTimeout(() => {
+                homeTab.style.display = "block";
+            }, 10);
+        }
+    };
+
     if (changeCoinBtn) {
-        changeCoinBtn.addEventListener("click", () => {
-            console.log("Change coin button clicked");
-            const newCoin = changeCoinSelection.value;
-            console.log("New coin selected:", newCoin);
-            if (newCoin === selectedCoin) {
-                window.Telegram.WebApp.showAlert("You are already mining " + newCoin + "!");
-                return;
-            }
-            selectedCoin = newCoin;
-            coinTypeDisplay.textContent = selectedCoin;
-            coinTypeRewardsDisplay.textContent = selectedCoin;
-            coinTypeEarningsDisplay.textContent = selectedCoin;
-            coinTypeCostDisplay.textContent = selectedCoin;
-            miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
-            if (miningRate > 0) {
-                // Recalculate mining rate if mining is active
-                miningRate = calculateMiningRate();
-                miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
-            }
-            saveUserData();
-            window.Telegram.WebApp.showAlert("Coin changed to " + selectedCoin + "!");
-            console.log("Coin changed to:", selectedCoin);
+        console.log("Attaching event listeners to changeCoinBtn");
+        changeCoinBtn.addEventListener("click", handleChangeCoin);
+        changeCoinBtn.addEventListener("touchstart", (e) => {
+            e.preventDefault(); // Prevent default touch behavior
+            console.log("Touchstart event on changeCoinBtn");
+            handleChangeCoin();
         });
     } else {
         console.error("changeCoinBtn not found in DOM");
@@ -369,7 +394,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Claim rewards
     if (claimBtn) {
-        claimBtn.addEventListener("click", () => {
+        startBtn.addEventListener("click", () => {
             console.log("Claim rewards button clicked");
             if (rewards <= 0) {
                 window.Telegram.WebApp.showAlert("No rewards to claim!");
