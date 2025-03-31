@@ -68,3 +68,8 @@ upgradeBtn.addEventListener("click", () => {
         }
     });
 });
+const hashPowerDisplay = document.getElementById("hashPower");
+let hashPower = 0;
+// In the mining interval:
+hashPower += 0.5;
+hashPowerDisplay.textContent = hashPower.toFixed(1);
