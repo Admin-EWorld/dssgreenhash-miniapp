@@ -263,6 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Change coin function triggered");
         if (!changeCoinSelection) {
             console.error("changeCoinSelection element not found");
+            window.Telegram.WebApp.showAlert("Error: Coin selection dropdown not found.");
             return;
         }
         const newCoin = changeCoinSelection.value;
@@ -302,6 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (changeCoinBtn) {
         console.log("Attaching event listeners to changeCoinBtn");
+        // Try multiple event types for Telegram compatibility
         changeCoinBtn.addEventListener("click", (e) => {
             console.log("Click event on changeCoinBtn");
             handleChangeCoin();
@@ -315,8 +317,14 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Mousedown event on changeCoinBtn");
             handleChangeCoin();
         });
+        // Fallback: Add an onclick attribute directly to the button
+        changeCoinBtn.onclick = () => {
+            console.log("Onclick attribute triggered on changeCoinBtn");
+            handleChangeCoin();
+        };
     } else {
         console.error("changeCoinBtn not found in DOM");
+        window.Telegram.WebApp.showAlert("Error: Change coin button not found.");
     }
 
     // Set initial referral link
