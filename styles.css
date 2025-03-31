@@ -24,7 +24,7 @@ h1 {
     font-size: 18px;
     margin: 10px 0;
 }
-button {
+button, select {
     background: #4CAF50;
     color: white;
     border: none;
@@ -34,7 +34,7 @@ button {
     cursor: pointer;
     font-size: 16px;
 }
-button:hover {
+button:hover, select:hover {
     background: #76FF03;
     color: #000;
 }
