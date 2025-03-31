@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Debug: Check if critical elements are found
     console.log("startBtn:", startBtn);
+    console.log("claimBtn:", claimBtn);
     console.log("navItems:", navItems);
     console.log("changeCoinBtn:", changeCoinBtn);
     console.log("changeCoinSelection:", changeCoinSelection);
@@ -301,10 +302,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (changeCoinBtn) {
         console.log("Attaching event listeners to changeCoinBtn");
-        changeCoinBtn.addEventListener("click", handleChangeCoin);
+        changeCoinBtn.addEventListener("click", (e) => {
+            console.log("Click event on changeCoinBtn");
+            handleChangeCoin();
+        });
         changeCoinBtn.addEventListener("touchstart", (e) => {
             e.preventDefault(); // Prevent default touch behavior
             console.log("Touchstart event on changeCoinBtn");
+            handleChangeCoin();
+        });
+        changeCoinBtn.addEventListener("mousedown", (e) => {
+            console.log("Mousedown event on changeCoinBtn");
             handleChangeCoin();
         });
     } else {
@@ -394,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Claim rewards
     if (claimBtn) {
-        startBtn.addEventListener("click", () => {
+        claimBtn.addEventListener("click", () => {
             console.log("Claim rewards button clicked");
             if (rewards <= 0) {
                 window.Telegram.WebApp.showAlert("No rewards to claim!");
