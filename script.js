@@ -1,13 +1,17 @@
 let miningRate = 0;
+let hashPower = 0;
 let totalMined = 0;
 let energyUsed = 0;
 let rewards = 0;
+let miningInterval;
 
 const rateDisplay = document.getElementById("rate");
+const hashPowerDisplay = document.getElementById("hashPower");
 const totalDisplay = document.getElementById("total");
 const energyDisplay = document.getElementById("energy");
 const rewardsDisplay = document.getElementById("rewards");
 const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
 const paymentCurrency = document.getElementById("paymentCurrency");
 const upgradeBtn = document.getElementById("upgradeBtn");
 const rewardCurrency = document.getElementById("rewardCurrency");
@@ -16,17 +20,26 @@ const claimBtn = document.getElementById("claimBtn");
 // Initialize Telegram Web App
 window.Telegram.WebApp.ready();
 
+// Prompt user to set up Wallet if not already done
+if (!window.Telegram.WebApp.initDataUnsafe.user) {
+    window.Telegram.WebApp.showAlert("Please set up your Telegram Wallet to proceed. Start @Wallet to begin.");
+    window.Telegram.WebApp.openTelegramLink("https://t.me/Wallet");
+}
+
 // Start mining
 startBtn.addEventListener("click", () => {
     if (miningRate === 0) {
         miningRate = 0.0001;
-        startBtn.textContent = "Mining...";
-        startBtn.disabled = true;
-        setInterval(() => {
+        hashPower = 1; // Starting hash power
+        startBtn.style.display = "none";
+        stopBtn.style.display = "block";
+        miningInterval = setInterval(() => {
             totalMined += miningRate;
             energyUsed += 0.1;
             rewards += 0.00001; // Fake rewards accumulation
+            hashPower += 0.5; // Increment hash power
             rateDisplay.textContent = miningRate.toFixed(4);
+            hashPowerDisplay.textContent = hashPower.toFixed(1);
             totalDisplay.textContent = totalMined.toFixed(4);
             energyDisplay.textContent = energyUsed.toFixed(1);
             rewardsDisplay.textContent = rewards.toFixed(4);
@@ -34,30 +47,30 @@ startBtn.addEventListener("click", () => {
     }
 });
 
-// Upgrade miner with Wallet Pay
+// Stop mining
+stopBtn.addEventListener("click", () => {
+    clearInterval(miningInterval);
+    miningRate = 0;
+    rateDisplay.textContent = "0.0000";
+    stopBtn.style.display = "none";
+    startBtn.style.display = "block";
+    startBtn.textContent = "Start Mining";
+    startBtn.disabled = false;
+});
+
+// Upgrade miner (simulated payment)
 upgradeBtn.addEventListener("click", () => {
     const selectedCurrency = paymentCurrency.value;
-    const amount = 0.0001; // Fixed amount for simplicity (equivalent in BTC, USDT, or TON)
+    const amount = 0.0001; // Fixed amount for simplicity
 
-    // Simulate Wallet Pay API call (replace with actual API integration)
-    const paymentData = {
-        amount: amount,
-        currency: selectedCurrency,
-        description: "Upgrade Miner in DSS Green Hash",
-        storeId: "your_wallet_pay_store_id", // Replace with your Wallet Pay Store ID
-        externalId: "upgrade_" + Date.now(), // Unique transaction ID
-    };
-
-    // In a real setup, you'd make an API call to Wallet Pay to create a payment request
-    // Example: POST https://pay.wallet.tg/wpay/store-api/v1/order
-    // Headers: Authorization: Bearer your_wallet_pay_api_key
-    // Body: paymentData
     window.Telegram.WebApp.showAlert(`Initiating payment of ${amount} ${selectedCurrency} via Wallet Pay...`);
 
-    // Simulate payment success (replace with actual API response handling)
+    // Simulate payment success
     setTimeout(() => {
         miningRate += 0.00005;
+        hashPower += 1; // Increase hash power with upgrade
         rateDisplay.textContent = miningRate.toFixed(4);
+        hashPowerDisplay.textContent = hashPower.toFixed(1);
         window.Telegram.WebApp.showAlert("Payment successful! Miner upgraded! New rate: " + miningRate.toFixed(4) + " BTC/hour");
     }, 2000);
 });
@@ -70,8 +83,6 @@ claimBtn.addEventListener("click", () => {
         return;
     }
 
-    // In a real setup, you'd use the Wallet bot API to send the reward to the user's Telegram Wallet
-    // Example: Send a transfer request to @Wallet with the amount and currency
     window.Telegram.WebApp.showAlert(`Sending ${rewards.toFixed(4)} ${selectedCurrency} to your Telegram Wallet...`);
 
     // Simulate reward distribution
