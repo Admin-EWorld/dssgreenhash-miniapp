@@ -1,28 +1,46 @@
 body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #1B5E20, #C8E6C9);
+    background: linear-gradient(to bottom, #1B5E20, #2E2E2E);
     color: #fff;
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 .container {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7);
     padding: 20px;
     border-radius: 10px;
     text-align: center;
     max-width: 400px;
     width: 100%;
+    height: 90vh;
+    overflow-y: auto;
+    position: relative;
 }
 h1 {
     color: #76FF03;
+    font-size: 24px;
 }
-.stats p {
+.stats p, p {
     font-size: 18px;
     margin: 10px 0;
+}
+.mining-circle {
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, #76FF03 0%, #1B5E20 70%);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    border: 2px solid #76FF03;
 }
 button, select {
     background: #4CAF50;
@@ -44,4 +62,56 @@ button:hover, select:hover {
 #stopBtn:hover {
     background: #ff6659;
     color: #fff;
+}
+.action-btn {
+    background: #4CAF50;
+}
+.action-btn.swap {
+    background: #FFA500;
+}
+.miner-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+.miner-img {
+    width: 100px;
+    height: 100px;
+    margin: 10px auto;
+    display: block;
+}
+.task, .info-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 400px;
+    background: #1B5E20;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid #76FF03;
+}
+.nav-item {
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+}
+.nav-item.active {
+    color: #76FF03;
+}
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
 }
