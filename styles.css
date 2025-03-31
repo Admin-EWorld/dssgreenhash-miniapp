@@ -39,8 +39,10 @@ body {
     max-width: 600px;
     display: flex;
     justify-content: space-around;
-    background-color: #2a2a2a;
-    padding: 10px 0;
+    background-color: #1a3c34; /* Dark green background to match the app theme */
+    padding: 15px 0; /* Increased padding for a taller nav bar */
+    border-top: 2px solid #00ff00; /* Green border on top */
+    box-shadow: 0 -2px 5px rgba(0, 255, 0, 0.2); /* Subtle green shadow */
 }
 
 .nav-item {
@@ -49,19 +51,28 @@ body {
     align-items: center;
     color: #888;
     cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover/tap effects */
+}
+
+.nav-item:hover, .nav-item:active {
+    color: #00ff00; /* Green color on hover/tap */
+    transform: scale(1.1); /* Slight scale effect on hover/tap */
 }
 
 .nav-item.active {
     color: #00ff00; /* Green color for active nav item */
+    background-color: rgba(0, 255, 0, 0.2); /* Slight green background for active tab */
+    border-radius: 5px;
+    padding: 5px;
 }
 
 .nav-item img {
-    width: 24px;
-    height: 24px;
+    width: 30px; /* Increased icon size */
+    height: 30px;
 }
 
 .nav-item span {
-    font-size: 12px;
+    font-size: 14px; /* Increased label size */
     margin-top: 5px;
 }
 
@@ -140,12 +151,13 @@ button:disabled {
 }
 
 select {
-    padding: 5px;
+    padding: 8px;
     margin: 10px;
     background-color: #333;
     color: #fff;
     border: none;
     border-radius: 5px;
+    font-size: 16px;
 }
 
 /* Green headers */
