@@ -7,7 +7,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #1a1a1a;
+    background-color: #1a3c34; /* Dark green background for the entire app */
     color: #fff;
     margin: 0;
     padding: 0;
@@ -23,6 +23,9 @@ body {
     max-width: 600px;
     padding: 20px;
     text-align: center;
+    background-color: rgba(0, 255, 0, 0.1); /* Slight green tint for tab content */
+    border-radius: 10px;
+    border: 1px solid #00ff00; /* Green border for tab content */
 }
 
 .tab-content.active {
@@ -49,7 +52,7 @@ body {
 }
 
 .nav-item.active {
-    color: #fff;
+    color: #00ff00; /* Green color for active nav item */
 }
 
 .nav-item img {
@@ -143,6 +146,11 @@ select {
     color: #fff;
     border: none;
     border-radius: 5px;
+}
+
+/* Green headers */
+h1, h2, h3 {
+    color: #00ff00; /* Green color for headers */
 }
 
 /* Styles for More tab sections */
