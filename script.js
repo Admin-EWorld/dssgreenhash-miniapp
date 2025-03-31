@@ -40,6 +40,8 @@ const landingPage = document.getElementById("landingPage");
 const coinSelection = document.getElementById("coinSelection");
 const proceedBtn = document.getElementById("proceedBtn");
 const navBar = document.querySelector(".nav-bar");
+const changeCoinSelection = document.getElementById("changeCoinSelection");
+const changeCoinBtn = document.getElementById("changeCoinBtn");
 
 // Initialize Telegram Web App
 window.Telegram.WebApp.ready();
@@ -138,8 +140,12 @@ const showInitialTab = () => {
             console.log("User has data, showing home tab");
             landingPage.style.display = "none";
             navBar.style.display = "flex";
-            tabContents.forEach(content => content.classList.remove("active"));
+            tabContents.forEach(content => {
+                content.classList.remove("active");
+                content.style.display = "none"; // Ensure all tabs are hidden
+            });
             const homeTab = document.getElementById("homeTab");
+            homeTab.style.display = "block"; // Explicitly show the home tab
             homeTab.classList.add("active");
             navItems.forEach(item => item.classList.remove("active"));
             navItems[0].classList.add("active");
@@ -169,16 +175,43 @@ proceedBtn.addEventListener("click", () => {
     console.log("Landing page hidden");
     navBar.style.display = "flex";
     console.log("Navigation bar displayed");
-    tabContents.forEach(content => content.classList.remove("active"));
-    console.log("All tabs hidden");
+    tabContents.forEach(content => {
+        content.classList.remove("active");
+        content.style.display = "none"; // Ensure all tabs are hidden
+        console.log("Hiding tab:", content.id);
+    });
     const homeTab = document.getElementById("homeTab");
+    homeTab.style.display = "block"; // Explicitly show the home tab
     homeTab.classList.add("active");
-    console.log("Home tab set to active");
+    console.log("Home tab set to active, display:", homeTab.style.display);
     navItems.forEach(item => item.classList.remove("active"));
     navItems[0].classList.add("active");
     console.log("Home nav item set to active");
     saveUserData();
     console.log("User data saved after coin selection");
+});
+
+// Change coin in More tab
+changeCoinBtn.addEventListener("click", () => {
+    const newCoin = changeCoinSelection.value;
+    if (newCoin === selectedCoin) {
+        window.Telegram.WebApp.showAlert("You are already mining " + newCoin + "!");
+        return;
+    }
+    selectedCoin = newCoin;
+    coinTypeDisplay.textContent = selectedCoin;
+    coinTypeRewardsDisplay.textContent = selectedCoin;
+    coinTypeEarningsDisplay.textContent = selectedCoin;
+    coinTypeCostDisplay.textContent = selectedCoin;
+    miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
+    if (miningRate > 0) {
+        // Recalculate mining rate if mining is active
+        miningRate = calculateMiningRate();
+        miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
+    }
+    saveUserData();
+    window.Telegram.WebApp.showAlert("Coin changed to " + selectedCoin + "!");
+    console.log("Coin changed to:", selectedCoin);
 });
 
 // Set initial referral link
@@ -192,12 +225,13 @@ navItems.forEach(item => {
         navItems.forEach(i => i.classList.remove("active"));
         tabContents.forEach(content => {
             content.classList.remove("active");
-            content.style.display = "none"; // Explicitly hide to clear any inline styles
+            content.style.display = "none"; // Reset inline style to ensure hiding
         });
 
         // Add active class to the clicked nav item and corresponding tab
         item.classList.add("active");
         const targetTab = document.getElementById(item.dataset.tab);
+        targetTab.style.display = "block"; // Explicitly show the target tab
         targetTab.classList.add("active");
         console.log("Navigated to tab:", item.dataset.tab);
     });
