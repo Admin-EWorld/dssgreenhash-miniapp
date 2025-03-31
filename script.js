@@ -27,9 +27,9 @@ startBtn.addEventListener("click", () => {
     }
 });
 
-// Upgrade miner (fake)
+// Upgrade miner (fake for now, with Stars placeholder)
 upgradeBtn.addEventListener("click", () => {
     miningRate += 0.00005;
     rateDisplay.textContent = miningRate.toFixed(4);
-    window.Telegram.WebApp.showAlert("Miner upgraded! New rate: " + miningRate.toFixed(4) + " BTC/hour");
+    window.Telegram.WebApp.showAlert("Miner upgraded! New rate: " + miningRate.toFixed(4) + " BTC/hour (Stars payment coming soon)");
 });
