@@ -38,3 +38,10 @@ button:hover, select:hover {
     background: #76FF03;
     color: #000;
 }
+#stopBtn {
+    background: #f44336;
+}
+#stopBtn:hover {
+    background: #ff6659;
+    color: #fff;
+}
