@@ -5,6 +5,11 @@ let earnings = 0;
 let rewards = 0;
 let selectedCoin = "TON";
 let miningInterval;
+let coinPrices = {
+    TON: 4.12,  // Default price, will be updated by fetch
+    BTC: 60000,  // Approximate price in USD
+    USDT: 1      // Stablecoin, pegged to USD
+};
 
 const hashPowerDisplay = document.getElementById("hashPower");
 const balanceDisplay = document.getElementById("balance");
@@ -38,6 +43,7 @@ const navBar = document.querySelector(".nav-bar");
 
 // Initialize Telegram Web App
 window.Telegram.WebApp.ready();
+console.log("Telegram Web App initialized");
 
 // Prompt user to set up Wallet if not already done
 if (!window.Telegram.WebApp.initDataUnsafe.user) {
@@ -48,7 +54,12 @@ if (!window.Telegram.WebApp.initDataUnsafe.user) {
 // Load user data from Telegram storage
 const loadUserData = () => {
     window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
+        if (err) {
+            console.error("Error loading user data:", err);
+            return;
+        }
         if (savedData) {
+            console.log("User data loaded:", savedData);
             const data = JSON.parse(savedData);
             hashPower = data.hashPower || 0;
             balance = data.balance || 0;
@@ -65,6 +76,8 @@ const loadUserData = () => {
             coinTypeEarningsDisplay.textContent = selectedCoin;
             coinTypeCostDisplay.textContent = selectedCoin;
             miningRateDisplay.textContent = `+${(miningRate / 1000).toFixed(8)} ${selectedCoin}`;
+        } else {
+            console.log("No user data found, showing landing page");
         }
     });
 };
@@ -78,17 +91,31 @@ const saveUserData = () => {
         rewards: rewards,
         selectedCoin: selectedCoin,
     };
-    window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data));
+    window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data), (err) => {
+        if (err) {
+            console.error("Error saving user data:", err);
+        } else {
+            console.log("User data saved:", data);
+        }
+    });
 };
 
 // Check if user has already selected a coin
 window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
+    if (err) {
+        console.error("Error checking user data:", err);
+        // Fallback to landing page if there's an error
+        landingPage.classList.add("active");
+        return;
+    }
     if (savedData) {
+        console.log("User has data, showing home tab");
         landingPage.style.display = "none";
         navBar.style.display = "flex";
         document.getElementById("homeTab").classList.add("active");
         loadUserData();
     } else {
+        console.log("No user data, showing landing page");
         landingPage.classList.add("active");
     }
 });
@@ -104,20 +131,35 @@ proceedBtn.addEventListener("click", () => {
     navBar.style.display = "flex";
     document.getElementById("homeTab").classList.add("active");
     saveUserData();
+    console.log("Coin selected:", selectedCoin);
 });
 
-// Fetch TON price from CoinGecko
-const fetchTonPrice = async () => {
+// Fetch coin prices from CoinGecko
+const fetchCoinPrices = async () => {
     try {
-        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd");
+        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=the-open-network,bitcoin,usdt&vs_currencies=usd");
         const data = await response.json();
-        const tonPrice = data["the-open-network"].usd;
-        tonPriceDisplay.textContent = tonPrice.toFixed(2);
+        coinPrices.TON = data["the-open-network"].usd;
+        coinPrices.BTC = data["bitcoin"].usd;
+        coinPrices.USDT = data["usdt"].usd;
+        tonPriceDisplay.textContent = coinPrices.TON.toFixed(2);
+        console.log("Coin prices fetched:", coinPrices);
     } catch (error) {
-        console.error("Error fetching TON price:", error);
+        console.error("Error fetching coin prices:", error);
+        // Use default prices if fetch fails
+        tonPriceDisplay.textContent = coinPrices.TON.toFixed(2);
     }
 };
-fetchTonPrice();
+fetchCoinPrices();
+
+// Calculate mining rate based on coin price
+const calculateMiningRate = () => {
+    // Base mining rate in USD per hour (e.g., $0.0001 USD/hour)
+    const baseRateUsd = 0.0001;
+    // Convert to selected coin based on its USD price
+    const rateInCoin = baseRateUsd / coinPrices[selectedCoin];
+    return rateInCoin;
+};
 
 // Set initial referral link
 const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || "123";
@@ -130,6 +172,7 @@ navItems.forEach(item => {
         item.classList.add("active");
         tabContents.forEach(content => content.classList.remove("active"));
         document.getElementById(item.dataset.tab).classList.add("active");
+        console.log("Navigated to tab:", item.dataset.tab);
     });
 });
 navItems[0].classList.add("active");
@@ -137,25 +180,26 @@ navItems[0].classList.add("active");
 // Start mining
 startBtn.addEventListener("click", () => {
     if (miningRate === 0) {
-        miningRate = 0.0001;
+        miningRate = calculateMiningRate();
         hashPower = hashPower || 1;
         startBtn.textContent = "Mining...";
         startBtn.style.display = "none";
         stopBtn.style.display = "block";
         miningCircle.classList.add("active");
         miningInterval = setInterval(() => {
-            balance += 0.00001;
-            rewards += 0.00001;
-            earnings += 0.01;
+            balance += miningRate;
+            rewards += miningRate;
+            earnings += miningRate * 720; // Approximate monthly earnings (30 days * 24 hours)
             hashPower += 0.5;
             hashPowerDisplay.textContent = hashPower.toFixed(2);
             balanceDisplay.textContent = balance.toFixed(4);
             rewardsDisplay.textContent = rewards.toFixed(4);
-            miningRateDisplay.textContent = `+${(miningRate / 1000).toFixed(8)} ${selectedCoin}`;
+            miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
             earningsDisplay.textContent = earnings.toFixed(2);
             boostHashPowerDisplay.textContent = hashPower.toFixed(2);
             saveUserData();
         }, 3600000); // Update every hour
+        console.log("Mining started, rate:", miningRate);
     }
 });
 
@@ -170,6 +214,7 @@ stopBtn.addEventListener("click", () => {
     startBtn.textContent = "Start Mining";
     startBtn.disabled = false;
     saveUserData();
+    console.log("Mining stopped");
 });
 
 // Claim rewards
