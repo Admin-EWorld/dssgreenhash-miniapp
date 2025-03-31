@@ -40,6 +40,8 @@ const landingPage = document.getElementById("landingPage");
 const coinSelection = document.getElementById("coinSelection");
 const proceedBtn = document.getElementById("proceedBtn");
 const navBar = document.querySelector(".nav-bar");
+const changeCoinSelection = document.getElementById("changeCoinSelection");
+const changeCoinBtn = document.getElementById("changeCoinBtn");
 
 // Initialize Telegram Web App
 window.Telegram.WebApp.ready();
@@ -100,48 +102,49 @@ const saveUserData = () => {
     });
 };
 
-// Show a specific tab
-const showTab = (tabId) => {
-    tabContents.forEach(content => content.classList.remove("active"));
-    const tab = document.getElementById(tabId);
-    if (tab) {
-        tab.classList.add("active");
-        console.log(`Showing tab: ${tabId}`);
-    } else {
-        console.error(`Tab not found: ${tabId}`);
-    }
+// Show the appropriate tab based on user data
+const showInitialTab = () => {
+    window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
+        if (err) {
+            console.error("Error checking user data:", err);
+            landingPage.classList.add("active");
+            return;
+        }
+        if (savedData) {
+            console.log("User has data, showing home tab");
+            landingPage.style.display = "none";
+            navBar.style.display = "flex";
+            tabContents.forEach(content => content.classList.remove("active"));
+            document.getElementById("homeTab").classList.add("active");
+            loadUserData();
+        } else {
+            console.log("No user data, showing landing page");
+            landingPage.classList.add("active");
+        }
+    });
 };
 
-// Check if user has already selected a coin
-window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
-    if (err) {
-        console.error("Error checking user data:", err);
-        showTab("landingPage");
-        return;
-    }
-    if (savedData) {
-        console.log("User has data, showing home tab");
-        navBar.style.display = "flex";
-        showTab("homeTab");
-        loadUserData();
-    } else {
-        console.log("No user data, showing landing page");
-        showTab("landingPage");
-    }
-});
+// Call the function to show the initial tab
+showInitialTab();
 
 // Proceed after coin selection
 proceedBtn.addEventListener("click", () => {
+    console.log("Proceed button clicked");
     selectedCoin = coinSelection.value;
+    console.log("Selected coin:", selectedCoin);
     coinTypeDisplay.textContent = selectedCoin;
     coinTypeRewardsDisplay.textContent = selectedCoin;
     coinTypeEarningsDisplay.textContent = selectedCoin;
     coinTypeCostDisplay.textContent = selectedCoin;
-    miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
+    miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
+    landingPage.style.display = "none";
     navBar.style.display = "flex";
-    showTab("homeTab");
+    tabContents.forEach(content => content.classList.remove("active"));
+    const homeTab = document.getElementById("homeTab");
+    homeTab.style.display = "block";
+    homeTab.classList.add("active");
+    console.log("Home tab should now be visible");
     saveUserData();
-    console.log("Coin selected:", selectedCoin);
 });
 
 // Fetch coin prices from CoinGecko
@@ -177,10 +180,32 @@ navItems.forEach(item => {
     item.addEventListener("click", () => {
         navItems.forEach(i => i.classList.remove("active"));
         item.classList.add("active");
-        showTab(item.dataset.tab);
+        tabContents.forEach(content => content.classList.remove("active"));
+        const targetTab = document.getElementById(item.dataset.tab);
+        targetTab.style.display = "block";
+        targetTab.classList.add("active");
+        console.log("Navigated to tab:", item.dataset.tab);
     });
 });
 navItems[0].classList.add("active");
+
+// Change coin
+changeCoinBtn.addEventListener("click", () => {
+    const newCoin = changeCoinSelection.value;
+    console.log("Changing coin to:", newCoin);
+    selectedCoin = newCoin;
+    coinTypeDisplay.textContent = selectedCoin;
+    coinTypeRewardsDisplay.textContent = selectedCoin;
+    coinTypeEarningsDisplay.textContent = selectedCoin;
+    coinTypeCostDisplay.textContent = selectedCoin;
+    miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
+    if (miningRate > 0) {
+        miningRate = calculateMiningRate();
+        miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
+    }
+    saveUserData();
+    window.Telegram.WebApp.showAlert(`Mining coin changed to ${selectedCoin}!`);
+});
 
 // Start mining
 startBtn.addEventListener("click", () => {
@@ -204,7 +229,7 @@ startBtn.addEventListener("click", () => {
             boostHashPowerDisplay.textContent = hashPower.toFixed(2);
             saveUserData();
         }, 3600000); // Update every hour
-        console.log("Mining started, rate:", miningRate);
+        console.log("ining started, rate:", miningRate);
     }
 });
 
