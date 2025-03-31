@@ -11,6 +11,7 @@ let coinPrices = {
     USDT: 1      // Stablecoin, pegged to USD
 };
 
+// DOM Elements
 const hashPowerDisplay = document.getElementById("hashPower");
 const balanceDisplay = document.getElementById("balance");
 const rewardsDisplay = document.getElementById("rewards");
@@ -44,8 +45,12 @@ const changeCoinSelection = document.getElementById("changeCoinSelection");
 const changeCoinBtn = document.getElementById("changeCoinBtn");
 
 // Initialize Telegram Web App
-window.Telegram.WebApp.ready();
-console.log("Telegram Web App initialized");
+if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    console.log("Telegram Web App initialized");
+} else {
+    console.error("Telegram Web App not available");
+}
 
 // Prompt user to set up Wallet if not already done
 if (!window.Telegram.WebApp.initDataUnsafe.user) {
@@ -55,6 +60,7 @@ if (!window.Telegram.WebApp.initDataUnsafe.user) {
 
 // Load user data from Telegram storage
 const loadUserData = () => {
+    console.log("Loading user data...");
     window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
         if (err) {
             console.error("Error loading user data:", err);
@@ -93,11 +99,12 @@ const saveUserData = () => {
         rewards: rewards,
         selectedCoin: selectedCoin,
     };
+    console.log("Saving user data:", data);
     window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data), (err) => {
         if (err) {
             console.error("Error saving user data:", err);
         } else {
-            console.log("User data saved:", data);
+            console.log("User data saved successfully");
         }
     });
 };
@@ -105,6 +112,7 @@ const saveUserData = () => {
 // Fetch coin prices from CoinGecko
 const fetchCoinPrices = async () => {
     try {
+        console.log("Fetching coin prices...");
         const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=the-open-network,bitcoin,usdt&vs_currencies=usd");
         const data = await response.json();
         coinPrices.TON = data["the-open-network"].usd;
@@ -123,6 +131,7 @@ fetchCoinPrices();
 const calculateMiningRate = () => {
     const baseRateUsd = 0.0001; // Base mining rate in USD per hour
     const rateInCoin = baseRateUsd / coinPrices[selectedCoin];
+    console.log("Calculated mining rate for", selectedCoin, ":", rateInCoin);
     return rateInCoin;
 };
 
@@ -142,10 +151,10 @@ const showInitialTab = () => {
             navBar.style.display = "flex";
             tabContents.forEach(content => {
                 content.classList.remove("active");
-                content.style.display = "none"; // Ensure all tabs are hidden
+                content.style.display = "none";
             });
             const homeTab = document.getElementById("homeTab");
-            homeTab.style.display = "block"; // Explicitly show the home tab
+            homeTab.style.display = "block";
             homeTab.classList.add("active");
             navItems.forEach(item => item.classList.remove("active"));
             navItems[0].classList.add("active");
@@ -157,6 +166,49 @@ const showInitialTab = () => {
         }
     });
 };
+
+// Clear user data (for testing)
+const clearUserData = () => {
+    console.log("Attempting to clear user data...");
+    window.Telegram.WebApp.CloudStorage.removeItem("userData", (err) => {
+        if (err) {
+            console.error("Error clearing user data:", err);
+            window.Telegram.WebApp.showAlert("Failed to clear user data. Please try again.");
+        } else {
+            console.log("User data cleared successfully");
+            window.Telegram.WebApp.showAlert("User data cleared! Refresh the app.");
+            // Reset local variables
+            miningRate = 0;
+            hashPower = 0;
+            balance = 0;
+            earnings = 0;
+            rewards = 0;
+            selectedCoin = "TON";
+            // Reset displays
+            hashPowerDisplay.textContent = "0";
+            balanceDisplay.textContent = "0.0000";
+            rewardsDisplay.textContent = "0.0000";
+            earningsDisplay.textContent = "0.00";
+            boostHashPowerDisplay.textContent = "0";
+            coinTypeDisplay.textContent = "TON";
+            coinTypeRewardsDisplay.textContent = "TON";
+            coinTypeEarningsDisplay.textContent = "TON";
+            coinTypeCostDisplay.textContent = "TON";
+            miningRateDisplay.textContent = "+0.0000 TON";
+            // Show landing page
+            tabContents.forEach(content => {
+                content.classList.remove("active");
+                content.style.display = "none";
+            });
+            landingPage.style.display = "block";
+            landingPage.classList.add("active");
+            navBar.style.display = "none";
+        }
+    });
+};
+
+// Call clearUserData immediately for testing
+clearUserData();
 
 // Call the function to show the initial tab
 showInitialTab();
@@ -177,11 +229,11 @@ proceedBtn.addEventListener("click", () => {
     console.log("Navigation bar displayed");
     tabContents.forEach(content => {
         content.classList.remove("active");
-        content.style.display = "none"; // Ensure all tabs are hidden
+        content.style.display = "none";
         console.log("Hiding tab:", content.id);
     });
     const homeTab = document.getElementById("homeTab");
-    homeTab.style.display = "block"; // Explicitly show the home tab
+    homeTab.style.display = "block";
     homeTab.classList.add("active");
     console.log("Home tab set to active, display:", homeTab.style.display);
     navItems.forEach(item => item.classList.remove("active"));
@@ -193,6 +245,7 @@ proceedBtn.addEventListener("click", () => {
 
 // Change coin in More tab
 changeCoinBtn.addEventListener("click", () => {
+    console.log("Change coin button clicked");
     const newCoin = changeCoinSelection.value;
     if (newCoin === selectedCoin) {
         window.Telegram.WebApp.showAlert("You are already mining " + newCoin + "!");
@@ -205,7 +258,6 @@ changeCoinBtn.addEventListener("click", () => {
     coinTypeCostDisplay.textContent = selectedCoin;
     miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
     if (miningRate > 0) {
-        // Recalculate mining rate if mining is active
         miningRate = calculateMiningRate();
         miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
     }
@@ -217,21 +269,20 @@ changeCoinBtn.addEventListener("click", () => {
 // Set initial referral link
 const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || "123";
 referralLinkDisplay.textContent = `t.me/dssgreenhash_bot/start?startapp=${userId}`;
+console.log("Referral link set:", referralLinkDisplay.textContent);
 
 // Navigation
 navItems.forEach(item => {
     item.addEventListener("click", () => {
-        // Remove active class from all nav items and tabs
+        console.log("Nav item clicked:", item.dataset.tab);
         navItems.forEach(i => i.classList.remove("active"));
         tabContents.forEach(content => {
             content.classList.remove("active");
-            content.style.display = "none"; // Reset inline style to ensure hiding
+            content.style.display = "none";
         });
-
-        // Add active class to the clicked nav item and corresponding tab
         item.classList.add("active");
         const targetTab = document.getElementById(item.dataset.tab);
-        targetTab.style.display = "block"; // Explicitly show the target tab
+        targetTab.style.display = "block";
         targetTab.classList.add("active");
         console.log("Navigated to tab:", item.dataset.tab);
     });
@@ -239,6 +290,7 @@ navItems.forEach(item => {
 
 // Start mining
 startBtn.addEventListener("click", () => {
+    console.log("Start mining button clicked");
     if (miningRate === 0) {
         miningRate = calculateMiningRate();
         hashPower = hashPower || 1;
@@ -265,6 +317,7 @@ startBtn.addEventListener("click", () => {
 
 // Stop mining
 stopBtn.addEventListener("click", () => {
+    console.log("Stop mining button clicked");
     clearInterval(miningInterval);
     miningRate = 0;
     miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
@@ -279,6 +332,7 @@ stopBtn.addEventListener("click", () => {
 
 // Claim rewards
 claimBtn.addEventListener("click", () => {
+    console.log("Claim rewards button clicked");
     if (rewards <= 0) {
         window.Telegram.WebApp.showAlert("No rewards to claim!");
         return;
@@ -296,21 +350,22 @@ claimBtn.addEventListener("click", () => {
 
 // Withdraw (simulated)
 withdrawBtn.addEventListener("click", () => {
+    console.log("Withdraw button clicked");
     window.Telegram.WebApp.showAlert("Withdraw initiated! (Simulated)");
 });
 
 // Swap coin (simulated)
 swapBtn.addEventListener("click", () => {
+    console.log("Swap coin button clicked");
     window.Telegram.WebApp.showAlert("Swap coin initiated! (Simulated)");
 });
 
 // Buy miner (simulated payment)
 buyMinerBtn.addEventListener("click", () => {
+    console.log("Buy miner button clicked");
     const selectedCurrency = paymentCurrency.value;
     const amount = 3; // Cost in selected coin
-
     window.Telegram.WebApp.showAlert(`Initiating payment of ${amount} ${selectedCurrency} via Wallet Pay...`);
-
     setTimeout(() => {
         hashPower += 10;
         hashPowerDisplay.textContent = hashPower.toFixed(2);
@@ -322,16 +377,15 @@ buyMinerBtn.addEventListener("click", () => {
 
 // Referral withdraw (simulated)
 referralWithdrawBtn.addEventListener("click", () => {
+    console.log("Referral withdraw button clicked");
     window.Telegram.WebApp.showAlert("Withdraw initiated! (Simulated)");
 });
 
 // Copy referral link
 copyLinkBtn.addEventListener("click", () => {
+    console.log("Copy link button clicked");
     const link = referralLinkDisplay.textContent;
     navigator.clipboard.writeText(link).then(() => {
         window.Telegram.WebApp.showAlert("Referral link copied!");
     });
-});
-window.Telegram.WebApp.CloudStorage.removeItem("userData", () => {
-    window.Telegram.WebApp.showAlert("User data cleared! Refresh the app.");
 });
