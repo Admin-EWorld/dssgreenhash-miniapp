@@ -344,39 +344,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load user data from Telegram storage
     const loadUserData = () => {
-        console.log("Loading user data...");
-        window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
-            if (err) {
-                console.error("Error loading user data:", err);
-                return;
-            }
-            if (savedData) {
-                console.log("User data loaded:", savedData);
-                const data = JSON.parse(savedData);
-                hashPower = data.hashPower || 0;
-                balance = data.balance || 0;
-                earnings = data.earnings || 0;
-                rewards = data.rewards || 0;
-                selectedCoin = data.selectedCoin || "TON";
-                selectedLanguage = data.selectedLanguage || "en";
-                if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
-                if (balanceDisplay) balanceDisplay.textContent = balance.toFixed(4);
-                if (rewardsDisplay) rewardsDisplay.textContent = rewards.toFixed(4);
-                if (earningsDisplay) earningsDisplay.textContent = earnings.toFixed(2);
-                if (boostHashPowerDisplay) boostHashPowerDisplay.textContent = hashPower.toFixed(2);
-                if (coinTypeDisplay) coinTypeDisplay.textContent = selectedCoin;
-                if (coinTypeRewardsDisplay) coinTypeRewardsDisplay.textContent = selectedCoin;
-                if (coinTypeEarningsDisplay) coinTypeEarningsDisplay.textContent = selectedCoin;
-                if (coinTypeCostDisplay) coinTypeCostDisplay.textContent = selectedCoin;
-                if (miningRateDisplay) miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
-                if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
-                if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
-                updateLanguage(); // Update text based on loaded language
-            } else {
-                console.log("No user data found");
-            }
-        });
-    };
+    console.log("Loading user data...");
+    window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
+        if (err) {
+            console.error("Error loading user data:", err);
+            return;
+        }
+        if (savedData) {
+            console.log("User data loaded:", savedData);
+            const data = JSON.parse(savedData);
+            hashPower = data.hashPower || 0;
+            balance = data.balance || 0;
+            earnings = data.earnings || 0;
+            rewards = data.rewards || 0;
+            selectedCoin = data.selectedCoin || "TON";
+            selectedLanguage = data.selectedLanguage || "en";
+            if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
+            if (balanceDisplay) balanceDisplay.textContent = balance.toFixed(4);
+            if (rewardsDisplay) rewardsDisplay.textContent = rewards.toFixed(4);
+            if (earningsDisplay) earningsDisplay.textContent = earnings.toFixed(2);
+            if (boostHashPowerDisplay) boostHashPowerDisplay.textContent = hashPower.toFixed(2);
+            if (coinTypeDisplay) coinTypeDisplay.textContent = selectedCoin;
+            if (coinTypeRewardsDisplay) coinTypeRewardsDisplay.textContent = selectedCoin;
+            if (coinTypeEarningsDisplay) coinTypeEarningsDisplay.textContent = selectedCoin;
+            if (coinTypeCostDisplay) coinTypeCostDisplay.textContent = selectedCoin;
+            if (miningRateDisplay) miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`; // Ensure selectedCoin is used
+            if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
+            if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
+            updateLanguage(); // Update text based on loaded language
+        } else {
+            console.log("No user data found");
+        }
+    });
+};
 
     // Save user data to Telegram storage
     const saveUserData = () => {
