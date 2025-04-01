@@ -95,6 +95,10 @@ button.mining:hover {
     display: block;
 }
 
+#landingPage {
+    display: block; /* Ensure landing page is visible by default */
+}
+
 /* Home Tab */
 #homeTab {
     text-align: center;
