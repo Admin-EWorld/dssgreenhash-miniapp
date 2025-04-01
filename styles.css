@@ -272,11 +272,11 @@ body {
     margin: 10px 0;
 }
 
-#boostTab select {
+#sharesInput {
     width: 100%;
-    max-width: 300px;
+    max-width: 200px;
     padding: 10px;
-    margin-bottom: 20px;
+    margin: 10px 0;
     border-radius: 5px;
     border: none;
     background-color: #1a3c34;
@@ -284,7 +284,7 @@ body {
     font-size: 1rem;
 }
 
-#buyMinerBtn {
+#buySharesBtn {
     background-color: #4caf50;
     color: #fff;
     padding: 10px 20px;
@@ -295,22 +295,36 @@ body {
     transition: background-color 0.3s;
 }
 
-#buyMinerBtn:hover {
+#buySharesBtn:hover {
     background-color: #388e3c;
 }
 
-/* Friends Tab */
-#friendsTab h2 {
+/* Refer & Earn Tab */
+#referTab h2 {
     font-size: 1.8rem;
     margin-bottom: 20px;
 }
 
-#friendsTab p {
+#referTab h3 {
+    font-size: 1.4rem;
+    margin: 20px 0 10px;
+}
+
+#referTab p {
     font-size: 1.2rem;
     margin: 10px 0;
 }
 
-#copyLinkBtn, #referralWithdrawBtn {
+#referralLink {
+    background-color: #1a3c34;
+    padding: 10px;
+    border-radius: 5px;
+    word-break: break-all;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+#copyLinkBtn {
     background-color: #4caf50;
     color: #fff;
     padding: 10px 20px;
@@ -322,29 +336,35 @@ body {
     transition: background-color 0.3s;
 }
 
-#copyLinkBtn:hover, #referralWithdrawBtn:hover {
+#copyLinkBtn:hover {
     background-color: #388e3c;
 }
 
-/* Earn Tab */
-#earnTab h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-}
-
-#earnTab p {
-    font-size: 1.2rem;
-    margin: 10px 0;
-}
-
-#earnTab ul {
+#referTab ul {
     list-style: none;
     margin: 20px 0;
 }
 
-#earnTab ul li {
+#referTab ul li {
     font-size: 1.1rem;
     margin: 10px 0;
+}
+
+/* Temporary Simulate Referral Button (for testing) */
+#referTab button {
+    background-color: #ff9800;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#referTab button:hover {
+    background-color: #f57c00;
 }
 
 /* More Tab */
@@ -404,8 +424,7 @@ body[style*="direction: rtl"] .nav-item {
 
 body[style*="direction: rtl"] #homeTab p,
 body[style*="direction: rtl"] #boostTab p,
-body[style*="direction: rtl"] #friendsTab p,
-body[style*="direction: rtl"] #earnTab p,
+body[style*="direction: rtl"] #referTab p,
 body[style*="direction: rtl"] #moreTab p {
     text-align: right;
 }
@@ -418,6 +437,6 @@ body[style*="direction: rtl"] .more-section {
     text-align: right;
 }
 
-body[style*="direction: rtl"] #earnTab ul {
+body[style*="direction: rtl"] #referTab ul {
     padding-right: 20px;
 }
