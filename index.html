@@ -72,28 +72,21 @@
     <!-- Boost Tab -->
     <div id="boostTab" class="tab-content">
         <h2>Boost Your Mining</h2>
-        <p>Hash Power: <span id="boostHashPower">0</span> TH/s</p>
-        <p>Buy more hash power:</p>
-        <select id="paymentCurrency">
-            <option value="TON">TON</option>
-            <option value="BTC">BTC</option>
-            <option value="USDT">USDT</option>
-        </select>
-        <button id="buyMinerBtn">Buy Miner (3 TON)</button>
+        <p>Hash Power: <span id="hashPower">0</span> TH/s</p>
+        <p id="sharesCost">1 Share = $60 (0.1 TH/s, 10% monthly return)</p>
+        <input type="number" id="sharesInput" placeholder="Enter number of shares" min="1">
+        <button id="buySharesBtn">Buy Shares</button>
     </div>
 
-    <!-- Friends Tab (to be combined into Refer & Earn) -->
-    <div id="friendsTab" class="tab-content">
-        <h2>Refer Friends</h2>
-        <p>Referral Balance: <span id="referralBalance">0.0000</span> TON</p>
-        <p>Referral Link: <span id="referralLink">https://t.me/DSSGreenHashBot?start=ref123</span></p>
+    <!-- Refer & Earn Tab (Combined Friends and Earn) -->
+    <div id="referTab" class="tab-content">
+        <h2>Refer & Earn</h2>
+        <p id="referralLinkText">Your Referral Link:</p>
+        <p id="referralLink">https://t.me/DSSGreenHashBot?start=test_user</p>
         <button id="copyLinkBtn">Copy Link</button>
-        <button id="referralWithdrawBtn">Withdraw Referral Balance</button>
-    </div>
-
-    <!-- Earn Tab (to be combined into Refer & Earn) -->
-    <div id="earnTab" class="tab-content">
-        <h2>Earn More</h2>
+        <p id="referralsText">Referrals: <span id="referralsCount">0</span></p>
+        <p id="referralRewardText">Reward per Referral: $5</p>
+        <h3>Earn More</h3>
         <p>Complete tasks to earn more rewards:</p>
         <ul>
             <li>Join our Telegram channel: +0.1 TON</li>
@@ -130,13 +123,9 @@
             <img src="https://img.icons8.com/ios-filled/50/ffffff/rocket.png" alt="Boost">
             <span>Boost</span>
         </div>
-        <div class="nav-item" data-tab="friendsTab">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/users.png" alt="Friends">
-            <span>Friends</span>
-        </div>
-        <div class="nav-item" data-tab="earnTab">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/money.png" alt="Earn">
-            <span>Earn</span>
+        <div class="nav-item" data-tab="referTab">
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/users.png" alt="Refer & Earn">
+            <span>Refer & Earn</span>
         </div>
         <div class="nav-item" data-tab="moreTab">
             <img src="https://img.icons8.com/ios-filled/50/ffffff/more.png" alt="More">
