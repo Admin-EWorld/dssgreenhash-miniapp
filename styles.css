@@ -1,423 +1,155 @@
-/* Reset default styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
-/* General body styles */
 body {
-    font-family: 'Arial', 'Helvetica', sans-serif;
-    background-color: #2e7d32;
-    color: #ffffff;
-    text-align: center;
+    background-color: #f0f2f5;
+    color: #333;
     padding: 20px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    text-align: center;
 }
 
-/* Tab content */
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #1a73e8;
+}
+
+h2 {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #1a73e8;
+}
+
+p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+select, input, button {
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-width: 300px;
+}
+
+button {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #1557b0;
+}
+
+button.mining {
+    background-color: #e53935;
+}
+
+button.mining:hover {
+    background-color: #c62828;
+}
+
+/* Navigation Bar */
+.nav-bar {
+    display: flex;
+    justify-content: space-around;
+    background-color: #1a73e8;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+}
+
+.nav-item {
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.nav-item.active {
+    background-color: #1557b0;
+    border-radius: 5px;
+}
+
+/* Tab Content */
 .tab-content {
     display: none;
+    padding: 20px;
+    padding-bottom: 60px; /* Space for nav bar */
 }
 
 .tab-content.active {
     display: block;
 }
 
-/* Landing Page */
-#landingPage {
+/* Home Tab */
+#homeTab {
+    text-align: center;
+}
+
+#miningCircle {
+    margin: 20px auto;
     display: block;
 }
 
-#landingPage h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-}
-
-#landingPage p {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-#landingPage select {
-    width: 100%;
-    max-width: 300px;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    border: none;
-    background-color: #1a3c34;
-    color: #fff;
-    font-size: 1rem;
-}
-
-#proceedBtn {
-    background-color: #4caf50;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#proceedBtn:hover {
-    background-color: #388e3c;
-}
-
-/* Navigation Bar */
-.nav-bar {
-    display: none;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #1a3c34;
-    padding: 10px 0;
-    display: flex;
-    justify-content: space-around;
-    border-top: 1px solid #388e3c;
-}
-
-.nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #888;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-
-.nav-item.active {
-    color: #4caf50;
-}
-
-.nav-item img {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 5px;
-}
-
-/* Home Tab */
-#homeTab h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-}
-
-.mining-circle {
-    width: 160px;
-    height: 160px;
-    background-color: #1a3c34;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px auto;
-    position: relative;
-    border: 5px solid transparent;
-}
-
-.mining-circle.mining {
-    animation: miningAnimation 2s infinite;
-}
-
-@keyframes miningAnimation {
-    0% {
-        border-color: #4caf50;
-    }
-    50% {
-        border-color: #2e7d32;
-    }
-    100% {
-        border-color: #4caf50;
-    }
-}
-
-.progress-circle {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-.progress-ring {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
 .progress-ring-circle {
-    transition: stroke-dashoffset 0.35s;
-    transform: rotate(-90deg);
-    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 1s linear;
 }
 
-.inner-circle {
-    width: 120px;
-    height: 120px;
-    background-color: #263238;
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+/* Earn (Boost) Tab */
+#boostTab {
+    text-align: center;
 }
 
-.inner-circle span {
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-.inner-circle p {
-    font-size: 0.8rem;
-    color: #888;
-    line-height: 1.2;
-    margin-top: 5px;
-}
-
-#progressText {
-    font-size: 1rem;
-    margin: 10px 0;
-}
-
-#homeTab p {
-    font-size: 1.2rem;
-    margin: 10px 0;
-}
-
-.estimated-income {
-    margin: 10px 0;
-}
-
-.estimated-income select {
+#sharesInput {
     width: 100%;
-    max-width: 150px;
-    padding: 5px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: none;
-    background-color: #1a3c34;
-    color: #fff;
-    font-size: 1rem;
-}
-
-.balance {
-    margin: 20px 0;
-}
-
-#startStopBtn, #withdrawBtn {
-    background-color: #4caf50;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    margin: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#startStopBtn.mining {
-    background-color: #d32f2f;
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7);
-    }
-    70% {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 10px rgba(211, 47, 47, 0);
-    }
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
-    }
-}
-
-#startStopBtn:hover, #withdrawBtn:hover {
-    background-color: #388e3c;
-}
-
-.transaction-history {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #1a3c34;
-    border-radius: 5px;
-}
-
-.transaction-history h3 {
-    font-size: 1.4rem;
+    max-width: 200px;
     margin-bottom: 10px;
 }
 
-.transaction-history p {
-    font-size: 1rem;
-    margin: 5px 0;
+/* Friends (Refer & Earn) Tab */
+#referTab {
+    text-align: center;
 }
 
-/* Boost Tab */
-#boostTab h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-}
-
-#boostTab p {
-    font-size: 1.2rem;
-    margin: 10px 0;
-}
-
-#boostTab select {
-    width: 100%;
-    max-width: 300px;
+#referralLink {
+    background-color: #e8f0fe;
     padding: 10px;
-    margin-bottom: 20px;
     border-radius: 5px;
-    border: none;
-    background-color: #1a3c34;
-    color: #fff;
-    font-size: 1rem;
-}
-
-#buyMinerBtn {
-    background-color: #4caf50;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#buyMinerBtn:hover {
-    background-color: #388e3c;
-}
-
-/* Friends Tab */
-#friendsTab h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-}
-
-#friendsTab p {
-    font-size: 1.2rem;
-    margin: 10px 0;
-}
-
-#copyLinkBtn, #referralWithdrawBtn {
-    background-color: #4caf50;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    margin: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#copyLinkBtn:hover, #referralWithdrawBtn:hover {
-    background-color: #388e3c;
-}
-
-/* Earn Tab */
-#earnTab h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-}
-
-#earnTab p {
-    font-size: 1.2rem;
-    margin: 10px 0;
-}
-
-#earnTab ul {
-    list-style: none;
-    margin: 20px 0;
-}
-
-#earnTab ul li {
-    font-size: 1.1rem;
-    margin: 10px 0;
+    word-break: break-all;
+    margin-bottom: 10px;
 }
 
 /* More Tab */
-#moreTab h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
+#moreTab {
+    text-align: center;
 }
 
-.change-coin-section, .more-section {
-    margin: 20px 0;
-}
+/* Responsive Design */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 20px;
+    }
 
-.change-coin-section h3, .more-section h3 {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-}
+    p, select, input, button {
+        font-size: 14px;
+    }
 
-.change-coin-section select {
-    width: 100%;
-    max-width: 300px;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    border: none;
-    background-color: #1a3c34;
-    color: #fff;
-    font-size: 1rem;
-}
-
-#changeCoinBtn {
-    background-color: #4caf50;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#changeCoinBtn:hover {
-    background-color: #388e3c;
-}
-
-/* RTL Support for Arabic */
-body[style*="direction: rtl"] {
-    text-align: right;
-}
-
-body[style*="direction: rtl"] .nav-bar {
-    flex-direction: row-reverse;
-}
-
-body[style*="direction: rtl"] .nav-item {
-    flex-direction: column;
-}
-
-body[style*="direction: rtl"] #homeTab p,
-body[style*="direction: rtl"] #boostTab p,
-body[style*="direction: rtl"] #friendsTab p,
-body[style*="direction: rtl"] #earnTab p,
-body[style*="direction: rtl"] #moreTab p {
-    text-align: right;
-}
-
-body[style*="direction: rtl"] .balance,
-body[style*="direction: rtl"] .estimated-income,
-body[style*="direction: rtl"] .transaction-history,
-body[style*="direction: rtl"] .change-coin-section,
-body[style*="direction: rtl"] .more-section {
-    text-align: right;
-}
-
-body[style*="direction: rtl"] #earnTab ul {
-    padding-right: 20px;
+    .nav-item {
+        font-size: 14px;
+        padding: 8px;
+    }
 }
