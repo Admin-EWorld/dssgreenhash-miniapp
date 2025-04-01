@@ -5,143 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DSS GreenHash</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <!-- Landing Page -->
     <div id="landingPage" class="tab-content">
         <h1 id="welcomeText">Welcome to DSS GreenHash</h1>
-        <p id="selectCoinText">Select your coin:</p>
+        <label id="selectCoinText">Select your coin:</label>
         <select id="coinSelection">
             <option value="TON">TON</option>
             <option value="BTC">BTC</option>
             <option value="USDT">USDT</option>
         </select>
-        <p id="selectLanguageText">Select your language:</p>
+        <label id="selectLanguageText">Select your language:</label>
         <select id="languageSelection">
             <option value="en">English</option>
-            <option value="ar">العربية</option>
-            <option value="ru">Русский</option>
+            <option value="ar">Arabic</option>
+            <option value="ru">Russian</option>
         </select>
         <button id="proceedBtn">Proceed</button>
     </div>
 
-    <!-- Home Tab -->
-    <div id="homeTab" class="tab-content">
-        <h1>DSS GreenHash</h1>
-        <div class="mining-circle" id="miningCircle">
-            <div class="progress-circle">
-                <svg class="progress-ring" width="160" height="160">
-                    <circle class="progress-ring-circle" stroke="#4caf50" stroke-width="5" fill="transparent" r="75" cx="80" cy="80"/>
-                </svg>
-            </div>
-            <div class="inner-circle">
-                <span id="miningShares">0</span>
-                <p>Shares</p>
-                <span id="hashPower">0</span>
-                <p>TH/s</p>
-            </div>
-        </div>
-        <p id="progressText">Mining Progress: <span id="progressPercent">0%</span></p>
-        <p id="coinPriceText"><span id="coinPriceLabel">TON</span> Price: $<span id="coinPrice">4.12</span></p>
-        <div class="estimated-income">
-            <p id="estimatedIncomeText">Estimated Income: <span id="estimatedIncome">0.0000 TON (~$0.00)</span></p>
-            <select id="incomePeriod">
-                <option value="hourly">Hourly</option>
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-            </select>
-        </div>
-        <div class="balance">
-            <p id="balanceText">Balance: $<span id="balanceUsd">0.00</span> (~<span id="balance">0.0000</span> <span id="coinType">TON</span>)</p>
-            <p id="balanceBreakdownText">(<span id="sharesValueLabel">Shares</span>: $<span id="sharesValue">0.00</span> | <span id="incomeLabel">Income</span>: $<span id="income">0.00</span> | <span id="referralLabel">Referral</span>: $<span id="referral">0.00</span>)</p>
-            <p id="nextUpdateText">Next Update: <span id="nextUpdate">60:00</span></p>
-        </div>
-        <button id="startStopBtn">Start Mining</button>
-        <button id="withdrawBtn">Withdraw</button>
-        <div class="transaction-history">
-            <h3 id="transactionHistoryText">Transaction History</h3>
-            <p id="totalDepositedText">Total Deposited: $<span id="totalDeposited">0.00</span></p>
-            <p id="totalMiningEarnedText">Total Earned by Mining: $<span id="totalMiningEarned">0.00</span></p>
-            <p id="totalReferralEarnedText">Total Earned by Referrals: $<span id="totalReferralEarned">0.00</span></p>
-            <p id="totalWithdrawalsText">Total Withdrawals: $<span id="totalWithdrawals">0.00</span></p>
-        </div>
+    <!-- Navigation Bar -->
+    <div class="nav-bar" style="display: none;">
+        <div class="nav-item active" data-tab="homeTab">Home</div>
+        <div class="nav-item" data-tab="boostTab">Earn</div>
+        <div class="nav-item" data-tab="referTab">Friends</div>
+        <div class="nav-item" data-tab="moreTab">More</div>
     </div>
 
-    <!-- Boost Tab -->
-    <div id="boostTab" class="tab-content">
-        <h2>Boost Your Mining</h2>
-        <p>Hash Power: <span id="boostHashPower">0</span> TH/s</p>
-        <p>Buy more hash power:</p>
-        <select id="paymentCurrency">
+    <!-- Home Tab -->
+    <div id="homeTab" class="tab-content" style="display: none;">
+        <h1>DSS GreenHash</h1>
+        <p id="coinPriceText"><span id="coinPriceLabel">TON</span> Price: $<span id="coinPrice">4.12</span></p>
+        <p id="estimatedIncomeText">Estimated Income: <span id="estimatedIncome">0.00000000 TON (~$0.00)</span></p>
+        <select id="incomePeriod">
+            <option value="hourly">Hourly</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+        </select>
+        <p>Shares: <span id="miningShares">0</span> | Hash Power: <span id="hashPower">0.00</span> TH/s</p>
+        <p id="balanceText">Balance: $<span id="balanceUsd">0.00</span> (~<span id="balance">0.0000</span> <span id="coinType">TON</span>)</p>
+        <p id="balanceBreakdownText">(<span id="sharesValueLabel">Shares</span>: $<span id="sharesValue">0.00</span> | <span id="incomeLabel">Income</span>: $<span id="income">0.00</span> | <span id="referralLabel">Referral</span>: $<span id="referral">0.00</span>)</p>
+        <p id="nextUpdateText">Next Update: <span id="nextUpdate">60:00</span></p>
+        <button id="startStopBtn">Start Mining</button>
+        <button id="withdrawBtn">Withdraw</button>
+        <p id="progressText">Mining Progress: <span id="progressPercent">0%</span></p>
+        <svg id="miningCircle" width="160" height="160">
+            <circle class="progress-ring-circle" cx="80" cy="80" r="75" stroke="#4CAF50" stroke-width="10" fill="transparent" />
+        </svg>
+        <h2 id="transactionHistoryText">Transaction History</h2>
+        <p id="totalDepositedText">Total Deposited: $<span id="totalDeposited">0.00</span></p>
+        <p id="totalMiningEarnedText">Total Earned by Mining: $<span id="totalMiningEarned">0.00</span></p>
+        <p id="totalReferralEarnedText">Total Earned by Referrals: $<span id="totalReferralEarned">0.00</span></p>
+        <p id="totalWithdrawalsText">Total Withdrawals: $<span id="totalWithdrawals">0.00</span></p>
+    </div>
+
+    <!-- Earn (Boost) Tab -->
+    <div id="boostTab" class="tab-content" style="display: none;">
+        <h1>Earn</h1>
+        <p id="sharesCost">1 Share = $60 (0.1 TH/s, 10% monthly return)</p>
+        <input type="number" id="sharesInput" placeholder="Enter number of shares" min="1">
+        <button id="buySharesBtn">Buy Shares</button>
+    </div>
+
+    <!-- Friends (Refer & Earn) Tab -->
+    <div id="referTab" class="tab-content" style="display: none;">
+        <h1>Friends</h1>
+        <p id="referralLinkText">Your Referral Link:</p>
+        <p id="referralLink">https://t.me/DSSGreenHashBot?start=test_user</p>
+        <button id="copyLinkBtn">Copy Link</button>
+        <p id="referralsText">Referrals: <span id="referralsCount">0</span></p>
+        <p id="referralRewardText">Reward per Referral: $5</p>
+    </div>
+
+    <!-- More Tab -->
+    <div id="moreTab" class="tab-content" style="display: none;">
+        <h1>More</h1>
+        <select id="changeCoinSelection">
             <option value="TON">TON</option>
             <option value="BTC">BTC</option>
             <option value="USDT">USDT</option>
         </select>
-        <button id="buyMinerBtn">Buy Miner (3 TON)</button>
-    </div>
-
-    <!-- Friends Tab (to be combined into Refer & Earn) -->
-    <div id="friendsTab" class="tab-content">
-        <h2>Refer Friends</h2>
-        <p>Referral Balance: <span id="referralBalance">0.0000</span> TON</p>
-        <p>Referral Link: <span id="referralLink">https://t.me/DSSGreenHashBot?start=ref123</span></p>
-        <button id="copyLinkBtn">Copy Link</button>
-        <button id="referralWithdrawBtn">Withdraw Referral Balance</button>
-    </div>
-
-    <!-- Earn Tab (to be combined into Refer & Earn) -->
-    <div id="earnTab" class="tab-content">
-        <h2>Earn More</h2>
-        <p>Complete tasks to earn more rewards:</p>
-        <ul>
-            <li>Join our Telegram channel: +0.1 TON</li>
-            <li>Follow us on Twitter: +0.05 TON</li>
-            <li>Invite a friend: +0.2 TON</li>
-        </ul>
-    </div>
-
-    <!-- More Tab -->
-    <div id="moreTab" class="tab-content">
-        <h2>More</h2>
-        <div class="change-coin-section">
-            <h3>Change Coin</h3>
-            <select id="changeCoinSelection">
-                <option value="TON">TON</option>
-                <option value="BTC">BTC</option>
-                <option value="USDT">USDT</option>
-            </select>
-            <button id="changeCoinBtn">Change Coin</button>
-        </div>
-        <div class="more-section">
-            <h3>More Options</h3>
-            <p>Settings, Support, and more coming soon!</p>
-        </div>
-    </div>
-
-    <!-- Navigation Bar -->
-    <div class="nav-bar">
-        <div class="nav-item active" data-tab="homeTab">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Home">
-            <span>Home</span>
-        </div>
-        <div class="nav-item" data-tab="boostTab">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/rocket.png" alt="Boost">
-            <span>Boost</span>
-        </div>
-        <div class="nav-item" data-tab="friendsTab">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/users.png" alt="Friends">
-            <span>Friends</span>
-        </div>
-        <div class="nav-item" data-tab="earnTab">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/money.png" alt="Earn">
-            <span>Earn</span>
-        </div>
-        <div class="nav-item" data-tab="moreTab">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/more.png" alt="More">
-            <span>More</span>
-        </div>
+        <button id="changeCoinBtn">Change Coin</button>
     </div>
 
     <script src="script.js"></script>
