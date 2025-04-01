@@ -84,141 +84,145 @@ document.addEventListener("DOMContentLoaded", () => {
             errorMoreTab: "Error: More tab not found.",
             errorChangeCoinBtn: "Error: Change coin button not found."
         },
-        es: {
-            welcome: "Bienvenido a DSS GreenHash",
-            selectCoin: "Selecciona una moneda para empezar a minar:",
-            selectLanguage: "Selecciona tu idioma:",
-            proceed: "Continuar",
-            homeTab: "Inicio",
-            boostTab: "Impulso",
-            friendsTab: "Amigos",
-            earnTab: "Ganar",
-            moreTab: "Más",
+        ar: {
+            welcome: "مرحبًا بك في DSS GreenHash",
+            selectCoin: "اختر عملة لبدء التعدين:",
+            selectLanguage: "اختر لغتك:",
+            proceed: "متابعة",
+            homeTab: "الرئيسية",
+            boostTab: "تعزيز",
+            friendsTab: "الأصدقاء",
+            earnTab: "كسب",
+            moreTab: "المزيد",
             dssGreenHash: "DSS GreenHash",
-            miningRate: "Tasa de minería:",
-            perHour: "/hora",
-            priceLabel: "Precio: $",
-            balance: "Saldo:",
-            rewards: "Recompensas:",
-            estMonthlyEarnings: "Ganancias mensuales estimadas:",
-            startMining: "Iniciar minería",
-            mining: "Minando...",
-            stopMining: "Detener minería",
-            claimRewards: "Reclamar recompensas",
-            withdraw: "Retirar",
-            swapCoin: "Cambiar moneda",
-            boostYourMining: "Impulsa tu minería",
-            currentHashPower: "Poder de hash actual:",
-            ths: "TH/s",
-            buyMinerPrompt: "Compra un nuevo minero para aumentar tu poder de hash:",
-            cost: "Costo:",
-            buyMiner: "Comprar minero",
-            inviteFriends: "Invita amigos",
-            referralBalance: "Saldo de referencia:",
-            inviteLink: "Enlace de invitación:",
-            copyLink: "Copiar enlace",
-            referralWithdraw: "Retirar",
-            earnMore: "Gana más",
-            completeTasks: "Completa tareas para ganar más recompensas.",
-            task1: "Tarea 1: Invita a 5 amigos - 0.5 TON",
-            task2: "Tarea 2: Mina durante 24 horas - 0.1 TON",
-            more: "Más",
-            changeCoin: "Cambiar moneda",
-            change: "Cambiar",
-            contactSupport: "Soporte de contacto",
-            email: "Correo: support@dssgreenhash.com",
-            legalInfo: "Información legal",
-            terms: "Términos de servicio y política de privacidad",
-            faqs: "Preguntas frecuentes",
-            faqsText: "Preguntas frecuentes",
-            noRewards: "¡No hay recompensas para reclamar!",
-            coinChanged: "Moneda cambiada a",
-            paymentSuccess: "¡Pago exitoso! ¡Minero actualizado! Nuevo hashrate:",
-            alreadyMining: "Ya estás minando",
-            walletPrompt: "Por favor, configura tu billetera de Telegram para continuar. Inicia @Wallet para comenzar.",
-            userDataCleared: "¡Datos de usuario borrados! Refresca la app.",
-            failedClearData: "Error al borrar datos de usuario. Por favor, intenta de nuevo.",
-            rewardsSent: "Enviado exitosamente",
-            toWallet: "a tu billetera!",
-            withdrawInitiated: "¡Retiro iniciado! (Simulado)",
-            swapInitiated: "¡Cambio de moneda iniciado! (Simulado)",
-            paymentInitiated: "Iniciando pago de",
-            viaWalletPay: "vía Wallet Pay...",
-            linkCopied: "¡Enlace de referencia copiado!",
-            errorDropdown: "Error: No se encontró el desplegable de selección de moneda.",
-            errorMoreTab: "Error: No se encontró la pestaña Más.",
-            errorChangeCoinBtn: "Error: No se encontró el botón de cambio de moneda."
+            miningRate: "معدل التعدين:",
+            perHour: "/ساعة",
+            priceLabel: "السعر: $",
+            balance: "الرصيد:",
+            rewards: "المكافآت:",
+            estMonthlyEarnings: "الأرباح الشهرية المقدرة:",
+            startMining: "بدء التعدين",
+            mining: "جارٍ التعدين...",
+            stopMining: "إيقاف التعدين",
+            claimRewards: "المطالبة بالمكافآت",
+            withdraw: "سحب",
+            swapCoin: "تبديل العملة",
+            boostYourMining: "عزز تعدينك",
+            currentHashPower: "قوة التجزئة الحالية:",
+            ths: "تيرا هاش/ث",
+            buyMinerPrompt: "اشترِ عامل منجم جديد لزيادة قوة التجزئة الخاصة بك:",
+            cost: "التكلفة:",
+            buyMiner: "شراء عامل منجم",
+            inviteFriends: "دعوة الأصدقاء",
+            referralBalance: "رصيد الإحالة:",
+            inviteLink: "رابط الدعوة:",
+            copyLink: "نسخ الرابط",
+            referralWithdraw: "سحب",
+            earnMore: "اكسب المزيد",
+            completeTasks: "أكمل المهام لكسب المزيد من المكافآت.",
+            task1: "المهمة 1: ادعُ 5 أصدقاء - 0.5 TON",
+            task2: "المهمة 2: قم بالتعدين لمدة 24 ساعة - 0.1 TON",
+            more: "المزيد",
+            changeCoin: "تغيير العملة",
+            change: "تغيير",
+            contactSupport: "اتصل بالدعم",
+            email: "البريد الإلكتروني: support@dssgreenhash.com",
+            legalInfo: "معلومات قانونية",
+            terms: "شروط الخدمة وسياسة الخصوصية",
+            faqs: "الأسئلة الشائعة",
+            faqsText: "الأسئلة المتداولة",
+            noRewards: "لا توجد مكافآت للمطالبة بها!",
+            coinChanged: "تم تغيير العملة إلى",
+            paymentSuccess: "تم الدفع بنجاح! تم ترقية عامل المنجم! معدل التجزئة الجديد:",
+            alreadyMining: "أنت بالفعل تقوم بالتعدين",
+            walletPrompt: "يرجى إعداد محفظتك على تيليجرام للمتابعة. ابدأ @Wallet للبدء.",
+            userDataCleared: "تم مسح بيانات المستخدم! قم بتحديث التطبيق.",
+            failedClearData: "فشل في مسح بيانات المستخدم. يرجى المحاولة مرة أخرى.",
+            rewardsSent: "تم الإرسال بنجاح",
+            toWallet: "إلى محفظتك!",
+            withdrawInitiated: "تم بدء السحب! (محاكاة)",
+            swapInitiated: "تم بدء تبديل العملة! (محاكاة)",
+            paymentInitiated: "جارٍ بدء الدفع بقيمة",
+            viaWalletPay: "عبر Wallet Pay...",
+            linkCopied: "تم نسخ رابط الإحالة!",
+            errorDropdown: "خطأ: لم يتم العثور على القائمة المنسدلة لاختيار العملة.",
+            errorMoreTab: "خطأ: لم يتم العثور على علامة التبويب المزيد.",
+            errorChangeCoinBtn: "خطأ: لم يتم العثور على زر تغيير العملة."
         },
-        fr: {
-            welcome: "Bienvenue sur DSS GreenHash",
-            selectCoin: "Sélectionnez une monnaie pour commencer à miner :",
-            selectLanguage: "Sélectionnez votre langue :",
-            proceed: "Continuer",
-            homeTab: "Accueil",
-            boostTab: "Boost",
-            friendsTab: "Amis",
-            earnTab: "Gagner",
-            moreTab: "Plus",
+        ru: {
+            welcome: "Добро пожаловать в DSS GreenHash",
+            selectCoin: "Выберите монету для начала майнинга:",
+            selectLanguage: "Выберите ваш язык:",
+            proceed: "Продолжить",
+            homeTab: "Главная",
+            boostTab: "Ускорение",
+            friendsTab: "Друзья",
+            earnTab: "Заработок",
+            moreTab: "Ещё",
             dssGreenHash: "DSS GreenHash",
-            miningRate: "Taux de minage :",
-            perHour: "/heure",
-            priceLabel: "Prix : $",
-            balance: "Solde :",
-            rewards: "Récompenses :",
-            estMonthlyEarnings: "Gains mensuels estimés :",
-            startMining: "Démarrer le minage",
-            mining: "Minage en cours...",
-            stopMining: "Arrêter le minage",
-            claimRewards: "Réclamer les récompenses",
-            withdraw: "Retirer",
-            swapCoin: "Changer de monnaie",
-            boostYourMining: "Boostez votre minage",
-            currentHashPower: "Puissance de hachage actuelle :",
+            miningRate: "Скорость майнинга:",
+            perHour: "/час",
+            priceLabel: "Цена: $",
+            balance: "Баланс:",
+            rewards: "Награды:",
+            estMonthlyEarnings: "Оценочные месячные доходы:",
+            startMining: "Начать майнинг",
+            mining: "Майнинг...",
+            stopMining: "Остановить майнинг",
+            claimRewards: "Забрать награды",
+            withdraw: "Вывести",
+            swapCoin: "Сменить монету",
+            boostYourMining: "Ускорьте ваш майнинг",
+            currentHashPower: "Текущая мощность хэширования:",
             ths: "TH/s",
-            buyMinerPrompt: "Achetez un nouveau mineur pour augmenter votre puissance de hachage :",
-            cost: "Coût :",
-            buyMiner: "Acheter un mineur",
-            inviteFriends: "Inviter des amis",
-            referralBalance: "Solde de parrainage :",
-            inviteLink: "Lien d'invitation :",
-            copyLink: "Copier le lien",
-            referralWithdraw: "Retirer",
-            earnMore: "Gagnez plus",
-            completeTasks: "Complétez des tâches pour gagner plus de récompenses.",
-            task1: "Tâche 1 : Invitez 5 amis - 0.5 TON",
-            task2: "Tâche 2 : Minez pendant 24 heures - 0.1 TON",
-            more: "Plus",
-            changeCoin: "Changer de monnaie",
-            change: "Changer",
-            contactSupport: "Support de contact",
-            email: "Email : support@dssgreenhash.com",
-            legalInfo: "Informations légales",
-            terms: "Conditions de service et politique de confidentialité",
-            faqs: "FAQ",
-            faqsText: "Questions fréquemment posées",
-            noRewards: "Aucune récompense à réclamer !",
-            coinChanged: "Monnaie changée en",
-            paymentSuccess: "Paiement réussi ! Mineur mis à jour ! Nouveau hashrate :",
-            alreadyMining: "Vous minez déjà",
-            walletPrompt: "Veuillez configurer votre portefeuille Telegram pour continuer. Démarrez @Wallet pour commencer.",
-            userDataCleared: "Données utilisateur supprimées ! Rafraîchissez l'application.",
-            failedClearData: "Échec de la suppression des données utilisateur. Veuillez réessayer.",
-            rewardsSent: "Envoyé avec succès",
-            toWallet: "à votre portefeuille !",
-            withdrawInitiated: "Retrait initié ! (Simulé)",
-            swapInitiated: "Changement de monnaie initié ! (Simulé)",
-            paymentInitiated: "Initiation du paiement de",
-            viaWalletPay: "via Wallet Pay...",
-            linkCopied: "Lien de parrainage copié !",
-            errorDropdown: "Erreur : Menu déroulant de sélection de monnaie introuvable.",
-            errorMoreTab: "Erreur : Onglet Plus introuvable.",
-            errorChangeCoinBtn: "Erreur : Bouton de changement de monnaie introuvable."
+            buyMinerPrompt: "Купите новый майнер, чтобы увеличить мощность хэширования:",
+            cost: "Стоимость:",
+            buyMiner: "Купить майнер",
+            inviteFriends: "Пригласить друзей",
+            referralBalance: "Реферальный баланс:",
+            inviteLink: "Пригласительная ссылка:",
+            copyLink: "Скопировать ссылку",
+            referralWithdraw: "Вывести",
+            earnMore: "Заработайте больше",
+            completeTasks: "Выполняйте задания, чтобы заработать больше наград.",
+            task1: "Задание 1: Пригласите 5 друзей - 0.5 TON",
+            task2: "Задание 2: Майните 24 часа - 0.1 TON",
+            more: "Ещё",
+            changeCoin: "Сменить монету",
+            change: "Сменить",
+            contactSupport: "Связаться с поддержкой",
+            email: "Электронная почта: support@dssgreenhash.com",
+            legalInfo: "Юридическая информация",
+            terms: "Условия использования и политика конфиденциальности",
+            faqs: "Часто задаваемые вопросы",
+            faqsText: "Часто задаваемые вопросы",
+            noRewards: "Нет наград для получения!",
+            coinChanged: "Монета изменена на",
+            paymentSuccess: "Оплата прошла успешно! Майнер обновлён! Новая мощность:",
+            alreadyMining: "Вы уже майните",
+            walletPrompt: "Пожалуйста, настройте ваш кошелёк Telegram для продолжения. Запустите @Wallet, чтобы начать.",
+            userDataCleared: "Данные пользователя очищены! Обновите приложение.",
+            failedClearData: "Не удалось очистить данные пользователя. Пожалуйста, попробуйте снова.",
+            rewardsSent: "Успешно отправлено",
+            toWallet: "в ваш кошелёк!",
+            withdrawInitiated: "Вывод начат! (Симуляция)",
+            swapInitiated: "Смена монеты начата! (Симуляция)",
+            paymentInitiated: "Инициируется платеж на сумму",
+            viaWalletPay: "через Wallet Pay...",
+            linkCopied: "Реферальная ссылка скопирована!",
+            errorDropdown: "Ошибка: Выпадающий список выбора монеты не найден.",
+            errorMoreTab: "Ошибка: Вкладка Ещё не найдена.",
+            errorChangeCoinBtn: "Ошибка: Кнопка смены монеты не найдена."
         }
     };
 
     // Function to update the app's text based on the selected language
     const updateLanguage = () => {
         const t = translations[selectedLanguage];
+        const isRtl = selectedLanguage === "ar"; // Check if the language is RTL (Arabic)
+        document.body.style.direction = isRtl ? "rtl" : "ltr"; // Set text direction
+        document.body.style.textAlign = isRtl ? "right" : "center"; // Adjust text alignment
+
         // Landing Page
         document.querySelector("#landingPage h1").textContent = t.welcome;
         document.querySelector("#landingPage p:nth-of-type(1)").textContent = t.selectCoin;
@@ -276,8 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("#moreTab .more-section:nth-of-type(3) h3").textContent = t.faqs;
         document.querySelector("#moreTab .more-section:nth-of-type(3) p").textContent = t.faqsText;
     };
-
-    // DOM Elements
+        // DOM Elements
     const hashPowerDisplay = document.getElementById("hashPower");
     const balanceDisplay = document.getElementById("balance");
     const rewardsDisplay = document.getElementById("rewards");
@@ -614,191 +617,129 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Fallback: Direct event listeners on changeCoinBtn
     if (changeCoinBtn) {
-        console.log("Attaching direct event listeners to changeCoinBtn");
-        changeCoinBtn.addEventListener("click", (e) => {
-            console.log("Direct click event on changeCoinBtn");
+        console.log("Attaching direct event listeners to changeCoinBtn...");
+        changeCoinBtn.addEventListener("click", () => {
+            console.log("Change coin button clicked directly");
             handleChangeCoin();
         });
         changeCoinBtn.addEventListener("touchstart", (e) => {
-            e.preventDefault();
-            console.log("Direct touchstart event on changeCoinBtn");
+            e.preventDefault(); // Prevent default touch behavior
+            console.log("Change coin button touched directly");
             handleChangeCoin();
         });
-        changeCoinBtn.addEventListener("mousedown", (e) => {
-            console.log("Direct mousedown event on changeCoinBtn");
-            handleChangeCoin();
-        });
-        changeCoinBtn.onclick = () => {
-            console.log("Direct onclick attribute triggered on changeCoinBtn");
-            handleChangeCoin();
-        };
     } else {
         console.error("changeCoinBtn not found in DOM");
         window.Telegram.WebApp.showAlert(translations[selectedLanguage].errorChangeCoinBtn);
     }
 
-    // Set initial referral link
-    const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || "123";
-    referralLinkDisplay.textContent = `t.me/dssgreenhash_bot/start?startapp=${userId}`;
-    console.log("Referral link set:", referralLinkDisplay.textContent);
-
-    // Navigation
-    if (navItems.length > 0) {
-        navItems.forEach(item => {
-            console.log("Attaching event listener to nav item:", item.dataset.tab);
-            item.addEventListener("click", () => {
-                console.log("Nav item clicked:", item.dataset.tab);
-                navItems.forEach(i => i.classList.remove("active"));
-                tabContents.forEach(content => {
-                    content.classList.remove("active");
-                    content.style.display = "none";
-                });
-                item.classList.add("active");
-                const targetTab = document.getElementById(item.dataset.tab);
-                if (targetTab) {
-                    targetTab.style.display = "block";
-                    targetTab.classList.add("active");
-                    console.log("Navigated to tab:", item.dataset.tab);
-                } else {
-                    console.error("Target tab not found for:", item.dataset.tab);
-                }
+    // Navigation between tabs
+    navItems.forEach(item => {
+        item.addEventListener("click", () => {
+            console.log("Nav item clicked:", item.dataset.tab);
+            navItems.forEach(i => i.classList.remove("active"));
+            item.classList.add("active");
+            tabContents.forEach(content => {
+                content.classList.remove("active");
+                content.style.display = "none";
             });
+            const tabContent = document.getElementById(item.dataset.tab);
+            tabContent.style.display = "block";
+            tabContent.classList.add("active");
+            console.log("Tab content set to active:", item.dataset.tab);
         });
-    } else {
-        console.error("No nav items found in DOM");
-    }
+    });
 
     // Start mining
-    if (startBtn) {
-        startBtn.addEventListener("click", () => {
-            console.log("Start mining button clicked");
-            if (miningRate === 0) {
-                miningRate = calculateMiningRate();
-                hashPower = hashPower || 1;
-                startBtn.textContent = translations[selectedLanguage].mining;
-                startBtn.style.display = "none";
-                stopBtn.style.display = "block";
-                miningCircle.classList.add("active");
-                miningInterval = setInterval(() => {
-                    balance += miningRate;
-                    rewards += miningRate;
-                    earnings += miningRate * 720; // Approximate monthly earnings (30 days * 24 hours)
-                    hashPower += 0.5;
-                    hashPowerDisplay.textContent = hashPower.toFixed(2);
-                    balanceDisplay.textContent = balance.toFixed(4);
-                    rewardsDisplay.textContent = rewards.toFixed(4);
-                    miningRateDisplay.textContent = `+${(miningRate).toFixed(8)} ${selectedCoin}`;
-                    earningsDisplay.textContent = earnings.toFixed(2);
-                    boostHashPowerDisplay.textContent = hashPower.toFixed(2);
-                    saveUserData();
-                }, 3600000); // Update every hour
-                console.log("Mining started, rate:", miningRate);
-            }
-        });
-    } else {
-        console.error("startBtn not found in DOM");
-    }
+    startBtn.addEventListener("click", () => {
+        console.log("Start button clicked");
+        if (miningInterval) {
+            console.log("Mining already in progress");
+            window.Telegram.WebApp.showAlert(translations[selectedLanguage].alreadyMining);
+            return;
+        }
+        miningRate = calculateMiningRate();
+        hashPower += 0.1; // Simulate hash power increase
+        hashPowerDisplay.textContent = hashPower.toFixed(2);
+        boostHashPowerDisplay.textContent = hashPower.toFixed(2);
+        miningRateDisplay.textContent = `+${miningRate.toFixed(8)} ${selectedCoin}`;
+        startBtn.style.display = "none";
+        stopBtn.style.display = "inline-block";
+        startBtn.textContent = translations[selectedLanguage].mining;
+        miningCircle.classList.add("mining");
+        miningInterval = setInterval(() => {
+            balance += miningRate;
+            rewards += miningRate;
+            earnings = (miningRate * 24 * 30).toFixed(8); // Estimated monthly earnings
+            balanceDisplay.textContent = balance.toFixed(4);
+            rewardsDisplay.textContent = rewards.toFixed(4);
+            earningsDisplay.textContent = earnings;
+            saveUserData();
+        }, 3600000); // Update every hour
+        console.log("Mining started, interval set");
+    });
 
     // Stop mining
-    if (stopBtn) {
-        stopBtn.addEventListener("click", () => {
-            console.log("Stop mining button clicked");
-            clearInterval(miningInterval);
-            miningRate = 0;
-            miningRateDisplay.textContent = `+0.0000 ${selectedCoin}`;
-            miningCircle.classList.remove("active");
-            stopBtn.style.display = "none";
-            startBtn.style.display = "block";
-            startBtn.textContent = translations[selectedLanguage].startMining;
-            startBtn.disabled = false;
-            saveUserData();
-            console.log("Mining stopped");
-        });
-    } else {
-        console.error("stopBtn not found in DOM");
-    }
+    stopBtn.addEventListener("click", () => {
+        console.log("Stop button clicked");
+        clearInterval(miningInterval);
+        miningInterval = null;
+        startBtn.style.display = "inline-block";
+        stopBtn.style.display = "none";
+        startBtn.textContent = translations[selectedLanguage].startMining;
+        miningCircle.classList.remove("mining");
+        console.log("Mining stopped");
+    });
 
     // Claim rewards
-    if (claimBtn) {
-        claimBtn.addEventListener("click", () => {
-            console.log("Claim rewards button clicked");
-            if (rewards <= 0) {
-                window.Telegram.WebApp.showAlert(translations[selectedLanguage].noRewards);
-                return;
-            }
-            window.Telegram.WebApp.showAlert(`${translations[selectedLanguage].rewardsSent} ${rewards.toFixed(4)} ${selectedCoin} ${translations[selectedLanguage].toWallet}`);
-            setTimeout(() => {
-                balance += rewards;
-                rewards = 0;
-                balanceDisplay.textContent = balance.toFixed(4);
-                rewardsDisplay.textContent = rewards.toFixed(4);
-                window.Telegram.WebApp.showAlert(`${translations[selectedLanguage].rewardsSent} ${rewards.toFixed(4)} ${selectedCoin} ${translations[selectedLanguage].toWallet}`);
-                saveUserData();
-            }, 2000);
-        });
-    } else {
-        console.error("claimBtn not found in DOM");
-    }
+    claimBtn.addEventListener("click", () => {
+        console.log("Claim rewards button clicked");
+        if (rewards <= 0) {
+            window.Telegram.WebApp.showAlert(translations[selectedLanguage].noRewards);
+            return;
+        }
+        window.Telegram.WebApp.showAlert(`${translations[selectedLanguage].rewardsSent} ${rewards.toFixed(4)} ${selectedCoin} ${translations[selectedLanguage].toWallet}`);
+        rewards = 0;
+        rewardsDisplay.textContent = "0.0000";
+        saveUserData();
+        console.log("Rewards claimed");
+    });
 
     // Withdraw (simulated)
-    if (withdrawBtn) {
-        withdrawBtn.addEventListener("click", () => {
-            console.log("Withdraw button clicked");
-            window.Telegram.WebApp.showAlert(translations[selectedLanguage].withdrawInitiated);
-        });
-    } else {
-        console.error("withdrawBtn not found in DOM");
-    }
+    withdrawBtn.addEventListener("click", () => {
+        console.log("Withdraw button clicked");
+        window.Telegram.WebApp.showAlert(translations[selectedLanguage].withdrawInitiated);
+        console.log("Withdraw initiated (simulated)");
+    });
 
     // Swap coin (simulated)
-    if (swapBtn) {
-        swapBtn.addEventListener("click", () => {
-            console.log("Swap coin button clicked");
-            window.Telegram.WebApp.showAlert(translations[selectedLanguage].swapInitiated);
-        });
-    } else {
-        console.error("swapBtn not found in DOM");
-    }
+    swapBtn.addEventListener("click", () => {
+        console.log("Swap coin button clicked");
+        window.Telegram.WebApp.showAlert(translations[selectedLanguage].swapInitiated);
+        console.log("Swap coin initiated (simulated)");
+    });
 
-    // Buy miner (simulated payment)
-    if (buyMinerBtn) {
-        buyMinerBtn.addEventListener("click", () => {
-            console.log("Buy miner button clicked");
-            const selectedCurrency = paymentCurrency.value;
-            const amount = 3; // Cost in selected coin
-            window.Telegram.WebApp.showAlert(`${translations[selectedLanguage].paymentInitiated} ${amount} ${selectedCurrency} ${translations[selectedLanguage].viaWalletPay}`);
-            setTimeout(() => {
-                hashPower += 10;
-                hashPowerDisplay.textContent = hashPower.toFixed(2);
-                boostHashPowerDisplay.textContent = hashPower.toFixed(2);
-                window.Telegram.WebApp.showAlert(`${translations[selectedLanguage].paymentSuccess} ${hashPower.toFixed(2)} ${translations[selectedLanguage].ths}`);
-                saveUserData();
-            }, 2000);
-        });
-    } else {
-        console.error("buyMinerBtn not found in DOM");
-    }
-
-    // Referral withdraw (simulated)
-    if (referralWithdrawBtn) {
-        referralWithdrawBtn.addEventListener("click", () => {
-            console.log("Referral withdraw button clicked");
-            window.Telegram.WebApp.showAlert(translations[selectedLanguage].withdrawInitiated);
-        });
-    } else {
-        console.error("referralWithdrawBtn not found in DOM");
-    }
+    // Buy miner
+    buyMinerBtn.addEventListener("click", () => {
+        console.log("Buy miner button clicked");
+        const cost = 3; // Cost in selected coin
+        window.Telegram.WebApp.showAlert(`${translations[selectedLanguage].paymentInitiated} ${cost} ${paymentCurrency.value} ${translations[selectedLanguage].viaWalletPay}`);
+        setTimeout(() => {
+            hashPower += 1.0; // Increase hash power
+            hashPowerDisplay.textContent = hashPower.toFixed(2);
+            boostHashPowerDisplay
 
     // Copy referral link
-    if (copyLinkBtn) {
-        copyLinkBtn.addEventListener("click", () => {
-            console.log("Copy link button clicked");
-            const link = referralLinkDisplay.textContent;
-            navigator.clipboard.writeText(link).then(() => {
-                window.Telegram.WebApp.showAlert(translations[selectedLanguage].linkCopied);
-            });
-        });
-    } else {
-        console.error("copyLinkBtn not found in DOM");
-    }
+    copyLinkBtn.addEventListener("click", () => {
+        console.log("Copy link button clicked");
+        navigator.clipboard.writeText(referralLinkDisplay.textContent);
+        window.Telegram.WebApp.showAlert(translations[selectedLanguage].linkCopied);
+        console.log("Referral link copied");
+    });
+
+    // Withdraw referral balance (simulated)
+    referralWithdrawBtn.addEventListener("click", () => {
+        console.log("Referral withdraw button clicked");
+        window.Telegram.WebApp.showAlert(translations[selectedLanguage].withdrawInitiated);
+        console.log("Referral withdraw initiated (simulated)");
+    });
 });
