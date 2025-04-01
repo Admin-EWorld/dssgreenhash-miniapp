@@ -3,31 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSS GreenHash MiniApp</title>
+    <title>DSS GreenHash</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <!-- Landing Page -->
-    <div id="landingPage" class="tab-content active">
-        <h1>Welcome to DSS GreenHash</h1>
-        <p>Select a coin to start mining:</p>
+    <div id="landingPage" class="tab-content">
+        <h1 id="welcomeText">Welcome to DSS GreenHash</h1>
+        <p id="selectCoinText">Select your coin:</p>
         <select id="coinSelection">
             <option value="TON">TON</option>
             <option value="BTC">BTC</option>
             <option value="USDT">USDT</option>
         </select>
-        <p>Select your language:</p>
+        <p id="selectLanguageText">Select your language:</p>
         <select id="languageSelection">
             <option value="en">English</option>
-            <option value="ar">Arabic</option>
-            <option value="ru">Russian</option>
+            <option value="ar">العربية</option>
+            <option value="ru">Русский</option>
         </select>
         <button id="proceedBtn">Proceed</button>
     </div>
 
+    <!-- Home Tab -->
+    <div id="homeTab" class="tab-content">
+        <h1>DSS GreenHash</h1>
+        <div class="mining-circle" id="miningCircle">
+            <div class="progress-circle">
+                <svg class="progress-ring" width="160" height="160">
+                    <circle class="progress-ring-circle" stroke="#4caf50" stroke-width="5" fill="transparent" r="75" cx="80" cy="80"/>
+                </svg>
+            </div>
+            <div class="inner-circle">
+                <span id="miningShares">0</span>
+                <p>Shares</p>
+                <span id="hashPower">0</span>
+                <p>TH/s</p>
+            </div>
+        </div>
+        <p id="progressText">Mining Progress: <span id="progressPercent">0%</span></p>
+        <p id="coinPriceText"><span id="coinPriceLabel">TON</span> Price: $<span id="coinPrice">4.12</span></p>
+        <div class="estimated-income">
+            <p id="estimatedIncomeText">Estimated Income: <span id="estimatedIncome">0.0000 TON (~$0.00)</span></p>
+            <select id="incomePeriod">
+                <option value="hourly">Hourly</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+        </div>
+        <div class="balance">
+            <p id="balanceText">Balance: $<span id="balanceUsd">0.00</span> (~<span id="balance">0.0000</span> <span id="coinType">TON</span>)</p>
+            <p id="balanceBreakdownText">(<span id="sharesValueLabel">Shares</span>: $<span id="sharesValue">0.00</span> | <span id="incomeLabel">Income</span>: $<span id="income">0.00</span> | <span id="referralLabel">Referral</span>: $<span id="referral">0.00</span>)</p>
+            <p id="nextUpdateText">Next Update: <span id="nextUpdate">60:00</span></p>
+        </div>
+        <button id="startStopBtn">Start Mining</button>
+        <button id="withdrawBtn">Withdraw</button>
+        <div class="transaction-history">
+            <h3 id="transactionHistoryText">Transaction History</h3>
+            <p id="totalDepositedText">Total Deposited: $<span id="totalDeposited">0.00</span></p>
+            <p id="totalMiningEarnedText">Total Earned by Mining: $<span id="totalMiningEarned">0.00</span></p>
+            <p id="totalReferralEarnedText">Total Earned by Referrals: $<span id="totalReferralEarned">0.00</span></p>
+            <p id="totalWithdrawalsText">Total Withdrawals: $<span id="totalWithdrawals">0.00</span></p>
+        </div>
+    </div>
+
+    <!-- Boost Tab -->
+    <div id="boostTab" class="tab-content">
+        <h2>Boost Your Mining</h2>
+        <p>Hash Power: <span id="boostHashPower">0</span> TH/s</p>
+        <p>Buy more hash power:</p>
+        <select id="paymentCurrency">
+            <option value="TON">TON</option>
+            <option value="BTC">BTC</option>
+            <option value="USDT">USDT</option>
+        </select>
+        <button id="buyMinerBtn">Buy Miner (3 TON)</button>
+    </div>
+
+    <!-- Friends Tab (to be combined into Refer & Earn) -->
+    <div id="friendsTab" class="tab-content">
+        <h2>Refer Friends</h2>
+        <p>Referral Balance: <span id="referralBalance">0.0000</span> TON</p>
+        <p>Referral Link: <span id="referralLink">https://t.me/DSSGreenHashBot?start=ref123</span></p>
+        <button id="copyLinkBtn">Copy Link</button>
+        <button id="referralWithdrawBtn">Withdraw Referral Balance</button>
+    </div>
+
+    <!-- Earn Tab (to be combined into Refer & Earn) -->
+    <div id="earnTab" class="tab-content">
+        <h2>Earn More</h2>
+        <p>Complete tasks to earn more rewards:</p>
+        <ul>
+            <li>Join our Telegram channel: +0.1 TON</li>
+            <li>Follow us on Twitter: +0.05 TON</li>
+            <li>Invite a friend: +0.2 TON</li>
+        </ul>
+    </div>
+
+    <!-- More Tab -->
+    <div id="moreTab" class="tab-content">
+        <h2>More</h2>
+        <div class="change-coin-section">
+            <h3>Change Coin</h3>
+            <select id="changeCoinSelection">
+                <option value="TON">TON</option>
+                <option value="BTC">BTC</option>
+                <option value="USDT">USDT</option>
+            </select>
+            <button id="changeCoinBtn">Change Coin</button>
+        </div>
+        <div class="more-section">
+            <h3>More Options</h3>
+            <p>Settings, Support, and more coming soon!</p>
+        </div>
+    </div>
+
     <!-- Navigation Bar -->
-    <div class="nav-bar" style="display: none;">
+    <div class="nav-bar">
         <div class="nav-item active" data-tab="homeTab">
             <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Home">
             <span>Home</span>
@@ -47,92 +141,6 @@
         <div class="nav-item" data-tab="moreTab">
             <img src="https://img.icons8.com/ios-filled/50/ffffff/more.png" alt="More">
             <span>More</span>
-        </div>
-    </div>
-
-    <!-- Home Tab -->
-    <div id="homeTab" class="tab-content">
-        <h1>DSS GreenHash</h1>
-        <div class="mining-circle" id="miningCircle">
-            <div class="inner-circle">
-                <span id="hashPower">0</span>
-                <p>TH/s</p>
-            </div>
-        </div>
-        <p>Mining Rate: <span id="miningRate">+0.0000 TON</span>/hr</p>
-        <p><span id="coinPriceLabel">TON</span> Price: $<span id="coinPrice">4.12</span></p>
-        <div class="balance">
-            <p>Balance: <span id="balance">0.0000</span> <span id="coinType">TON</span></p>
-            <p>Rewards: <span id="rewards">0.0000</span> <span id="coinTypeRewards">TON</span></p>
-        </div>
-        <div class="earnings">
-            <p>Est. Monthly Earnings: <span id="earnings">0.00</span> <span id="coinTypeEarnings">TON</span></p>
-        </div>
-        <button id="startBtn">Start Mining</button>
-        <button id="stopBtn" style="display: none;">Stop Mining</button>
-        <button id="claimBtn">Claim Rewards</button>
-        <button id="withdrawBtn">Withdraw</button>
-        <button id="swapBtn">Swap Coin</button>
-    </div>
-
-    <!-- Boost Tab -->
-    <div id="boostTab" class="tab-content">
-        <h2>Boost Your Mining</h2>
-        <p>Current Hash Power: <span id="boostHashPower">0</span> TH/s</p>
-        <p>Buy a new miner to increase your hash power:</p>
-        <select id="paymentCurrency">
-            <option value="TON">TON</option>
-            <option value="BTC">BTC</option>
-            <option value="USDT">USDT</option>
-        </select>
-        <p>Cost: 3 <span id="coinTypeCost">TON</span></p>
-        <button id="buyMinerBtn">Buy Miner</button>
-    </div>
-
-    <!-- Friends Tab -->
-    <div id="friendsTab" class="tab-content">
-        <h2>Invite Friends</h2>
-        <p>Referral Balance: <span id="referralBalance">0.0000</span> TON</p>
-        <p>Invite Link: <span id="referralLink">t.me/dssgreenhash_bot</span></p>
-        <button id="copyLinkBtn">Copy Link</button>
-        <button id="referralWithdrawBtn">Withdraw</button>
-    </div>
-
-    <!-- Earn Tab -->
-    <div id="earnTab" class="tab-content">
-        <h2>Earn More</h2>
-        <p>Complete tasks to earn more rewards.</p>
-        <ul>
-            <li>Task 1: Invite 5 friends - 0.5 TON</li>
-            <li>Task 2: Mine for 24 hours - 0.1 TON</li>
-        </ul>
-    </div>
-
-    <!-- More Tab -->
-    <div id="moreTab" class="tab-content">
-        <h2>More</h2>
-        <!-- Change Coin Section -->
-        <div class="change-coin-section">
-            <h3>Change Coin</h3>
-            <select id="changeCoinSelection">
-                <option value="TON">TON</option>
-                <option value="BTC">BTC</option>
-                <option value="USDT">USDT</option>
-            </select>
-            <button id="changeCoinBtn" tabindex="0">Change</button>
-        </div>
-        <!-- Other Sections -->
-        <div class="more-section">
-            <h3>Contact Support</h3>
-            <p>Email: support@dssgreenhash.com</p>
-        </div>
-        <div class="more-section">
-            <h3>Legal Information</h3>
-            <p>Terms of Service and Privacy Policy</p>
-        </div>
-        <div class="more-section">
-            <h3>FAQs</h3>
-            <p>Frequently Asked Questions</p>
         </div>
     </div>
 
