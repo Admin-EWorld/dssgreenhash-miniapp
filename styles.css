@@ -1,61 +1,86 @@
-/* Reset default styles to prevent Telegram overrides */
+/* Reset default styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* General body styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #1a3c34; /* Dark green background for the entire app */
-    color: #fff;
-    margin: 0;
-    padding: 0;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
+    justify-content: space-between;
 }
 
+/* Tab content */
 .tab-content {
     display: none;
-    width: 100%;
-    max-width: 600px;
-    padding: 20px;
-    text-align: center;
-    background: linear-gradient(45deg, rgba(0, 255, 0, 0.1), rgba(0, 128, 0, 0.1)); /* Gradient background */
-    border-radius: 10px;
-    border: 1px solid #00ff00; /* Green border for tab content */
-    animation: gradientShift 5s ease infinite; /* Background animation */
 }
 
 .tab-content.active {
     display: block;
 }
 
-@keyframes gradientShift {
-    0% {
-        background: linear-gradient(45deg, rgba(0, 255, 0, 0.1), rgba(0, 128, 0, 0.1));
-    }
-    50% {
-        background: linear-gradient(45deg, rgba(0, 128, 0, 0.1), rgba(0, 255, 0, 0.1));
-    }
-    100% {
-        background: linear-gradient(45deg, rgba(0, 255, 0, 0.1), rgba(0, 128, 0, 0.1));
-    }
+/* Landing Page */
+#landingPage {
+    display: block;
 }
 
+#landingPage h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+#landingPage p {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+#landingPage select {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    font-size: 1rem;
+}
+
+#proceedBtn {
+    background-color: #00cc00;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#proceedBtn:hover {
+    background-color: #00b300;
+}
+
+/* Navigation Bar */
 .nav-bar {
+    display: none;
     position: fixed;
     bottom: 0;
-    width: 100%;
-    max-width: 600px;
+    left: 0;
+    right: 0;
+    background-color: #333;
+    padding: 10px 0;
     display: flex;
     justify-content: space-around;
-    background-color: #1a3c34;
-    padding: 15px 0;
-    border-top: 2px solid #00ff00;
-    box-shadow: 0 -2px 5px rgba(0, 255, 0, 0.2);
+    border-top: 1px solid #444;
 }
 
 .nav-item {
@@ -63,30 +88,24 @@ body {
     flex-direction: column;
     align-items: center;
     color: #888;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.nav-item:hover, .nav-item:active {
-    color: #00ff00;
-    transform: scale(1.1);
 }
 
 .nav-item.active {
-    color: #00ff00;
-    background-color: rgba(0, 255, 0, 0.2);
-    border-radius: 5px;
-    padding: 5px;
+    color: #00cc00;
 }
 
 .nav-item img {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
 }
 
-.nav-item span {
-    font-size: 14px;
-    margin-top: 5px;
+/* Home Tab */
+#homeTab h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
 }
 
 .mining-circle {
@@ -99,17 +118,29 @@ body {
     align-items: center;
     margin: 20px auto;
     position: relative;
+    border: 5px solid transparent;
 }
 
-.mining-circle.active {
-    background: radial-gradient(circle, #00ff00 0%, #333 70%) !important;
-    animation: pulse 2s infinite !important;
+.mining-circle.mining {
+    animation: miningAnimation 2s infinite;
+}
+
+@keyframes miningAnimation {
+    0% {
+        border-color: #00cc00;
+    }
+    50% {
+        border-color: #006600;
+    }
+    100% {
+        border-color: #00cc00;
+    }
 }
 
 .inner-circle {
     width: 120px;
     height: 120px;
-    background-color: #1a1a1a;
+    background-color: #222;
     border-radius: 50%;
     display: flex;
     flex-direction: column;
@@ -118,95 +149,196 @@ body {
 }
 
 .inner-circle span {
-    font-size: 24px;
+    font-size: 2rem;
     font-weight: bold;
 }
 
 .inner-circle p {
-    margin: 0;
-    font-size: 14px;
+    font-size: 1rem;
+    color: #888;
 }
 
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 20px rgba(0, 255, 0, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(0, 255, 0, 0);
-    }
-}
-
-button {
-    background-color: #00ff00 !important;
-    color: #000 !important;
-    border: none !important;
-    padding: 10px 20px !important;
-    margin: 10px !important;
-    border-radius: 5px !important;
-    cursor: pointer !important;
-    font-size: 16px !important;
-}
-
-button:disabled {
-    background-color: #555 !important;
-    cursor: not-allowed !important;
-}
-
-#startBtn {
-    animation: buttonPulse 2s infinite; /* Pulsing effect for Start Mining button */
-}
-
-@keyframes buttonPulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 15px rgba(0, 255, 0, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(0, 255, 0, 0);
-    }
+#homeTab p {
+    font-size: 1.2rem;
+    margin: 10px 0;
 }
 
 .balance, .earnings {
     margin: 20px 0;
 }
 
-.balance p, .earnings p {
-    margin: 5px 0;
-}
-
-select {
-    padding: 8px;
-    margin: 10px;
-    background-color: #333;
+#startBtn, #stopBtn, #claimBtn, #withdrawBtn, #swapBtn {
+    background-color: #00cc00;
     color: #fff;
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 1.2rem;
+    margin: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-/* Green headers */
-h1, h2, h3 {
-    color: #00ff00;
+#startBtn:hover, #stopBtn:hover, #claimBtn:hover, #withdrawBtn:hover, #swapBtn:hover {
+    background-color: #00b300;
 }
 
-/* Styles for More tab sections */
-.more-section {
+/* Boost Tab */
+#boostTab h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+#boostTab p {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+#boostTab select {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    font-size: 1rem;
+}
+
+#buyMinerBtn {
+    background-color: #00cc00;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#buyMinerBtn:hover {
+    background-color: #00b300;
+}
+
+/* Friends Tab */
+#friendsTab h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+#friendsTab p {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+#copyLinkBtn, #referralWithdrawBtn {
+    background-color: #00cc00;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    margin: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#copyLinkBtn:hover, #referralWithdrawBtn:hover {
+    background-color: #00b300;
+}
+
+/* Earn Tab */
+#earnTab h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+#earnTab p {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+#earnTab ul {
+    list-style: none;
     margin: 20px 0;
 }
 
-.change-coin-section {
+#earnTab ul li {
+    font-size: 1.1rem;
+    margin: 10px 0;
+}
+
+/* More Tab */
+#moreTab h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.change-coin-section, .more-section {
     margin: 20px 0;
 }
 
-.change-coin-section h3 {
+.change-coin-section h3, .more-section h3 {
+    font-size: 1.4rem;
     margin-bottom: 10px;
 }
 
 .change-coin-section select {
-    margin-right: 10px;
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    font-size: 1rem;
+}
+
+#changeCoinBtn {
+    background-color: #00cc00;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#changeCoinBtn:hover {
+    background-color: #00b300;
+}
+
+/* RTL Support for Arabic */
+body[style*="direction: rtl"] {
+    text-align: right;
+}
+
+body[style*="direction: rtl"] .nav-bar {
+    flex-direction: row-reverse;
+}
+
+body[style*="direction: rtl"] .nav-item {
+    flex-direction: column;
+}
+
+body[style*="direction: rtl"] #homeTab p,
+body[style*="direction: rtl"] #boostTab p,
+body[style*="direction: rtl"] #friendsTab p,
+body[style*="direction: rtl"] #earnTab p,
+body[style*="direction: rtl"] #moreTab p {
+    text-align: right;
+}
+
+body[style*="direction: rtl"] .balance,
+body[style*="direction: rtl"] .earnings,
+body[style*="direction: rtl"] .change-coin-section,
+body[style*="direction: rtl"] .more-section {
+    text-align: right;
+}
+
+body[style*="direction: rtl"] #earnTab ul {
+    padding-right: 20px;
 }
