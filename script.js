@@ -3,13 +3,154 @@ document.addEventListener("DOMContentLoaded", () => {
         let miningRate = 0, hashPower = 0, balance = 0, income = 0, referralRewards = 0, shares = 0, selectedCoin = "TON", selectedLanguage = "en";
         let miningInterval, progressInterval;
         let coinPrices = { TON: 4.12, BTC: 60000, USDT: 1 };
-        let totalDeposited = 0, totalMiningEarned = 0, totalReferralEarned = 0, totalWithdrawals = 0;
+        let totalDeposited = 0, totalMiningEarned = 0, totalReferralEarned = 0, totalWithdrawals = 0, referrals = 0;
         let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 3600;
 
         const translations = {
-            en: { welcome: "Welcome to DSS GreenHash", selectCoin: "Select your coin:", selectLanguage: "Select your language:", proceed: "Proceed", dssGreenHash: "DSS GreenHash", priceLabel: "Price: $", balance: "Balance: $", sharesValue: "Shares", income: "Income", referral: "Referral", nextUpdate: "Next Update:", startMining: "Start Mining", stopMining: "Stop Mining", withdraw: "Withdraw", transactionHistory: "Transaction History", totalDeposited: "Total Deposited: $", totalMiningEarned: "Total Earned by Mining: $", totalReferralEarned: "Total Earned by Referrals: $", totalWithdrawals: "Total Withdrawals: $", estimatedIncome: "Estimated Income:", hourly: "Hourly", daily: "Daily", weekly: "Weekly", monthly: "Monthly", miningProgress: "Mining Progress:", alreadyMining: "Already mining!", withdrawInitiated: "Withdrawal initiated! (Simulated)", walletPrompt: "Please set up your Wallet to proceed.", failedClearData: "Failed to clear user data.", userDataCleared: "User data cleared successfully.", coinChanged: "Coin changed to", alreadyMiningCoin: "Already mining", errorDropdown: "Error: Coin selection dropdown not found.", errorMoreTab: "Error: More tab not found.", errorChangeCoinBtn: "Error: Change coin button not found.", noShares: "Please buy shares in the Boost tab to start mining.", noFunds: "No funds to withdraw.", noIncomeReferral: "No income or referral rewards to withdraw." },
-            ar: { welcome: "مرحبًا بك في DSS GreenHash", selectCoin: "اختر عملتك:", selectLanguage: "اختر لغتك:", proceed: "تابع", dssGreenHash: "DSS GreenHash", priceLabel: "السعر: $", balance: "الرصيد: $", sharesValue: "الأسهم", income: "الدخل", referral: "الإحالة", nextUpdate: "التحديث التالي:", startMining: "بدء التعدين", stopMining: "إيقاف التعدين", withdraw: "سحب", transactionHistory: "سجل المعاملات", totalDeposited: "إجمالي الإيداع: $", totalMiningEarned: "إجمالي الأرباح من التعدين: $", totalReferralEarned: "إجمالي الأرباح من الإحالات: $", totalWithdrawals: "إجمالي السحوبات: $", estimatedIncome: "الدخل المقدر:", hourly: "ساعي", daily: "يومي", weekly: "أسبوعي", monthly: "شهري", miningProgress: "تقدم التعدين:", alreadyMining: "التعدين جارٍ بالفعل!", withdrawInitiated: "تم بدء السحب! (محاكاة)", walletPrompt: "يرجى إعداد محفظتك للمتابعة.", failedClearData: "فشل في مسح بيانات المستخدم.", userDataCleared: "تم مسح بيانات المستخدم بنجاح.", coinChanged: "تم تغيير العملة إلى", alreadyMiningCoin: "التعدين جارٍ بالفعل", errorDropdown: "خطأ: لم يتم العثور على قائمة اختيار العملة.", errorMoreTab: "خطأ: لم يتم العثور على علامة التبويب 'المزيد'.", errorChangeCoinBtn: "خطأ: لم يتم العثور على زر تغيير العملة.", noShares: "يرجى شراء أسهم في علامة التبويب Boost لبدء التعدين.", noFunds: "لا توجد أموال للسحب.", noIncomeReferral: "لا توجد أرباح أو مكافآت إحالة للسحب." },
-            ru: { welcome: "Добро пожаловать в DSS GreenHash", selectCoin: "Выберите валюту:", selectLanguage: "Выберите язык:", proceed: "Продолжить", dssGreenHash: "DSS GreenHash", priceLabel: "Цена: $", balance: "Баланс: $", sharesValue: "Акции", income: "Доход", referral: "Рефералы", nextUpdate: "Следующее обновление:", startMining: "Начать майнинг", stopMining: "Остановить майнинг", withdraw: "Вывести", transactionHistory: "История транзакций", totalDeposited: "Всего внесено: $", totalMiningEarned: "Всего заработано на майнинге: $", totalReferralEarned: "Всего заработано на рефералах: $", totalWithdrawals: "Всего выведено: $", estimatedIncome: "Ожидаемый доход:", hourly: "Почасовой", daily: "Ежедневный", weekly: "Еженедельный", monthly: "Ежемесячный", miningProgress: "Прогресс майнинга:", alreadyMining: "Майнинг уже идет!", withdrawInitiated: "Вывод инициирован! (Симуляция)", walletPrompt: "Пожалуйста, настройте ваш кошелек для продолжения.", failedClearData: "Не удалось очистить данные пользователя.", userDataCleared: "Данные пользователя успешно очищены.", coinChanged: "Валюта изменена на", alreadyMiningCoin: "Уже майнится", errorDropdown: "Ошибка: Выпадающий список выбора валюты не найден.", errorMoreTab: "Ошибка: Вкладка 'Еще' не найдена.", errorChangeCoinBtn: "Ошибка: Кнопка смены валюты не найдена.", noShares: "Пожалуйста, купите акции во вкладке Boost, чтобы начать майнинг.", noFunds: "Нет средств для вывода.", noIncomeReferral: "Нет дохода или реферальных вознаграждений для вывода." }
+            en: { 
+                welcome: "Welcome to DSS GreenHash", 
+                selectCoin: "Select your coin:", 
+                selectLanguage: "Select your language:", 
+                proceed: "Proceed", 
+                dssGreenHash: "DSS GreenHash", 
+                priceLabel: "Price: $", 
+                balance: "Balance: $", 
+                sharesValue: "Shares", 
+                income: "Income", 
+                referral: "Referral", 
+                nextUpdate: "Next Update:", 
+                startMining: "Start Mining", 
+                stopMining: "Stop Mining", 
+                withdraw: "Withdraw", 
+                transactionHistory: "Transaction History", 
+                totalDeposited: "Total Deposited: $", 
+                totalMiningEarned: "Total Earned by Mining: $", 
+                totalReferralEarned: "Total Earned by Referrals: $", 
+                totalWithdrawals: "Total Withdrawals: $", 
+                estimatedIncome: "Estimated Income:", 
+                hourly: "Hourly", 
+                daily: "Daily", 
+                weekly: "Weekly", 
+                monthly: "Monthly", 
+                miningProgress: "Mining Progress:", 
+                alreadyMining: "Already mining!", 
+                withdrawInitiated: "Withdrawal initiated! (Simulated)", 
+                walletPrompt: "Please set up your Wallet to proceed.", 
+                failedClearData: "Failed to clear user data.", 
+                userDataCleared: "User data cleared successfully.", 
+                coinChanged: "Coin changed to", 
+                alreadyMiningCoin: "Already mining", 
+                errorDropdown: "Error: Coin selection dropdown not found.", 
+                errorMoreTab: "Error: More tab not found.", 
+                errorChangeCoinBtn: "Error: Change coin button not found.", 
+                noShares: "Please buy shares in the Boost tab to start mining.", 
+                noFunds: "No funds to withdraw.", 
+                noIncomeReferral: "No income or referral rewards to withdraw.",
+                buyShares: "Buy Shares",
+                sharesCost: "1 Share = $60 (0.1 TH/s, 10% monthly return)",
+                purchaseSuccessful: "Purchase successful!",
+                referralLink: "Your Referral Link:",
+                copyLink: "Copy Link",
+                referrals: "Referrals:",
+                referralReward: "Reward per Referral: $5",
+                linkCopied: "Referral link copied!"
+            },
+            ar: { 
+                welcome: "مرحبًا بك في DSS GreenHash", 
+                selectCoin: "اختر عملتك:", 
+                selectLanguage: "اختر لغتك:", 
+                proceed: "تابع", 
+                dssGreenHash: "DSS GreenHash", 
+                priceLabel: "السعر: $", 
+                balance: "الرصيد: $", 
+                sharesValue: "الأسهم", 
+                income: "الدخل", 
+                referral: "الإحالة", 
+                nextUpdate: "التحديث التالي:", 
+                startMining: "بدء التعدين", 
+                stopMining: "إيقاف التعدين", 
+                withdraw: "سحب", 
+                transactionHistory: "سجل المعاملات", 
+                totalDeposited: "إجمالي الإيداع: $", 
+                totalMiningEarned: "إجمالي الأرباح من التعدين: $", 
+                totalReferralEarned: "إجمالي الأرباح من الإحالات: $", 
+                totalWithdrawals: "إجمالي السحوبات: $", 
+                estimatedIncome: "الدخل المقدر:", 
+                hourly: "ساعي", 
+                daily: "يومي", 
+                weekly: "أسبوعي", 
+                monthly: "شهري", 
+                miningProgress: "تقدم التعدين:", 
+                alreadyMining: "التعدين جارٍ بالفعل!", 
+                withdrawInitiated: "تم بدء السحب! (محاكاة)", 
+                walletPrompt: "يرجى إعداد محفظتك للمتابعة.", 
+                failedClearData: "فشل في مسح بيانات المستخدم.", 
+                userDataCleared: "تم مسح بيانات المستخدم بنجاح.", 
+                coinChanged: "تم تغيير العملة إلى", 
+                alreadyMiningCoin: "التعدين جارٍ بالفعل", 
+                errorDropdown: "خطأ: لم يتم العثور على قائمة اختيار العملة.", 
+                errorMoreTab: "خطأ: لم يتم العثور على علامة التبويب 'المزيد'.", 
+                errorChangeCoinBtn: "خطأ: لم يتم العثور على زر تغيير العملة.", 
+                noShares: "يرجى شراء أسهم في علامة التبويب Boost لبدء التعدين.", 
+                noFunds: "لا توجد أموال للسحب.", 
+                noIncomeReferral: "لا توجد أرباح أو مكافآت إحالة للسحب.",
+                buyShares: "شراء أسهم",
+                sharesCost: "1 سهم = $60 (0.1 TH/s، عائد شهري 10%)",
+                purchaseSuccessful: "تم الشراء بنجاح!",
+                referralLink: "رابط الإحالة الخاص بك:",
+                copyLink: "نسخ الرابط",
+                referrals: "الإحالات:",
+                referralReward: "مكافأة الإحالة: $5",
+                linkCopied: "تم نسخ رابط الإحالة!"
+            },
+            ru: { 
+                welcome: "Добро пожаловать в DSS GreenHash", 
+                selectCoin: "Выберите валюту:", 
+                selectLanguage: "Выберите язык:", 
+                proceed: "Продолжить", 
+                dssGreenHash: "DSS GreenHash", 
+                priceLabel: "Цена: $", 
+                balance: "Баланс: $", 
+                sharesValue: "Акции", 
+                income: "Доход", 
+                referral: "Рефералы", 
+                nextUpdate: "Следующее обновление:", 
+                startMining: "Начать майнинг", 
+                stopMining: "Остановить майнинг", 
+                withdraw: "Вывести", 
+                transactionHistory: "История транзакций", 
+                totalDeposited: "Всего внесено: $", 
+                totalMiningEarned: "Всего заработано на майнинге: $", 
+                totalReferralEarned: "Всего заработано на рефералах: $", 
+                totalWithdrawals: "Всего выведено: $", 
+                estimatedIncome: "Ожидаемый доход:", 
+                hourly: "Почасовой", 
+                daily: "Ежедневный", 
+                weekly: "Еженедельный", 
+                monthly: "Ежемесячный", 
+                miningProgress: "Прогресс майнинга:", 
+                alreadyMining: "Майнинг уже идет!", 
+                withdrawInitiated: "Вывод инициирован! (Симуляция)", 
+                walletPrompt: "Пожалуйста, настройте ваш кошелек для продолжения.", 
+                failedClearData: "Не удалось очистить данные пользователя.", 
+                userDataCleared: "Данные пользователя успешно очищены.", 
+                coinChanged: "Валюта изменена на", 
+                alreadyMiningCoin: "Уже майнится", 
+                errorDropdown: "Ошибка: Выпадающий список выбора валюты не найден.", 
+                errorMoreTab: "Ошибка: Вкладка 'Еще' не найдена.", 
+                errorChangeCoinBtn: "Ошибка: Кнопка смены валюты не найдена.", 
+                noShares: "Пожалуйста, купите акции во вкладке Boost, чтобы начать майнинг.", 
+                noFunds: "Нет средств для вывода.", 
+                noIncomeReferral: "Нет дохода или реферальных вознаграждений для вывода.",
+                buyShares: "Купить акции",
+                sharesCost: "1 акция = $60 (0.1 TH/s, 10% месячной прибыли)",
+                purchaseSuccessful: "Покупка успешна!",
+                referralLink: "Ваша реферальная ссылка:",
+                copyLink: "Скопировать ссылку",
+                referrals: "Рефералы:",
+                referralReward: "Награда за реферала: $5",
+                linkCopied: "Реферальная ссылка скопирована!"
+            }
         };
 
         const updateLanguage = () => {
@@ -36,6 +177,14 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelector("#homeTab #incomePeriod option[value='daily']").textContent = t.daily;
             document.querySelector("#homeTab #incomePeriod option[value='weekly']").textContent = t.weekly;
             document.querySelector("#homeTab #incomePeriod option[value='monthly']").textContent = t.monthly;
+            // Boost Tab Translations
+            document.querySelector("#boostTab #sharesCost").textContent = t.sharesCost;
+            document.querySelector("#boostTab #buySharesBtn").textContent = t.buyShares;
+            // Refer & Earn Tab Translations
+            document.querySelector("#referTab #referralLinkText").textContent = t.referralLink;
+            document.querySelector("#referTab #copyLinkBtn").textContent = t.copyLink;
+            document.querySelector("#referTab #referralsText").innerHTML = `${t.referrals} <span id="referralsCount">${referrals}</span>`;
+            document.querySelector("#referTab #referralRewardText").textContent = t.referralReward;
             document.body.style.direction = selectedLanguage === "ar" ? "rtl" : "ltr";
         };
 
@@ -56,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const withdrawBtn = document.getElementById("withdrawBtn");
         const progressPercent = document.getElementById("progressPercent");
         const nextUpdate = document.getElementById("nextUpdate");
-        const totalDepositedDisplay = document.getElementById("totalDeposited");
+        const totalDepositedDisplay = document.getElementById("-totalDeposited");
         const totalMiningEarnedDisplay = document.getElementById("totalMiningEarned");
         const totalReferralEarnedDisplay = document.getElementById("totalReferralEarned");
         const totalWithdrawalsDisplay = document.getElementById("totalWithdrawals");
@@ -70,6 +219,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const changeCoinSelection = document.getElementById("changeCoinSelection");
         const changeCoinBtn = document.getElementById("changeCoinBtn");
         const moreTab = document.getElementById("moreTab");
+        const buySharesBtn = document.getElementById("buySharesBtn");
+        const sharesInput = document.getElementById("sharesInput");
+        const referralLinkDisplay = document.getElementById("referralLink");
+        const copyLinkBtn = document.getElementById("copyLinkBtn");
+        const referralsCount = document.getElementById("referralsCount");
 
         if (window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.ready();
         if (!window.Telegram.WebApp.initDataUnsafe.user) {
@@ -93,6 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     totalMiningEarned = data.totalMiningEarned || 0;
                     totalReferralEarned = data.totalReferralEarned || 0;
                     totalWithdrawals = data.totalWithdrawals || 0;
+                    referrals = data.referrals || 0;
                     if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
                     if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
                     if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
@@ -107,14 +262,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(2);
                     if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = totalReferralEarned.toFixed(2);
                     if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = totalWithdrawals.toFixed(2);
+                    if (referralsCount) referralsCount.textContent = referrals;
                     updateEstimatedIncome();
                     updateLanguage();
+                    generateReferralLink();
                 }
             });
         };
 
         const saveUserData = () => {
-            const data = { shares, balance, income, referralRewards, selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned, totalReferralEarned, totalWithdrawals };
+            const data = { shares, balance, income, referralRewards, selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned, totalReferralEarned, totalWithdrawals, referrals };
             window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data));
         };
 
@@ -226,7 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.Telegram.WebApp.showAlert(translations[selectedLanguage].userDataCleared);
                 miningRate = 0; hashPower = 0; balance = 0; income = 0; referralRewards = 0; shares = 0;
                 selectedCoin = "TON"; selectedLanguage = "en"; totalDeposited = 0; totalMiningEarned = 0;
-                totalReferralEarned = 0; totalWithdrawals = 0;
+                totalReferralEarned = 0; totalWithdrawals = 0; referrals = 0;
                 if (miningSharesDisplay) miningSharesDisplay.textContent = "0";
                 if (hashPowerDisplay) hashPowerDisplay.textContent = "0";
                 if (balanceUsdDisplay) balanceUsdDisplay.textContent = "0.00";
@@ -241,6 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = "0.00";
                 if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = "0.00";
                 if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = "0.00";
+                if (referralsCount) referralsCount.textContent = "0";
                 tabContents.forEach(content => {
                     content.classList.remove("active");
                     content.style.display = "none";
@@ -455,6 +613,71 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (incomePeriod) {
             incomePeriod.addEventListener("change", updateEstimatedIncome);
+        }
+
+        // Boost Tab: Buy Shares Functionality
+        if (buySharesBtn) {
+            buySharesBtn.addEventListener("click", () => {
+                const t = translations[selectedLanguage];
+                const numShares = parseInt(sharesInput.value) || 0;
+                if (numShares <= 0) {
+                    window.Telegram.WebApp.showAlert("Please enter a valid number of shares.");
+                    return;
+                }
+                shares += numShares;
+                hashPower = shares * 0.1;
+                totalDeposited += numShares * 60; // Simulate deposit
+                balance += numShares * 60; // Add to balance
+                if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
+                if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
+                if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
+                if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
+                if (totalDepositedDisplay) totalDepositedDisplay.textContent = totalDeposited.toFixed(2);
+                updateEstimatedIncome();
+                saveUserData();
+                window.Telegram.WebApp.showAlert(t.purchaseSuccessful);
+                sharesInput.value = "";
+            });
+        }
+
+        // Refer & Earn Tab: Generate and Copy Referral Link
+        const generateReferralLink = () => {
+            if (referralLinkDisplay) {
+                referralLinkDisplay.textContent = `https://t.me/DSSGreenHashBot?start=test_user`;
+            }
+        };
+
+        if (copyLinkBtn) {
+            copyLinkBtn.addEventListener("click", () => {
+                const t = translations[selectedLanguage];
+                const link = referralLinkDisplay.textContent;
+                navigator.clipboard.writeText(link).then(() => {
+                    window.Telegram.WebApp.showAlert(t.linkCopied);
+                });
+            });
+        }
+
+        // Simulate a referral (for testing purposes)
+        const simulateReferral = () => {
+            referrals += 1;
+            referralRewards += 5; // $5 per referral
+            totalReferralEarned += 5;
+            balance += 5;
+            if (referralsCount) referralsCount.textContent = referrals;
+            if (referralDisplay) referralDisplay.textContent = referralRewards.toFixed(2);
+            if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = totalReferralEarned.toFixed(2);
+            if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
+            if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
+            saveUserData();
+        };
+
+        // For testing: Add a button to simulate a referral (remove this in production)
+        const referTab = document.getElementById("referTab");
+        if (referTab) {
+            const simulateBtn = document.createElement("button");
+            simulateBtn.textContent = "Simulate Referral (Test)";
+            simulateBtn.addEventListener("click", simulateReferral);
+            referTab.appendChild(simulateBtn);
         }
     }, 0);
 });
