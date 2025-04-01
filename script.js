@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let miningInterval, progressInterval;
         let coinPrices = { TON: 4.12, BTC: 60000, USDT: 1 };
         let totalDeposited = 0, totalMiningEarned = 0, totalReferralEarned = 0, totalWithdrawals = 0, referrals = 0;
-        let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 3600;
+        let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 3600; // 60 minutes
 
         const translations = {
             en: { 
@@ -205,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const withdrawBtn = document.getElementById("withdrawBtn");
         const progressPercent = document.getElementById("progressPercent");
         const nextUpdate = document.getElementById("nextUpdate");
-        const totalDepositedDisplay = document.getElementById("-totalDeposited");
+        const totalDepositedDisplay = document.getElementById("totalDeposited");
         const totalMiningEarnedDisplay = document.getElementById("totalMiningEarned");
         const totalReferralEarnedDisplay = document.getElementById("totalReferralEarned");
         const totalWithdrawalsDisplay = document.getElementById("totalWithdrawals");
@@ -248,6 +248,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     totalReferralEarned = data.totalReferralEarned || 0;
                     totalWithdrawals = data.totalWithdrawals || 0;
                     referrals = data.referrals || 0;
+                    isMining = data.isMining || false;
+                    lastUpdateTime = data.lastUpdateTime || Date.now();
                     if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
                     if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
                     if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
@@ -263,15 +265,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = totalReferralEarned.toFixed(2);
                     if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = totalWithdrawals.toFixed(2);
                     if (referralsCount) referralsCount.textContent = referrals;
+                    if (startStopBtn) startStopBtn.textContent = isMining ? translations[selectedLanguage].stopMining : translations[selectedLanguage].startMining;
+                    if (miningCircle) {
+                        if (isMining) miningCircle.classList.add("mining");
+                        else miningCircle.classList.remove("mining");
+                    }
                     updateEstimatedIncome();
                     updateLanguage();
                     generateReferralLink();
+                    if (isMining) {
+                        miningInterval = setInterval(updateMining, 1000); // Update every second
+                    }
                 }
             });
         };
 
         const saveUserData = () => {
-            const data = { shares, balance, income, referralRewards, selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned, totalReferralEarned, totalWithdrawals, referrals };
+            const data = { shares, balance, income, referralRewards, selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned, totalReferralEarned, totalWithdrawals, referrals, isMining, lastUpdateTime };
             window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data));
         };
 
@@ -293,10 +303,10 @@ document.addEventListener("DOMContentLoaded", () => {
         fetchCoinPrices();
 
         const calculateMiningRate = () => {
-            const monthlyUsdPerShare = 6;
+            const monthlyUsdPerShare = 6; // 10% monthly return on $60 per share
             const monthlyUsd = shares * monthlyUsdPerShare;
             const hourlyUsd = monthlyUsd / (30 * 24);
-            return hourlyUsd / coinPrices[selectedCoin];
+            return hourlyUsd / coinPrices[selectedCoin]; // Hourly rate in selected coin
         };
 
         const updateEstimatedIncome = () => {
@@ -312,9 +322,9 @@ document.addEventListener("DOMContentLoaded", () => {
             estimatedIncomeDisplay.textContent = `${coinIncome.toFixed(8)} ${selectedCoin} (~$${usdIncome.toFixed(2)})`;
         };
 
-        const updateTimerAndProgress = () => {
+        const updateMining = () => {
             const now = Date.now();
-            const elapsed = (now - lastUpdateTime) / 1000;
+            const elapsed = (now - lastUpdateTime) / 1000; // Elapsed time in seconds
             const remaining = Math.max(0, updateIntervalSeconds - elapsed);
             const minutes = Math.floor(remaining / 60);
             const seconds = Math.floor(remaining % 60);
@@ -330,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (remaining <= 0) {
                 lastUpdateTime = Date.now();
                 if (isMining) {
-                    const hourlyUsd = (shares * 6) / (30 * 24);
+                    const hourlyUsd = (shares * 6) / (30 * 24); // Hourly income in USD
                     balance += hourlyUsd;
                     income += hourlyUsd;
                     totalMiningEarned += hourlyUsd;
@@ -364,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     navItems.forEach(item => item.classList.remove("active"));
                     if (navItems[0]) navItems[0].classList.add("active");
                     loadUserData();
-                    progressInterval = setInterval(updateTimerAndProgress, 1000);
+                    progressInterval = setInterval(updateMining, 1000); // Update every second
                 } else {
                     if (landingPage) {
                         landingPage.classList.add("active");
@@ -383,7 +393,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.Telegram.WebApp.showAlert(translations[selectedLanguage].userDataCleared);
                 miningRate = 0; hashPower = 0; balance = 0; income = 0; referralRewards = 0; shares = 0;
                 selectedCoin = "TON"; selectedLanguage = "en"; totalDeposited = 0; totalMiningEarned = 0;
-                totalReferralEarned = 0; totalWithdrawals = 0; referrals = 0;
+                totalReferralEarned = 0; totalWithdrawals = 0; referrals = 0; isMining = false;
+                lastUpdateTime = Date.now();
                 if (miningSharesDisplay) miningSharesDisplay.textContent = "0";
                 if (hashPowerDisplay) hashPowerDisplay.textContent = "0";
                 if (balanceUsdDisplay) balanceUsdDisplay.textContent = "0.00";
@@ -399,6 +410,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = "0.00";
                 if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = "0.00";
                 if (referralsCount) referralsCount.textContent = "0";
+                if (startStopBtn) startStopBtn.textContent = translations[selectedLanguage].startMining;
+                if (miningCircle) miningCircle.classList.remove("mining");
                 tabContents.forEach(content => {
                     content.classList.remove("active");
                     content.style.display = "none";
@@ -437,7 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (navItems[0]) navItems[0].classList.add("active");
                 updateLanguage();
                 saveUserData();
-                progressInterval = setInterval(updateTimerAndProgress, 1000);
+                progressInterval = setInterval(updateMining, 1000);
             });
         }
 
@@ -526,8 +539,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     startStopBtn.textContent = t.stopMining;
                     startStopBtn.classList.add("mining");
                     if (miningCircle) miningCircle.classList.add("mining");
-                    miningInterval = setInterval(() => {}, 3600000);
+                    miningInterval = setInterval(updateMining, 1000);
                 }
+                saveUserData();
             });
         }
 
@@ -567,6 +581,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 referralRewards = 0;
                                 shares = 0;
                                 hashPower = 0;
+                                isMining = false;
+                                lastUpdateTime = Date.now();
                                 if (miningSharesDisplay) miningSharesDisplay.textContent = "0";
                                 if (hashPowerDisplay) hashPowerDisplay.textContent = "0";
                                 if (balanceUsdDisplay) balanceUsdDisplay.textContent = "0.00";
@@ -575,6 +591,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                 if (referralDisplay) referralDisplay.textContent = "0.00";
                                 if (sharesValueDisplay) sharesValueDisplay.textContent = "0.00";
                                 if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = totalWithdrawals.toFixed(2);
+                                if (startStopBtn) startStopBtn.textContent = t.startMining;
+                                if (miningCircle) miningCircle.classList.remove("mining");
+                                clearInterval(miningInterval);
+                                miningInterval = null;
                                 saveUserData();
                                 window.Telegram.WebApp.showAlert(t.withdrawInitiated);
                             }
@@ -626,12 +646,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 shares += numShares;
                 hashPower = shares * 0.1;
-                totalDeposited += numShares * 60; // Simulate deposit
+                totalDeposited += numShares * 60;
                 balance += numShares * 60; // Add to balance
                 if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
                 if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
                 if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
                 if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
+                if (sharesValueDisplay) sharesValueDisplay.textContent = (shares * 60).toFixed(2);
                 if (totalDepositedDisplay) totalDepositedDisplay.textContent = totalDeposited.toFixed(2);
                 updateEstimatedIncome();
                 saveUserData();
