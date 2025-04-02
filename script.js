@@ -294,6 +294,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const remaining = Math.max(0, updateIntervalSeconds - elapsed);
     const minutes = Math.floor(remaining / 60);
     const seconds = Math.floor(remaining % 60);
+
+    // Dynamically fetch DOM elements
+    const nextUpdate = document.getElementById("nextUpdate");
+    const progressPercent = document.getElementById("progressPercent");
+    const balanceUsdDisplay = document.getElementById("balanceUsd");
+    const balanceDisplay = document.getElementById("balance");
+    const incomeDisplay = document.getElementById("income");
+    const sharesValueDisplay = document.getElementById("sharesValue");
+    const totalMiningEarnedDisplay = document.getElementById("totalMiningEarned");
+    const referralDisplay = document.getElementById("referral");
+
+    // Debug logs to check if elements are found
+    console.log("DOM elements - nextUpdate:", nextUpdate, "progressPercent:", progressPercent, "balanceUsdDisplay:", balanceUsdDisplay, "balanceDisplay:", balanceDisplay, "incomeDisplay:", incomeDisplay, "sharesValueDisplay:", sharesValueDisplay, "totalMiningEarnedDisplay:", totalMiningEarnedDisplay, "referralDisplay:", referralDisplay);
+
     if (nextUpdate) nextUpdate.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     const progress = (elapsed / updateIntervalSeconds) * 100;
     if (progressPercent) progressPercent.textContent = `${Math.min(100, Math.round(progress))}%`;
@@ -303,15 +317,22 @@ document.addEventListener("DOMContentLoaded", () => {
         progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
         progressRing.style.strokeDashoffset = circumference - (progress / 100) * circumference;
     }
-            // Update UI elements every second
+
+    // Update UI elements every second
     if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
+    else console.error("balanceUsdDisplay not found");
     if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
+    else console.error("balanceDisplay not found");
     if (incomeDisplay) incomeDisplay.textContent = income.toFixed(2);
+    else console.error("incomeDisplay not found");
     if (sharesValueDisplay) sharesValueDisplay.textContent = (shares * 60).toFixed(2);
+    else console.error("sharesValueDisplay not found");
     if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(2);
+    else console.error("totalMiningEarnedDisplay not found");
     if (referralDisplay) referralDisplay.textContent = referralRewards.toFixed(2);
-            
-            if (remaining <= 0) {
+    else console.error("referralDisplay not found");
+
+    if (remaining <= 0) {
         lastUpdateTime = Date.now();
         if (isMining && shares > 0) {
             const hourlyUsd = (shares * 6) / (30 * 24); // Hourly income in USD
