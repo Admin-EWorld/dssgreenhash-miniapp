@@ -218,10 +218,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Telegram WebApp initialization
         let isTelegramEnvironment = false;
+        let isCloudStorageSupported = false;
         if (window.Telegram && window.Telegram.WebApp) {
             console.log("Telegram WebApp version:", window.Telegram.WebApp.version);
             window.Telegram.WebApp.ready();
             isTelegramEnvironment = true;
+            // Check if CloudStorage is supported (version 6.1 or higher)
+            isCloudStorageSupported = window.Telegram.WebApp.version >= "6.1";
+            console.log("CloudStorage supported:", isCloudStorageSupported);
         }
 
         // Fetch coin prices from CoinGecko API
@@ -272,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Update mining progress, timer, and stats
         const updateMining = () => {
-            console.log("updateMining called, isMining:", isMining);
+            console.log("updateMining called, isMining:", isMining, "shares:", shares);
             const now = Date.now();
             const elapsed = (now - lastUpdateTime) / 1000; // Elapsed time in seconds
             const remaining = Math.max(0, updateIntervalSeconds - elapsed);
@@ -289,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             if (remaining <= 0) {
                 lastUpdateTime = Date.now();
-                if (isMining) {
+                if (isMining && shares > 0) {
                     const hourlyUsd = (shares * 6) / (30 * 24); // Hourly income in USD
                     balance += hourlyUsd;
                     income += hourlyUsd;
@@ -298,6 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
                     if (incomeDisplay) incomeDisplay.textContent = income.toFixed(2);
                     if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(2);
+                    console.log("Mining update: balance =", balance, "income =", income, "totalMiningEarned =", totalMiningEarned);
                     saveUserData();
                 }
             }
@@ -341,8 +346,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Show the initial tab (Home or Landing Page)
         const showInitialTab = () => {
             console.log("showInitialTab called");
-            if (!isTelegramEnvironment) {
-                console.log("Not in Telegram environment, showing landing page");
+            if (!isTelegramEnvironment || !isCloudStorageSupported) {
+                console.log("Not in Telegram environment or CloudStorage not supported, showing landing page");
                 if (landingPage) {
                     landingPage.classList.add("active");
                     updateLanguage();
@@ -383,6 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     loadUserData();
                     if (progressInterval) clearInterval(progressInterval);
                     progressInterval = setInterval(updateMining, 1000);
+                    console.log("progressInterval set:", progressInterval);
                 } else {
                     console.log("No user data found, showing landing page");
                     if (landingPage) {
@@ -396,8 +402,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Load user data from Telegram CloudStorage
         const loadUserData = () => {
             console.log("loadUserData called");
-            if (!isTelegramEnvironment) {
-                console.log("Not in Telegram environment, skipping CloudStorage load");
+            if (!isTelegramEnvironment || !isCloudStorageSupported) {
+                console.log("Not in Telegram environment or CloudStorage not supported, skipping CloudStorage load");
                 updateLanguage();
                 return;
             }
@@ -450,6 +456,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     generateReferralLink();
                     if (miningInterval) clearInterval(miningInterval);
                     miningInterval = setInterval(updateMining, 1000);
+                    console.log("miningInterval set:", miningInterval);
                 }
             });
         };
@@ -457,8 +464,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Save user data to Telegram CloudStorage
         const saveUserData = () => {
             console.log("saveUserData called");
-            if (!isTelegramEnvironment) {
-                console.log("Not in Telegram environment, skipping CloudStorage save");
+            if (!isTelegramEnvironment || !isCloudStorageSupported) {
+                console.log("Not in Telegram environment or CloudStorage not supported, skipping CloudStorage save");
                 return;
             }
             const data = { shares, balance, income, referralRewards, selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned, totalReferralEarned, totalWithdrawals, referrals, isMining, lastUpdateTime };
@@ -481,8 +488,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Clear user data and reset the app
         const clearUserData = () => {
             console.log("clearUserData called");
-            if (!isTelegramEnvironment) {
-                console.log("Not in Telegram environment, resetting locally");
+            if (!isTelegramEnvironment || !isCloudStorageSupported) {
+                console.log("Not in Telegram environment or CloudStorage not supported, resetting locally");
                 resetApp();
                 return;
             }
@@ -591,8 +598,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     updateLanguage();
                     saveUserData();
+                    // Initialize mining updates immediately
+                    updateMining();
                     if (progressInterval) clearInterval(progressInterval);
                     progressInterval = setInterval(updateMining, 1000);
+                    console.log("progressInterval set after proceed:", progressInterval);
                     console.log("Proceed button logic completed");
                 } catch (error) {
                     console.error("Error in proceedBtn event listener:", error);
@@ -694,6 +704,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (miningCircle) miningCircle.classList.add("mining");
                     if (miningInterval) clearInterval(miningInterval);
                     miningInterval = setInterval(updateMining, 1000);
+                    console.log("miningInterval set after start:", miningInterval);
                 }
                 saveUserData();
             });
