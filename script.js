@@ -595,7 +595,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (navBar) navBar.style.display = "none";
             updateLanguage();
         };
-       clearUserData();
+       //clearUserData();
 
         // Bypassing the wallet check for now
         console.log("Bypassing wallet check for testing purposes");
