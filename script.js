@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
             isTelegramEnvironment = true;
         }
 
-        // Fetch coin prices from CoinGecko API (moved above initializeApp)
+        // Fetch coin prices from CoinGecko API
         const fetchCoinPrices = async () => {
             console.log("fetchCoinPrices called");
             try {
@@ -471,7 +471,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         };
 
-        // Function to initialize the app (moved below dependent functions)
+        // Function to initialize the app
         function initializeApp() {
             console.log("initializeApp called");
             fetchCoinPrices();
@@ -544,6 +544,8 @@ document.addEventListener("DOMContentLoaded", () => {
             proceedBtn.addEventListener("click", () => {
                 try {
                     console.log("proceedBtn clicked");
+                    console.log("coinSelection:", coinSelection);
+                    console.log("languageSelection:", languageSelection);
                     if (!coinSelection || !languageSelection) {
                         console.error("Coin or language selection dropdown not found");
                         showAlert("Error: Coin or language selection dropdown not found.");
@@ -557,13 +559,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
                     if (landingPage) {
                         landingPage.style.display = "none";
-                        console.log("Landing page hidden");
+                        console.log("Landing page hidden, display:", landingPage.style.display);
                     } else {
                         console.error("Landing page element not found");
                     }
                     if (navBar) {
                         navBar.style.display = "flex";
-                        console.log("Nav bar display set to flex");
+                        console.log("Nav bar display set to flex, display:", navBar.style.display);
                     } else {
                         console.error("Nav bar element not found");
                     }
@@ -575,7 +577,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (homeTab) {
                         homeTab.style.display = "block";
                         homeTab.classList.add("active");
-                        console.log("Home tab display set to block, class 'active' added");
+                        console.log("Home tab display set to block, class 'active' added, display:", homeTab.style.display);
+                        console.log("Home tab computed style display:", window.getComputedStyle(homeTab).display);
                     } else {
                         console.error("Home tab not found");
                     }
