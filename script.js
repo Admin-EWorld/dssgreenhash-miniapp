@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let miningInterval, progressInterval;
         let coinPrices = { TON: 4.12, BTC: 60000, USDT: 1 };
         let totalDeposited = 0, totalMiningEarned = 0, totalReferralEarned = 0, totalWithdrawals = 0, referrals = 0;
-        let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 3600; // 60 minutes
+        let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 10; // Reduced to 10 seconds for testing
 
         // Translations for different languages
         const translations = {
@@ -232,16 +232,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const fetchCoinPrices = async () => {
             console.log("fetchCoinPrices called");
             try {
-                const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=the-open-network,bitcoin,usdt&vs_currencies=usd");
+                const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=the-open-network,bitcoin,tether&vs_currencies=usd");
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
-                coinPrices.TON = data["the-open-network"].usd;
-                coinPrices.BTC = data["bitcoin"].usd;
-                coinPrices.USDT = data["usdt"].usd;
+                console.log("CoinGecko API response:", data);
+
+                // Validate the response data
+                if (!data["the-open-network"] || !data["bitcoin"] || !data["tether"]) {
+                    throw new Error("Invalid CoinGecko API response: Missing expected coin data");
+                }
+
+                coinPrices.TON = data["the-open-network"].usd || coinPrices.TON;
+                coinPrices.BTC = data["bitcoin"].usd || coinPrices.BTC;
+                coinPrices.USDT = data["tether"].usd || coinPrices.USDT;
+
                 if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
                 if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
                 updateEstimatedIncome();
             } catch (error) {
                 console.error("Error fetching coin prices:", error);
+                // Fallback to default prices
                 if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
                 if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
             }
@@ -276,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Update mining progress, timer, and stats
         const updateMining = () => {
-            console.log("updateMining called, isMining:", isMining, "shares:", shares);
+            console.log("updateMining called, isMining:", isMining, "shares:", shares, "balance:", balance, "income:", income);
             const now = Date.now();
             const elapsed = (now - lastUpdateTime) / 1000; // Elapsed time in seconds
             const remaining = Math.max(0, updateIntervalSeconds - elapsed);
@@ -304,6 +316,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(2);
                     console.log("Mining update: balance =", balance, "income =", income, "totalMiningEarned =", totalMiningEarned);
                     saveUserData();
+                } else {
+                    console.log("Mining not active or no shares to mine with");
                 }
             }
         };
@@ -321,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelector("#homeTab #estimatedIncomeText").innerHTML = `${t.estimatedIncome} <span id="estimatedIncome">${(miningRate).toFixed(8)} ${selectedCoin} (~$${((miningRate) * coinPrices[selectedCoin]).toFixed(2)})</span>`;
             document.querySelector("#homeTab #balanceText").innerHTML = `${t.balance}<span id="balanceUsd">${balance.toFixed(2)}</span> (~<span id="balance">${(balance / coinPrices[selectedCoin]).toFixed(4)}</span> <span id="coinType">${selectedCoin}</span>)`;
             document.querySelector("#homeTab #balanceBreakdownText").innerHTML = `(<span id="sharesValueLabel">${t.sharesValue}</span>: $<span id="sharesValue">${(shares * 60).toFixed(2)}</span> | <span id="incomeLabel">${t.income}</span>: $<span id="income">${income.toFixed(2)}</span> | <span id="referralLabel">${t.referral}</span>: $<span id="referral">${referralRewards.toFixed(2)}</span>)`;
-            document.querySelector("#homeTab #nextUpdateText").innerHTML = `${t.nextUpdate} <span id="nextUpdate">60:00</span>`;
+            document.querySelector("#homeTab #nextUpdateText").innerHTML = `${t.nextUpdate} <span id="nextUpdate">00:10</span>`;
             document.querySelector("#homeTab #startStopBtn").textContent = isMining ? t.stopMining : t.startMining;
             document.querySelector("#homeTab #withdrawBtn").textContent = t.withdraw;
             document.querySelector("#homeTab #transactionHistoryText").textContent = t.transactionHistory;
@@ -679,7 +693,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Start/Stop mining button
         if (startStopBtn) {
             startStopBtn.addEventListener("click", () => {
-                console.log("startStopBtn clicked, isMining:", isMining);
+                console.log("startStopBtn clicked, isMining:", isMining, "shares:", shares);
                 const t = translations[selectedLanguage];
                 if (isMining) {
                     clearInterval(miningInterval);
@@ -688,6 +702,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     startStopBtn.textContent = t.startMining;
                     startStopBtn.classList.remove("mining");
                     if (miningCircle) miningCircle.classList.remove("mining");
+                    console.log("Mining stopped, isMining:", isMining);
                 } else {
                     if (shares === 0) {
                         showAlert(t.noShares);
@@ -704,7 +719,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (miningCircle) miningCircle.classList.add("mining");
                     if (miningInterval) clearInterval(miningInterval);
                     miningInterval = setInterval(updateMining, 1000);
-                    console.log("miningInterval set after start:", miningInterval);
+                    console.log("Mining started, isMining:", isMining, "miningInterval set:", miningInterval);
+                    updateMining(); // Update immediately to reflect the mining state
                 }
                 saveUserData();
             });
@@ -827,6 +843,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 saveUserData();
                 showAlert(t.purchaseSuccessful);
                 sharesInput.value = "";
+                console.log("Shares updated, shares:", shares, "balance:", balance);
             });
         }
 
