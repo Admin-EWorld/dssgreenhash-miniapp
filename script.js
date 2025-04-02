@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
         // Initialize variables
         let miningRate = 0, hashPower = 0, balance = 0, income = 0, referralRewards = 0, shares = 0, selectedCoin = "TON", selectedLanguage = "en";
@@ -50,7 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 noFunds: "No funds to withdraw.", 
                 noIncomeReferral: "No income or referral rewards to withdraw.",
                 buyShares: "Buy Shares",
-                sharesCost: "1 Share = $60 (0.1 TH/s, 10% monthly return)",
+                activeSharesHashPower: "Active Shares / Hash Power:",
+                shareCost: "1 Share =",
+                estimatedReturns: "Estimated Monthly returns is 8~10% (48 ~ 60 $)",
                 purchaseSuccessful: "Purchase successful!",
                 referralLink: "Your Referral Link:",
                 copyLink: "Copy Link",
@@ -98,7 +100,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 noFunds: "لا توجد أموال للسحب.", 
                 noIncomeReferral: "لا توجد أرباح أو مكافآت إحالة للسحب.",
                 buyShares: "شراء أسهم",
-                sharesCost: "1 سهم = $60 (0.1 TH/s، عائد شهري 10%)",
+                activeSharesHashPower: "الأسهم النشطة / قوة التجزئة:",
+                shareCost: "1 سهم =",
+                estimatedReturns: "العائد الشهري المقدر هو 8~10% (48 ~ 60 $)",
                 purchaseSuccessful: "تم الشراء بنجاح!",
                 referralLink: "رابط الإحالة الخاص بك:",
                 copyLink: "نسخ الرابط",
@@ -146,7 +150,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 noFunds: "Нет средств для вывода.", 
                 noIncomeReferral: "Нет дохода или реферальных вознаграждений для вывода.",
                 buyShares: "Купить акции",
-                sharesCost: "1 акция = $60 (0.1 TH/s, 10% месячной прибыли)",
+                activeSharesHashPower: "Активные акции / Хэш-мощность:",
+                shareCost: "1 акция =",
+                estimatedReturns: "Ожидаемая месячная доходность 8~10% (48 ~ 60 $)",
                 purchaseSuccessful: "Покупка успешна!",
                 referralLink: "Ваша реферальная ссылка:",
                 copyLink: "Скопировать ссылку",
@@ -181,7 +187,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // DOM elements
         const miningSharesDisplay = document.getElementById("miningShares");
-        const hashPowerDisplay = document.getElementById("hashPower");
+        const hashPowerDisplay = document.getElementById("hashPower"); // For Home tab
+        const activeSharesDisplay = document.getElementById("activeShares"); // For Boost tab
+        const hashPowerBoostDisplay = document.getElementById("hashPowerBoost"); // For Boost tab
+        const shareCostBtcDisplay = document.getElementById("shareCostBtc"); // For Boost tab
+        const shareCostTonDisplay = document.getElementById("shareCostTon"); // For Boost tab
         const balanceDisplay = document.getElementById("balance");
         const balanceUsdDisplay = document.getElementById("balanceUsd");
         const incomeDisplay = document.getElementById("income");
@@ -389,7 +399,14 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelector("#homeTab #incomePeriod option[value='daily']").textContent = t.daily;
             document.querySelector("#homeTab #incomePeriod option[value='weekly']").textContent = t.weekly;
             document.querySelector("#homeTab #incomePeriod option[value='monthly']").textContent = t.monthly;
-            document.querySelector("#boostTab #sharesCost").textContent = t.sharesCost;
+            if (activeSharesDisplay) activeSharesDisplay.textContent = shares;
+            if (hashPowerBoostDisplay) hashPowerBoostDisplay.textContent = (shares * 0.1).toFixed(1);
+            document.querySelector("#boostTab #activeSharesHashPower").innerHTML = `${t.activeSharesHashPower} <span id="activeShares">${shares}</span> / <span id="hashPowerBoost">${(shares * 0.1).toFixed(1)}</span> TH/s`;
+            const shareCostUsd = 60; // Cost of 1 share in USD
+            const shareCostBtc = (shareCostUsd / coinPrices.BTC).toFixed(8);
+            const shareCostTon = (shareCostUsd / coinPrices.TON).toFixed(4);
+            document.querySelector("#boostTab #shareCost").innerHTML = `${t.shareCost} (0.1 TH/s) (${shareCostUsd} $) (<span id="shareCostBtc">BTC ${shareCostBtc}</span>) (<span id="shareCostTon">TON ${shareCostTon}</span>)`;
+            document.querySelector("#boostTab #estimatedReturns").textContent = t.estimatedReturns;
             document.querySelector("#boostTab #buySharesBtn").textContent = t.buyShares;
             document.querySelector("#referTab #referralLinkText").textContent = t.referralLink;
             document.querySelector("#referTab #copyLinkBtn").textContent = t.copyLink;
@@ -487,7 +504,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     lastUpdateTime = data.lastUpdateTime || Date.now();
                     console.log("loadUserData: isMining =", isMining, "shares =", shares);
                     if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
-                    if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
+                    if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(1); // For Home tab
+                    if (activeSharesDisplay) activeSharesDisplay.textContent = shares; // For Boost tab
+                    if (hashPowerBoostDisplay) hashPowerBoostDisplay.textContent = hashPower.toFixed(1); // For Boost tab
                     if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
                     if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
                     if (incomeDisplay) incomeDisplay.textContent = income.toFixed(2);
@@ -502,6 +521,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = totalWithdrawals.toFixed(2);
                     if (referralsCount) referralsCount.textContent = referrals;
                     if (startStopBtn) startStopBtn.textContent = isMining ? translations[selectedLanguage].stopMining : translations[selectedLanguage].startMining;
+                    if (shareCostBtcDisplay && shareCostTonDisplay) {
+    const shareCostUsd = 60;
+    shareCostBtcDisplay.textContent = `BTC ${(shareCostUsd / coinPrices.BTC).toFixed(8)}`;
+    shareCostTonDisplay.textContent = `TON ${(shareCostUsd / coinPrices.TON).toFixed(4)}`;
+}
                     if (miningCircle) {
                         if (isMining) miningCircle.classList.add("mining");
                         else miningCircle.classList.remove("mining");
@@ -875,7 +899,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 totalDeposited += numShares * 60;
                 balance += numShares * 60; // Add to balance
                 if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
-                if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
+                if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(1); // For Home tab
+                if (activeSharesDisplay) activeSharesDisplay.textContent = shares; // For Boost tab
+                if (hashPowerBoostDisplay) hashPowerBoostDisplay.textContent = hashPower.toFixed(1); // For Boost tab
+                if (shareCostBtcDisplay && shareCostTonDisplay) {
+     const shareCostUsd = 60;
+    shareCostBtcDisplay.textContent = `BTC ${(shareCostUsd / coinPrices.BTC).toFixed(8)}`;
+    shareCostTonDisplay.textContent = `TON ${(shareCostUsd / coinPrices.TON).toFixed(4)}`;
+}
                 if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
                 if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
                 if (sharesValueDisplay) sharesValueDisplay.textContent = (shares * 60).toFixed(2);
