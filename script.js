@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 proceed: "Продолжить", 
                 dssGreenHash: "DSS GreenHash", 
                 priceLabel: "Цена: $", 
-                🙂: "Баланс: $", 
+                balance: "Баланс: $", 
                 sharesValue: "Акции", 
                 income: "Доход", 
                 referral: "Рефералы", 
