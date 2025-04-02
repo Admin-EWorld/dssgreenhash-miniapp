@@ -3,7 +3,7 @@
         // Initialize variables
         let miningRate = 0, hashPower = 0, balance = 0, income = 0, referralRewards = 0, shares = 0, selectedCoin = "TON", selectedLanguage = "en";
         let miningInterval, progressInterval;
-        let coinPrices = { TON: 0, BTC: 0, USDT: 0 };
+        let coinPrices = JSON.parse(localStorage.getItem("coinPrices")) || { TON: 0, BTC: 0, USDT: 0 };
         let totalDeposited = 0, totalMiningEarned = 0, totalReferralEarned = 0, totalWithdrawals = 0, referrals = 0;
         let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 60; // Set to 60 seconds for the desired cycle
         const profitPerSecondPerShare = (6 / (30 * 24 * 60 * 60)); // $6 per share per month, converted to per second
@@ -259,18 +259,10 @@
         coinPrices.TON = data["the-open-network"].usd;
         coinPrices.BTC = data["bitcoin"].usd;
         coinPrices.USDT = data["tether"].usd;
+        localStorage.setItem("coinPrices", JSON.stringify(coinPrices));
 
         // Update UI
-        if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
-        if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
-        updateEstimatedIncome();
-
-        // Update Boost tab share cost equivalents
-        if (shareCostBtcDisplay && shareCostTonDisplay) {
-            const shareCostUsd = 60;
-            shareCostBtcDisplay.textContent = `BTC ${(shareCostUsd / coinPrices.BTC).toFixed(8)}`;
-            shareCostTonDisplay.textContent = `TON ${(shareCostUsd / coinPrices.TON).toFixed(4)}`;
-        }
+        updateUI();
     } catch (error) {
         console.error("Error fetching coin prices:", error);
         if (retryCount > 0) {
@@ -279,10 +271,7 @@
         } else {
             console.error("All retry attempts failed. Using last known prices.");
             showAlert("Failed to fetch coin prices. Using last known prices.");
-            // Update UI with last known prices
-            if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
-            if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
-            updateEstimatedIncome();
+            updateUI();
         }
     }
 };
@@ -489,96 +478,148 @@ document.querySelector("#boostTab #buySharesBtn").textContent = t.buyShares;
 
         // Load user data from Telegram CloudStorage
         const loadUserData = () => {
-            console.log("loadUserData called");
-            if (!isTelegramEnvironment || !isCloudStorageSupported) {
-                console.log("Not in Telegram environment or CloudStorage not supported, skipping CloudStorage load");
-                updateLanguage();
+    console.log("loadUserData called");
+    if (isTelegramEnvironment && isCloudStorageSupported) {
+        window.Telegram.WebApp.CloudStorage.getItems([
+            "miningRate", "hashPower", "balance", "income", "referralRewards", "shares",
+            "selectedCoin", "selectedLanguage", "totalDeposited", "totalMiningEarned",
+            "totalReferralEarned", "totalWithdrawals", "referrals", "isMining", "lastUpdateTime"
+        ], (error, result) => {
+            if (error) {
+                console.error("Error loading user data:", error);
+                showAlert(t.failedClearData);
                 return;
             }
-            window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
-                if (err) {
-                    console.error("Error loading user data:", err);
-                    console.log("Proceeding with default values due to CloudStorage error");
-                    updateLanguage();
-                    return;
-                }
-                if (savedData) {
-                    const data = JSON.parse(savedData);
-                    shares = data.shares || 0;
-                    hashPower = shares * 0.1;
-                    balance = data.balance || 0;
-                    income = data.income || 0;
-                    referralRewards = data.referralRewards || 0;
-                    selectedCoin = data.selectedCoin || "TON";
-                    selectedLanguage = data.selectedLanguage || "en";
-                    totalDeposited = data.totalDeposited || 0;
-                    totalMiningEarned = data.totalMiningEarned || 0;
-                    totalReferralEarned = data.totalReferralEarned || 0;
-                    totalWithdrawals = data.totalWithdrawals || 0;
-                    referrals = data.referrals || 0;
-                    isMining = data.isMining || false;
-                    lastUpdateTime = data.lastUpdateTime || Date.now();
-                    console.log("loadUserData: isMining =", isMining, "shares =", shares);
-                    if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
-                    if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(1); // For Home tab
-                    if (activeSharesDisplay) activeSharesDisplay.textContent = shares; // For Boost tab
-                    if (hashPowerBoostDisplay) hashPowerBoostDisplay.textContent = hashPower.toFixed(1); // For Boost tab
-                    if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
-                    if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
-                    if (incomeDisplay) incomeDisplay.textContent = income.toFixed(2);
-                    if (referralDisplay) referralDisplay.textContent = referralRewards.toFixed(2);
-                    if (sharesValueDisplay) sharesValueDisplay.textContent = (shares * 60).toFixed(2);
-                    if (coinTypeDisplay) coinTypeDisplay.textContent = selectedCoin;
-                    if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
-                    if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
-                    if (totalDepositedDisplay) totalDepositedDisplay.textContent = totalDeposited.toFixed(2);
-                    if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(2);
-                    if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = totalReferralEarned.toFixed(2);
-                    if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = totalWithdrawals.toFixed(2);
-                    if (referralsCount) referralsCount.textContent = referrals;
-                    if (startStopBtn) startStopBtn.textContent = isMining ? translations[selectedLanguage].stopMining : translations[selectedLanguage].startMining;
-                    if (shareCostBtcDisplay && shareCostTonDisplay) {
-    const shareCostUsd = 60;
-    shareCostBtcDisplay.textContent = `BTC ${(shareCostUsd / coinPrices.BTC).toFixed(8)}`;
-    shareCostTonDisplay.textContent = `TON ${(shareCostUsd / coinPrices.TON).toFixed(4)}`;
-}
-                    if (miningCircle) {
-                        if (isMining) miningCircle.classList.add("mining");
-                        else miningCircle.classList.remove("mining");
-                    }
-                    updateEstimatedIncome();
-                    updateLanguage();
-                    generateReferralLink();
-                    if (miningInterval) clearInterval(miningInterval);
-                    miningInterval = setInterval(updateMining, 1000);
-                    console.log("miningInterval set:", miningInterval);
-                }
-            });
-        };
-
+            console.log("Loaded user data:", result);
+            const data = result || {};
+            miningRate = parseFloat(data.miningRate) || 0;
+            hashPower = parseFloat(data.hashPower) || 0;
+            balance = parseFloat(data.balance) || 0;
+            income = parseFloat(data.income) || 0;
+            referralRewards = parseFloat(data.referralRewards) || 0;
+            shares = parseInt(data.shares) || 0;
+            selectedCoin = data.selectedCoin || "TON";
+            selectedLanguage = data.selectedLanguage || "en";
+            totalDeposited = parseFloat(data.totalDeposited) || 0;
+            totalMiningEarned = parseFloat(data.totalMiningEarned) || 0;
+            totalReferralEarned = parseFloat(data.totalReferralEarned) || 0;
+            totalWithdrawals = parseFloat(data.totalWithdrawals) || 0;
+            referrals = parseInt(data.referrals) || 0;
+            isMining = data.isMining || false;
+            lastUpdateTime = parseInt(data.lastUpdateTime) || Date.now();
+            updateUI();
+            updateLanguage();
+            updateEstimatedIncome();
+            if (isMining) startMining();
+        });
+    } else {
+        console.log("CloudStorage not supported or not in Telegram environment, loading from localStorage");
+        const savedData = JSON.parse(localStorage.getItem("userData")) || {};
+        miningRate = parseFloat(savedData.miningRate) || 0;
+        hashPower = parseFloat(savedData.hashPower) || 0;
+        balance = parseFloat(savedData.balance) || 0;
+        income = parseFloat(savedData.income) || 0;
+        referralRewards = parseFloat(savedData.referralRewards) || 0;
+        shares = parseInt(savedData.shares) || 0;
+        selectedCoin = savedData.selectedCoin || "TON";
+        selectedLanguage = savedData.selectedLanguage || "en";
+        totalDeposited = parseFloat(savedData.totalDeposited) || 0;
+        totalMiningEarned = parseFloat(savedData.totalMiningEarned) || 0;
+        totalReferralEarned = parseFloat(savedData.totalReferralEarned) || 0;
+        totalWithdrawals = parseFloat(savedData.totalWithdrawals) || 0;
+        referrals = parseInt(savedData.referrals) || 0;
+        isMining = savedData.isMining || false;
+        lastUpdateTime = parseInt(savedData.lastUpdateTime) || Date.now();
+        updateUI();
+        updateLanguage();
+        updateEstimatedIncome();
+    }
+};
         // Save user data to Telegram CloudStorage
         const saveUserData = () => {
-            console.log("saveUserData called");
-            if (!isTelegramEnvironment || !isCloudStorageSupported) {
-                console.log("Not in Telegram environment or CloudStorage not supported, skipping CloudStorage save");
-                return;
-            }
-            const data = { shares, balance, income, referralRewards, selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned, totalReferralEarned, totalWithdrawals, referrals, isMining, lastUpdateTime };
-            window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data), (err) => {
-                if (err) {
-                    console.error("Error saving user data:", err);
-                } else {
-                    console.log("User data saved successfully");
-                }
-            });
+    console.log("saveUserData called");
+    if (isTelegramEnvironment && isCloudStorageSupported) {
+        window.Telegram.WebApp.CloudStorage.setItem("miningRate", miningRate.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("hashPower", hashPower.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("balance", balance.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("income", income.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("referralRewards", referralRewards.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("shares", shares.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("selectedCoin", selectedCoin);
+        window.Telegram.WebApp.CloudStorage.setItem("selectedLanguage", selectedLanguage);
+        window.Telegram.WebApp.CloudStorage.setItem("totalDeposited", totalDeposited.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("totalMiningEarned", totalMiningEarned.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("totalReferralEarned", totalReferralEarned.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("totalWithdrawals", totalWithdrawals.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("referrals", referrals.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("isMining", isMining.toString());
+        window.Telegram.WebApp.CloudStorage.setItem("lastUpdateTime", lastUpdateTime.toString());
+    } else {
+        console.log("Saving to localStorage as fallback");
+        const userData = {
+            miningRate, hashPower, balance, income, referralRewards, shares,
+            selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned,
+            totalReferralEarned, totalWithdrawals, referrals, isMining, lastUpdateTime
         };
-
+        localStorage.setItem("userData", JSON.stringify(userData));
+    }
+};
+const updateUI = () => {
+    console.log("updateUI called");
+    if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
+    if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(1);
+    if (activeSharesDisplay) activeSharesDisplay.textContent = shares;
+    if (hashPowerBoostDisplay) hashPowerBoostDisplay.textContent = hashPower.toFixed(1);
+    if (shareCostBtcDisplay && shareCostTonDisplay) {
+        const shareCostUsd = 60;
+        shareCostBtcDisplay.textContent = `BTC ${(shareCostUsd / coinPrices.BTC).toFixed(8)}`;
+        shareCostTonDisplay.textContent = `TON ${(shareCostUsd / coinPrices.TON).toFixed(4)}`;
+    }
+    if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
+    if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
+    if (incomeDisplay) incomeDisplay.textContent = income.toFixed(5);
+    if (sharesValueDisplay) sharesValueDisplay.textContent = (shares * 60).toFixed(2);
+    if (totalDepositedDisplay) totalDepositedDisplay.textContent = totalDeposited.toFixed(2);
+    if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(5);
+    if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = totalReferralEarned.toFixed(2);
+    if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = totalWithdrawals.toFixed(2);
+    if (referralsCount) referralsCount.textContent = referrals;
+    if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
+    if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
+    updateEstimatedIncome();
+};
         // Function to initialize the app
         function initializeApp() {
             console.log("initializeApp called");
             fetchCoinPrices();
             // Fetch coin prices every 5 minutes
             setInterval(fetchCoinPrices, 30000);
+            // Listen for storage events to update UI in real-time across tabs
+window.addEventListener("storage", (event) => {
+    if (event.key === "userData") {
+        console.log("Storage event detected, updating UI with new user data");
+        const newData = JSON.parse(event.newValue) || {};
+        miningRate = parseFloat(newData.miningRate) || 0;
+        hashPower = parseFloat(newData.hashPower) || 0;
+        balance = parseFloat(newData.balance) || 0;
+        income = parseFloat(newData.income) || 0;
+        referralRewards = parseFloat(newData.referralRewards) || 0;
+        shares = parseInt(newData.shares) || 0;
+        selectedCoin = newData.selectedCoin || selectedCoin;
+        totalDeposited = parseFloat(newData.totalDeposited) || 0;
+        totalMiningEarned = parseFloat(newData.totalMiningEarned) || 0;
+        totalReferralEarned = parseFloat(newData.totalReferralEarned) || 0;
+        totalWithdrawals = parseFloat(newData.totalWithdrawals) || 0;
+        referrals = parseInt(newData.referrals) || 0;
+        isMining = newData.isMining || isMining;
+        lastUpdateTime = parseInt(newData.lastUpdateTime) || lastUpdateTime;
+        updateUI();
+    } else if (event.key === "coinPrices") {
+        console.log("Storage event detected, updating UI with new coin prices");
+        coinPrices = JSON.parse(event.newValue) || coinPrices;
+        updateUI();
+    }
+});
             showInitialTab();
         }
 
