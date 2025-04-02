@@ -334,11 +334,11 @@ document.addEventListener("DOMContentLoaded", () => {
     else console.error("balanceUsdDisplay not found");
     if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
     else console.error("balanceDisplay not found");
-    if (incomeDisplay) incomeDisplay.textContent = income.toFixed(2);
+    if (incomeDisplay) incomeDisplay.textContent = income.toFixed(5);
     else console.error("incomeDisplay not found");
     if (sharesValueDisplay) sharesValueDisplay.textContent = (shares * 60).toFixed(2);
     else console.error("sharesValueDisplay not found");
-    if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(2);
+    if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(5);
     else console.error("totalMiningEarnedDisplay not found");
     if (referralDisplay) referralDisplay.textContent = referralRewards.toFixed(2);
     else console.error("referralDisplay not found");
