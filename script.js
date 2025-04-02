@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 proceed: "Продолжить", 
                 dssGreenHash: "DSS GreenHash", 
                 priceLabel: "Цена: $", 
-                balance: "Баланс: $", 
+                🙂: "Баланс: $", 
                 sharesValue: "Акции", 
                 income: "Доход", 
                 referral: "Рефералы", 
@@ -152,6 +152,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 referrals: "Рефералы:",
                 referralReward: "Награда за реферала: $5",
                 linkCopied: "Реферальная ссылка скопирована!"
+            }
+        };
+
+        // Helper function to show alerts (with fallback for older Telegram versions)
+        const showAlert = (message, callback) => {
+            console.log("showAlert called with message:", message);
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.version >= "6.1") {
+                window.Telegram.WebApp.showAlert(message, callback);
+            } else {
+                alert(message); // Fallback to browser alert
+                if (callback) callback();
+            }
+        };
+
+        // Helper function to show popups (with fallback for older Telegram versions)
+        const showPopup = (options, callback) => {
+            console.log("showPopup called with options:", options);
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.version >= "6.1") {
+                window.Telegram.WebApp.showPopup(options, callback);
+            } else {
+                // Fallback: Simulate a popup with a simple confirm dialog
+                const buttonId = confirm(`${options.title}\n${options.message}`) ? options.buttons[0].id : "cancel";
+                if (callback) callback(buttonId);
             }
         };
 
@@ -229,10 +252,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const referralsCount = document.getElementById("referralsCount");
 
         // Telegram WebApp initialization
-        if (window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.ready();
+        if (window.Telegram && window.Telegram.WebApp) {
+            console.log("Telegram WebApp version:", window.Telegram.WebApp.version);
+            window.Telegram.WebApp.ready();
+        }
         if (!window.Telegram.WebApp.initDataUnsafe.user) {
-            window.Telegram.WebApp.showAlert(translations[selectedLanguage].walletPrompt);
-            window.Telegram.WebApp.openTelegramLink("https://t.me/Wallet");
+            showAlert(translations[selectedLanguage].walletPrompt, () => {
+                window.Telegram.WebApp.openTelegramLink("https://t.me/Wallet");
+            });
         }
 
         // Load user data from Telegram CloudStorage
@@ -283,7 +310,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     updateEstimatedIncome();
                     updateLanguage();
                     generateReferralLink();
-                    // Start the mining update interval
                     if (miningInterval) clearInterval(miningInterval);
                     miningInterval = setInterval(updateMining, 1000);
                 }
@@ -401,7 +427,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     navItems.forEach(item => item.classList.remove("active"));
                     if (navItems[0]) navItems[0].classList.add("active");
                     loadUserData();
-                    // Start the mining update interval
                     if (progressInterval) clearInterval(progressInterval);
                     progressInterval = setInterval(updateMining, 1000);
                 } else {
@@ -419,10 +444,10 @@ document.addEventListener("DOMContentLoaded", () => {
             window.Telegram.WebApp.CloudStorage.removeItem("userData", (err) => {
                 if (err) {
                     console.error("Error clearing user data:", err);
-                    window.Telegram.WebApp.showAlert(translations[selectedLanguage].failedClearData);
+                    showAlert(translations[selectedLanguage].failedClearData);
                     return;
                 }
-                window.Telegram.WebApp.showAlert(translations[selectedLanguage].userDataCleared);
+                showAlert(translations[selectedLanguage].userDataCleared);
                 miningRate = 0; hashPower = 0; balance = 0; income = 0; referralRewards = 0; shares = 0;
                 selectedCoin = "TON"; selectedLanguage = "en"; totalDeposited = 0; totalMiningEarned = 0;
                 totalReferralEarned = 0; totalWithdrawals = 0; referrals = 0; isMining = false;
@@ -494,12 +519,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const handleChangeCoin = () => {
             console.log("handleChangeCoin called");
             if (!changeCoinSelection) {
-                window.Telegram.WebApp.showAlert(translations[selectedLanguage].errorDropdown);
+                showAlert(translations[selectedLanguage].errorDropdown);
                 return;
             }
             const newCoin = changeCoinSelection.value;
             if (newCoin === selectedCoin) {
-                window.Telegram.WebApp.showAlert(`${translations[selectedLanguage].alreadyMiningCoin} ${newCoin}!`);
+                showAlert(`${translations[selectedLanguage].alreadyMiningCoin} ${newCoin}!`);
                 return;
             }
             selectedCoin = newCoin;
@@ -509,7 +534,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
             updateEstimatedIncome();
             saveUserData();
-            window.Telegram.WebApp.showAlert(`${translations[selectedLanguage].coinChanged} ${selectedCoin}!`);
+            showAlert(`${translations[selectedLanguage].coinChanged} ${selectedCoin}!`);
             const homeTab = document.getElementById("homeTab");
             if (homeTab && homeTab.classList.contains("active")) {
                 homeTab.style.display = "none";
@@ -569,11 +594,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (miningCircle) miningCircle.classList.remove("mining");
                 } else {
                     if (shares === 0) {
-                        window.Telegram.WebApp.showAlert(t.noShares);
+                        showAlert(t.noShares);
                         return;
                     }
                     if (miningInterval) {
-                        window.Telegram.WebApp.showAlert(t.alreadyMining);
+                        showAlert(t.alreadyMining);
                         return;
                     }
                     miningRate = calculateMiningRate();
@@ -597,7 +622,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const incomeReferralUsdt = income + referralRewards;
                 const totalCoin = totalUsdt / coinPrices[selectedCoin];
                 const incomeReferralCoin = incomeReferralUsdt / coinPrices[selectedCoin];
-                window.Telegram.WebApp.showPopup({
+                showPopup({
                     title: "Withdraw Options",
                     message: `Total Value: ${totalCoin.toFixed(4)} ${selectedCoin} (~$${totalUsdt.toFixed(2)})\nIncome + Referral: ${incomeReferralCoin.toFixed(4)} ${selectedCoin} (~$${incomeReferralUsdt.toFixed(2)})`,
                     buttons: [
@@ -608,10 +633,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }, (buttonId) => {
                     if (buttonId === "total") {
                         if (totalUsdt <= 0) {
-                            window.Telegram.WebApp.showAlert(t.noFunds);
+                            showAlert(t.noFunds);
                             return;
                         }
-                        window.Telegram.WebApp.showPopup({
+                        showPopup({
                             title: "Confirm Withdrawal",
                             message: `Withdraw: ${totalUsdt.toFixed(2)} USDT to EQ...abc`,
                             buttons: [
@@ -641,15 +666,15 @@ document.addEventListener("DOMContentLoaded", () => {
                                 clearInterval(miningInterval);
                                 miningInterval = null;
                                 saveUserData();
-                                window.Telegram.WebApp.showAlert(t.withdrawInitiated);
+                                showAlert(t.withdrawInitiated);
                             }
                         });
                     } else if (buttonId === "incomeReferral") {
                         if (incomeReferralUsdt <= 0) {
-                            window.Telegram.WebApp.showAlert(t.noIncomeReferral);
+                            showAlert(t.noIncomeReferral);
                             return;
                         }
-                        window.Telegram.WebApp.showPopup({
+                        showPopup({
                             title: "Confirm Withdrawal",
                             message: `Withdraw: ${incomeReferralUsdt.toFixed(2)} USDT to EQ...abc`,
                             buttons: [
@@ -668,7 +693,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 if (referralDisplay) referralDisplay.textContent = "0.00";
                                 if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = totalWithdrawals.toFixed(2);
                                 saveUserData();
-                                window.Telegram.WebApp.showAlert(t.withdrawInitiated);
+                                showAlert(t.withdrawInitiated);
                             }
                         });
                     }
@@ -688,7 +713,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const t = translations[selectedLanguage];
                 const numShares = parseInt(sharesInput.value) || 0;
                 if (numShares <= 0) {
-                    window.Telegram.WebApp.showAlert("Please enter a valid number of shares.");
+                    showAlert("Please enter a valid number of shares.");
                     return;
                 }
                 shares += numShares;
@@ -703,7 +728,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (totalDepositedDisplay) totalDepositedDisplay.textContent = totalDeposited.toFixed(2);
                 updateEstimatedIncome();
                 saveUserData();
-                window.Telegram.WebApp.showAlert(t.purchaseSuccessful);
+                showAlert(t.purchaseSuccessful);
                 sharesInput.value = "";
             });
         }
@@ -722,7 +747,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const t = translations[selectedLanguage];
                 const link = referralLinkDisplay.textContent;
                 navigator.clipboard.writeText(link).then(() => {
-                    window.Telegram.WebApp.showAlert(t.linkCopied);
+                    showAlert(t.linkCopied);
                 });
             });
         }
