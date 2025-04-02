@@ -259,18 +259,9 @@ document.addEventListener("DOMContentLoaded", () => {
             isTelegramEnvironment = true;
         }
 
-        // Check if the user is authenticated (wallet setup)
-        if (isTelegramEnvironment && !window.Telegram.WebApp.initDataUnsafe.user) {
-            console.log("User not authenticated, prompting for wallet setup");
-            showAlert(translations[selectedLanguage].walletPrompt, () => {
-                window.Telegram.WebApp.openTelegramLink("https://t.me/Wallet");
-                // Allow the app to proceed even if the wallet is not set up
-                initializeApp();
-            });
-        } else {
-            // If the user is authenticated or not in Telegram environment, proceed with initialization
-            initializeApp();
-        }
+        // Bypassing the wallet check for now
+        console.log("Bypassing wallet check for testing purposes");
+        initializeApp();
 
         // Function to initialize the app
         function initializeApp() {
@@ -282,6 +273,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // Load user data from Telegram CloudStorage
         const loadUserData = () => {
             console.log("loadUserData called");
+            if (!isTelegramEnvironment) {
+                console.log("Not in Telegram environment, skipping CloudStorage load");
+                updateLanguage();
+                return;
+            }
             window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
                 if (err) {
                     console.error("Error loading user data:", err);
@@ -336,6 +332,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // Save user data to Telegram CloudStorage
         const saveUserData = () => {
             console.log("saveUserData called");
+            if (!isTelegramEnvironment) {
+                console.log("Not in Telegram environment, skipping CloudStorage save");
+                return;
+            }
             const data = { shares, balance, income, referralRewards, selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned, totalReferralEarned, totalWithdrawals, referrals, isMining, lastUpdateTime };
             window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data));
         };
@@ -383,7 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
             else if (period === "weekly") usdIncome = (shares * monthlyUsdPerShare) / 30 * 7;
             else usdIncome = shares * monthlyUsdPerShare;
             const coinIncome = usdIncome / coinPrices[selectedCoin];
-            estimatedIncomeDisplay.textContent = `${coinIncome.toFixed(8)} ${selectedCoin} (~$${usdIncome.toFixed(2)})`;
+            estimatedIncomeDisplay.textContent = `${coinIncome.toFixed(8) || 0} ${selectedCoin} (~$${usdIncome.toFixed(2) || 0})`;
         };
 
         // Update mining progress, timer, and stats
@@ -422,6 +422,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // Show the initial tab (Home or Landing Page)
         const showInitialTab = () => {
             console.log("showInitialTab called");
+            if (!isTelegramEnvironment) {
+                console.log("Not in Telegram environment, showing landing page");
+                if (landingPage) {
+                    landingPage.classList.add("active");
+                    updateLanguage();
+                }
+                return;
+            }
             window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
                 if (err) {
                     console.error("Error in showInitialTab:", err);
@@ -429,6 +437,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
                 if (savedData) {
+                    console.log("User data found, loading Home tab");
                     if (landingPage) landingPage.style.display = "none";
                     if (navBar) navBar.style.display = "flex";
                     tabContents.forEach(content => {
@@ -446,6 +455,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (progressInterval) clearInterval(progressInterval);
                     progressInterval = setInterval(updateMining, 1000);
                 } else {
+                    console.log("No user data found, showing landing page");
                     if (landingPage) {
                         landingPage.classList.add("active");
                         updateLanguage();
@@ -457,6 +467,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // Clear user data and reset the app
         const clearUserData = () => {
             console.log("clearUserData called");
+            if (!isTelegramEnvironment) {
+                console.log("Not in Telegram environment, resetting locally");
+                resetApp();
+                return;
+            }
             window.Telegram.WebApp.CloudStorage.removeItem("userData", (err) => {
                 if (err) {
                     console.error("Error clearing user data:", err);
@@ -464,38 +479,44 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
                 showAlert(translations[selectedLanguage].userDataCleared);
-                miningRate = 0; hashPower = 0; balance = 0; income = 0; referralRewards = 0; shares = 0;
-                selectedCoin = "TON"; selectedLanguage = "en"; totalDeposited = 0; totalMiningEarned = 0;
-                totalReferralEarned = 0; totalWithdrawals = 0; referrals = 0; isMining = false;
-                lastUpdateTime = Date.now();
-                if (miningSharesDisplay) miningSharesDisplay.textContent = "0";
-                if (hashPowerDisplay) hashPowerDisplay.textContent = "0";
-                if (balanceUsdDisplay) balanceUsdDisplay.textContent = "0.00";
-                if (balanceDisplay) balanceDisplay.textContent = "0.0000";
-                if (incomeDisplay) incomeDisplay.textContent = "0.00";
-                if (referralDisplay) referralDisplay.textContent = "0.00";
-                if (sharesValueDisplay) sharesValueDisplay.textContent = "0.00";
-                if (coinTypeDisplay) coinTypeDisplay.textContent = "TON";
-                if (coinPriceLabel) coinPriceLabel.textContent = "TON";
-                if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices.TON.toFixed(2);
-                if (totalDepositedDisplay) totalDepositedDisplay.textContent = "0.00";
-                if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = "0.00";
-                if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = "0.00";
-                if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = "0.00";
-                if (referralsCount) referralsCount.textContent = "0";
-                if (startStopBtn) startStopBtn.textContent = translations[selectedLanguage].startMining;
-                if (miningCircle) miningCircle.classList.remove("mining");
-                tabContents.forEach(content => {
-                    content.classList.remove("active");
-                    content.style.display = "none";
-                });
-                if (landingPage) {
-                    landingPage.style.display = "block";
-                    landingPage.classList.add("active");
-                }
-                if (navBar) navBar.style.display = "none";
-                updateLanguage();
+                resetApp();
             });
+        };
+
+        // Helper function to reset the app
+        const resetApp = () => {
+            console.log("resetApp called");
+            miningRate = 0; hashPower = 0; balance = 0; income = 0; referralRewards = 0; shares = 0;
+            selectedCoin = "TON"; selectedLanguage = "en"; totalDeposited = 0; totalMiningEarned = 0;
+            totalReferralEarned = 0; totalWithdrawals = 0; referrals = 0; isMining = false;
+            lastUpdateTime = Date.now();
+            if (miningSharesDisplay) miningSharesDisplay.textContent = "0";
+            if (hashPowerDisplay) hashPowerDisplay.textContent = "0";
+            if (balanceUsdDisplay) balanceUsdDisplay.textContent = "0.00";
+            if (balanceDisplay) balanceDisplay.textContent = "0.0000";
+            if (incomeDisplay) incomeDisplay.textContent = "0.00";
+            if (referralDisplay) referralDisplay.textContent = "0.00";
+            if (sharesValueDisplay) sharesValueDisplay.textContent = "0.00";
+            if (coinTypeDisplay) coinTypeDisplay.textContent = "TON";
+            if (coinPriceLabel) coinPriceLabel.textContent = "TON";
+            if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices.TON.toFixed(2);
+            if (totalDepositedDisplay) totalDepositedDisplay.textContent = "0.00";
+            if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = "0.00";
+            if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = "0.00";
+            if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = "0.00";
+            if (referralsCount) referralsCount.textContent = "0";
+            if (startStopBtn) startStopBtn.textContent = translations[selectedLanguage].startMining;
+            if (miningCircle) miningCircle.classList.remove("mining");
+            tabContents.forEach(content => {
+                content.classList.remove("active");
+                content.style.display = "none";
+            });
+            if (landingPage) {
+                landingPage.style.display = "block";
+                landingPage.classList.add("active");
+            }
+            if (navBar) navBar.style.display = "none";
+            updateLanguage();
         };
         clearUserData();
 
@@ -505,6 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("proceedBtn clicked");
                 selectedCoin = coinSelection ? coinSelection.value : "TON";
                 selectedLanguage = languageSelection ? languageSelection.value : "en";
+                console.log("Selected coin:", selectedCoin, "Selected language:", selectedLanguage);
                 if (coinTypeDisplay) coinTypeDisplay.textContent = selectedCoin;
                 if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
                 if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
@@ -516,8 +538,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 const homeTab = document.getElementById("homeTab");
                 if (homeTab) {
+                    console.log("Showing Home tab");
                     homeTab.style.display = "block";
                     homeTab.classList.add("active");
+                } else {
+                    console.error("Home tab not found");
                 }
                 navItems.forEach(item => item.classList.remove("active"));
                 if (navItems[0]) navItems[0].classList.add("active");
