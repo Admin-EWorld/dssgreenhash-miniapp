@@ -3,7 +3,7 @@
         // Initialize variables
         let miningRate = 0, hashPower = 0, balance = 0, income = 0, referralRewards = 0, shares = 0, selectedCoin = "TON", selectedLanguage = "en";
         let miningInterval, progressInterval;
-        let coinPrices = { TON: 4.12, BTC: 60000, USDT: 1 };
+        let coinPrices = { TON: 4.00, BTC: 86500, USDT: 1 };
         let totalDeposited = 0, totalMiningEarned = 0, totalReferralEarned = 0, totalWithdrawals = 0, referrals = 0;
         let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 60; // Set to 60 seconds for the desired cycle
         const profitPerSecondPerShare = (6 / (30 * 24 * 60 * 60)); // $6 per share per month, converted to per second
@@ -50,9 +50,9 @@
                 noFunds: "No funds to withdraw.", 
                 noIncomeReferral: "No income or referral rewards to withdraw.",
                 buyShares: "Buy Shares",
-                activeSharesHashPower: "Active Shares / Hash Power:",
-                shareCost: "1 Share =",
-                estimatedReturns: "Estimated Monthly returns is 8~10% (48 ~ 60 $)",
+                activeSharesHashPower: "Active Shares / Hash Power",
+                shareCost: "1 Mining Share =",
+                estimatedReturns: "Estimated Monthly Returns",
                 purchaseSuccessful: "Purchase successful!",
                 referralLink: "Your Referral Link:",
                 copyLink: "Copy Link",
@@ -100,9 +100,9 @@
                 noFunds: "لا توجد أموال للسحب.", 
                 noIncomeReferral: "لا توجد أرباح أو مكافآت إحالة للسحب.",
                 buyShares: "شراء أسهم",
-                activeSharesHashPower: "الأسهم النشطة / قوة التجزئة:",
-                shareCost: "1 سهم =",
-                estimatedReturns: "العائد الشهري المقدر هو 8~10% (48 ~ 60 $)",
+                activeSharesHashPower: "الأسهم النشطة / قوة التجزئة",
+                shareCost: "1 سهم تعدين =",
+                estimatedReturns: "العائد الشهري المقدر",
                 purchaseSuccessful: "تم الشراء بنجاح!",
                 referralLink: "رابط الإحالة الخاص بك:",
                 copyLink: "نسخ الرابط",
@@ -150,9 +150,9 @@
                 noFunds: "Нет средств для вывода.", 
                 noIncomeReferral: "Нет дохода или реферальных вознаграждений для вывода.",
                 buyShares: "Купить акции",
-                activeSharesHashPower: "Активные акции / Хэш-мощность:",
-                shareCost: "1 акция =",
-                estimatedReturns: "Ожидаемая месячная доходность 8~10% (48 ~ 60 $)",
+                activeSharesHashPower: "Активные акции / Хэш-мощность",
+                shareCost: "1 акция для майнинга =",
+                estimatedReturns: "Ожидаемая месячная доходность",
                 purchaseSuccessful: "Покупка успешна!",
                 referralLink: "Ваша реферальная ссылка:",
                 copyLink: "Скопировать ссылку",
@@ -400,14 +400,14 @@
             document.querySelector("#homeTab #incomePeriod option[value='weekly']").textContent = t.weekly;
             document.querySelector("#homeTab #incomePeriod option[value='monthly']").textContent = t.monthly;
             if (activeSharesDisplay) activeSharesDisplay.textContent = shares;
-            if (hashPowerBoostDisplay) hashPowerBoostDisplay.textContent = (shares * 0.1).toFixed(1);
-            document.querySelector("#boostTab #activeSharesHashPower").innerHTML = `${t.activeSharesHashPower} <span id="activeShares">${shares}</span> / <span id="hashPowerBoost">${(shares * 0.1).toFixed(1)}</span> TH/s`;
-            const shareCostUsd = 60; // Cost of 1 share in USD
-            const shareCostBtc = (shareCostUsd / coinPrices.BTC).toFixed(8);
-            const shareCostTon = (shareCostUsd / coinPrices.TON).toFixed(4);
-            document.querySelector("#boostTab #shareCost").innerHTML = `${t.shareCost} (0.1 TH/s) (${shareCostUsd} $) (<span id="shareCostBtc">BTC ${shareCostBtc}</span>) (<span id="shareCostTon">TON ${shareCostTon}</span>)`;
-            document.querySelector("#boostTab #estimatedReturns").textContent = t.estimatedReturns;
-            document.querySelector("#boostTab #buySharesBtn").textContent = t.buyShares;
+if (hashPowerBoostDisplay) hashPowerBoostDisplay.textContent = (shares * 0.1).toFixed(1);
+document.querySelector("#boostTab #activeSharesHashPower").innerHTML = `${t.activeSharesHashPower}<br><span id="activeShares">${shares}</span>&nbsp;&nbsp;/&nbsp;&nbsp;<span id="hashPowerBoost">${(shares * 0.1).toFixed(1)}</span> TH/s)`;
+const shareCostUsd = 60; // Cost of 1 share in USD
+const shareCostBtc = (shareCostUsd / coinPrices.BTC).toFixed(8);
+const shareCostTon = (shareCostUsd / coinPrices.TON).toFixed(4);
+document.querySelector("#boostTab #shareCost").innerHTML = `${t.shareCost}:<br>(0.1 TH/s) (${shareCostUsd} $)<br>(<span id="shareCostBtc">BTC ${shareCostBtc}</span>) (<span id="shareCostTon">TON ${shareCostTon}</span>)`;
+document.querySelector("#boostTab #estimatedReturns").innerHTML = `${t.estimatedReturns}:<br>(8~10%) (48 ~ 60 $)`;
+document.querySelector("#boostTab #buySharesBtn").textContent = t.buyShares;
             document.querySelector("#referTab #referralLinkText").textContent = t.referralLink;
             document.querySelector("#referTab #copyLinkBtn").textContent = t.copyLink;
             document.querySelector("#referTab #referralsText").innerHTML = `${t.referrals} <span id="referralsCount">${referrals}</span>`;
