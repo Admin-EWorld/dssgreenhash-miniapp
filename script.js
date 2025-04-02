@@ -1,11 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
+        // Initialize variables
         let miningRate = 0, hashPower = 0, balance = 0, income = 0, referralRewards = 0, shares = 0, selectedCoin = "TON", selectedLanguage = "en";
         let miningInterval, progressInterval;
         let coinPrices = { TON: 4.12, BTC: 60000, USDT: 1 };
         let totalDeposited = 0, totalMiningEarned = 0, totalReferralEarned = 0, totalWithdrawals = 0, referrals = 0;
         let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 3600; // 60 minutes
 
+        // Translations for different languages
         const translations = {
             en: { 
                 welcome: "Welcome to DSS GreenHash", 
@@ -153,7 +155,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
+        // Function to update the UI with the selected language
         const updateLanguage = () => {
+            console.log("updateLanguage called");
             const t = translations[selectedLanguage];
             document.getElementById("welcomeText").textContent = t.welcome;
             document.getElementById("selectCoinText").textContent = t.selectCoin;
@@ -177,10 +181,8 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelector("#homeTab #incomePeriod option[value='daily']").textContent = t.daily;
             document.querySelector("#homeTab #incomePeriod option[value='weekly']").textContent = t.weekly;
             document.querySelector("#homeTab #incomePeriod option[value='monthly']").textContent = t.monthly;
-            // Boost Tab Translations
             document.querySelector("#boostTab #sharesCost").textContent = t.sharesCost;
             document.querySelector("#boostTab #buySharesBtn").textContent = t.buyShares;
-            // Refer & Earn Tab Translations
             document.querySelector("#referTab #referralLinkText").textContent = t.referralLink;
             document.querySelector("#referTab #copyLinkBtn").textContent = t.copyLink;
             document.querySelector("#referTab #referralsText").innerHTML = `${t.referrals} <span id="referralsCount">${referrals}</span>`;
@@ -188,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.style.direction = selectedLanguage === "ar" ? "rtl" : "ltr";
         };
 
+        // DOM elements
         const miningSharesDisplay = document.getElementById("miningShares");
         const hashPowerDisplay = document.getElementById("hashPower");
         const balanceDisplay = document.getElementById("balance");
@@ -225,15 +228,21 @@ document.addEventListener("DOMContentLoaded", () => {
         const copyLinkBtn = document.getElementById("copyLinkBtn");
         const referralsCount = document.getElementById("referralsCount");
 
+        // Telegram WebApp initialization
         if (window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.ready();
         if (!window.Telegram.WebApp.initDataUnsafe.user) {
             window.Telegram.WebApp.showAlert(translations[selectedLanguage].walletPrompt);
             window.Telegram.WebApp.openTelegramLink("https://t.me/Wallet");
         }
 
+        // Load user data from Telegram CloudStorage
         const loadUserData = () => {
+            console.log("loadUserData called");
             window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
-                if (err) return;
+                if (err) {
+                    console.error("Error loading user data:", err);
+                    return;
+                }
                 if (savedData) {
                     const data = JSON.parse(savedData);
                     shares = data.shares || 0;
@@ -250,6 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     referrals = data.referrals || 0;
                     isMining = data.isMining || false;
                     lastUpdateTime = data.lastUpdateTime || Date.now();
+                    console.log("loadUserData: isMining =", isMining, "shares =", shares);
                     if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
                     if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
                     if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
@@ -273,19 +283,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     updateEstimatedIncome();
                     updateLanguage();
                     generateReferralLink();
-                    if (isMining) {
-                        miningInterval = setInterval(updateMining, 1000); // Update every second
-                    }
+                    // Start the mining update interval
+                    if (miningInterval) clearInterval(miningInterval);
+                    miningInterval = setInterval(updateMining, 1000);
                 }
             });
         };
 
+        // Save user data to Telegram CloudStorage
         const saveUserData = () => {
+            console.log("saveUserData called");
             const data = { shares, balance, income, referralRewards, selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned, totalReferralEarned, totalWithdrawals, referrals, isMining, lastUpdateTime };
             window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data));
         };
 
+        // Fetch coin prices from CoinGecko API
         const fetchCoinPrices = async () => {
+            console.log("fetchCoinPrices called");
             try {
                 const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=the-open-network,bitcoin,usdt&vs_currencies=usd");
                 const data = await response.json();
@@ -296,21 +310,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
                 updateEstimatedIncome();
             } catch (error) {
+                console.error("Error fetching coin prices:", error);
                 if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
                 if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
             }
         };
         fetchCoinPrices();
 
+        // Calculate the hourly mining rate in the selected coin
         const calculateMiningRate = () => {
+            console.log("calculateMiningRate called");
             const monthlyUsdPerShare = 6; // 10% monthly return on $60 per share
             const monthlyUsd = shares * monthlyUsdPerShare;
             const hourlyUsd = monthlyUsd / (30 * 24);
             return hourlyUsd / coinPrices[selectedCoin]; // Hourly rate in selected coin
         };
 
+        // Update the estimated income based on the selected period
         const updateEstimatedIncome = () => {
-            if (!incomePeriod || !estimatedIncomeDisplay) return;
+            console.log("updateEstimatedIncome called, shares:", shares);
+            if (!incomePeriod || !estimatedIncomeDisplay) {
+                console.error("incomePeriod or estimatedIncomeDisplay not found");
+                return;
+            }
             const period = incomePeriod.value;
             const monthlyUsdPerShare = 6;
             let usdIncome;
@@ -322,7 +344,9 @@ document.addEventListener("DOMContentLoaded", () => {
             estimatedIncomeDisplay.textContent = `${coinIncome.toFixed(8)} ${selectedCoin} (~$${usdIncome.toFixed(2)})`;
         };
 
+        // Update mining progress, timer, and stats
         const updateMining = () => {
+            console.log("updateMining called, isMining:", isMining);
             const now = Date.now();
             const elapsed = (now - lastUpdateTime) / 1000; // Elapsed time in seconds
             const remaining = Math.max(0, updateIntervalSeconds - elapsed);
@@ -353,9 +377,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
+        // Show the initial tab (Home or Landing Page)
         const showInitialTab = () => {
+            console.log("showInitialTab called");
             window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
                 if (err) {
+                    console.error("Error in showInitialTab:", err);
                     if (landingPage) landingPage.classList.add("active");
                     return;
                 }
@@ -374,7 +401,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     navItems.forEach(item => item.classList.remove("active"));
                     if (navItems[0]) navItems[0].classList.add("active");
                     loadUserData();
-                    progressInterval = setInterval(updateMining, 1000); // Update every second
+                    // Start the mining update interval
+                    if (progressInterval) clearInterval(progressInterval);
+                    progressInterval = setInterval(updateMining, 1000);
                 } else {
                     if (landingPage) {
                         landingPage.classList.add("active");
@@ -384,9 +413,12 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         };
 
+        // Clear user data and reset the app
         const clearUserData = () => {
+            console.log("clearUserData called");
             window.Telegram.WebApp.CloudStorage.removeItem("userData", (err) => {
                 if (err) {
+                    console.error("Error clearing user data:", err);
                     window.Telegram.WebApp.showAlert(translations[selectedLanguage].failedClearData);
                     return;
                 }
@@ -426,10 +458,13 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         clearUserData();
 
+        // Initialize the app by showing the initial tab
         showInitialTab();
 
+        // Event listener for the Proceed button on the landing page
         if (proceedBtn) {
             proceedBtn.addEventListener("click", () => {
+                console.log("proceedBtn clicked");
                 selectedCoin = coinSelection ? coinSelection.value : "TON";
                 selectedLanguage = languageSelection ? languageSelection.value : "en";
                 if (coinTypeDisplay) coinTypeDisplay.textContent = selectedCoin;
@@ -450,11 +485,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (navItems[0]) navItems[0].classList.add("active");
                 updateLanguage();
                 saveUserData();
+                if (progressInterval) clearInterval(progressInterval);
                 progressInterval = setInterval(updateMining, 1000);
             });
         }
 
+        // Handle coin change in the More tab
         const handleChangeCoin = () => {
+            console.log("handleChangeCoin called");
             if (!changeCoinSelection) {
                 window.Telegram.WebApp.showAlert(translations[selectedLanguage].errorDropdown);
                 return;
@@ -499,8 +537,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        // Navigation between tabs
         navItems.forEach(item => {
             item.addEventListener("click", () => {
+                console.log("Nav item clicked:", item.dataset.tab);
                 navItems.forEach(i => i.classList.remove("active"));
                 item.classList.add("active");
                 tabContents.forEach(content => {
@@ -515,8 +555,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
+        // Start/Stop mining button
         if (startStopBtn) {
             startStopBtn.addEventListener("click", () => {
+                console.log("startStopBtn clicked, isMining:", isMining);
                 const t = translations[selectedLanguage];
                 if (isMining) {
                     clearInterval(miningInterval);
@@ -539,14 +581,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     startStopBtn.textContent = t.stopMining;
                     startStopBtn.classList.add("mining");
                     if (miningCircle) miningCircle.classList.add("mining");
+                    if (miningInterval) clearInterval(miningInterval);
                     miningInterval = setInterval(updateMining, 1000);
                 }
                 saveUserData();
             });
         }
 
+        // Withdraw button
         if (withdrawBtn) {
             withdrawBtn.addEventListener("click", () => {
+                console.log("withdrawBtn clicked");
                 const t = translations[selectedLanguage];
                 const totalUsdt = balance;
                 const incomeReferralUsdt = income + referralRewards;
@@ -631,6 +676,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        // Update estimated income when the period dropdown changes
         if (incomePeriod) {
             incomePeriod.addEventListener("change", updateEstimatedIncome);
         }
@@ -638,6 +684,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Boost Tab: Buy Shares Functionality
         if (buySharesBtn) {
             buySharesBtn.addEventListener("click", () => {
+                console.log("buySharesBtn clicked");
                 const t = translations[selectedLanguage];
                 const numShares = parseInt(sharesInput.value) || 0;
                 if (numShares <= 0) {
@@ -663,6 +710,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Refer & Earn Tab: Generate and Copy Referral Link
         const generateReferralLink = () => {
+            console.log("generateReferralLink called");
             if (referralLinkDisplay) {
                 referralLinkDisplay.textContent = `https://t.me/DSSGreenHashBot?start=test_user`;
             }
@@ -670,6 +718,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (copyLinkBtn) {
             copyLinkBtn.addEventListener("click", () => {
+                console.log("copyLinkBtn clicked");
                 const t = translations[selectedLanguage];
                 const link = referralLinkDisplay.textContent;
                 navigator.clipboard.writeText(link).then(() => {
@@ -680,6 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Simulate a referral (for testing purposes)
         const simulateReferral = () => {
+            console.log("simulateReferral called");
             referrals += 1;
             referralRewards += 5; // $5 per referral
             totalReferralEarned += 5;
