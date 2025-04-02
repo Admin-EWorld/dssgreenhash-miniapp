@@ -178,41 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        // Function to update the UI with the selected language
-        const updateLanguage = () => {
-            console.log("updateLanguage called");
-            const t = translations[selectedLanguage];
-            document.getElementById("welcomeText").textContent = t.welcome;
-            document.getElementById("selectCoinText").textContent = t.selectCoin;
-            document.getElementById("selectLanguageText").textContent = t.selectLanguage;
-            document.getElementById("proceedBtn").textContent = t.proceed;
-            document.querySelector("#homeTab h1").textContent = t.dssGreenHash;
-            document.querySelector("#homeTab #coinPriceText").innerHTML = `<span id="coinPriceLabel">${selectedCoin}</span> ${t.priceLabel}<span id="coinPrice">${coinPrices[selectedCoin].toFixed(2)}</span>`;
-            document.querySelector("#homeTab #estimatedIncomeText").innerHTML = `${t.estimatedIncome} <span id="estimatedIncome">${(miningRate).toFixed(8)} ${selectedCoin} (~$${((miningRate) * coinPrices[selectedCoin]).toFixed(2)})</span>`;
-            document.querySelector("#homeTab #balanceText").innerHTML = `${t.balance}<span id="balanceUsd">${balance.toFixed(2)}</span> (~<span id="balance">${(balance / coinPrices[selectedCoin]).toFixed(4)}</span> <span id="coinType">${selectedCoin}</span>)`;
-            document.querySelector("#homeTab #balanceBreakdownText").innerHTML = `(<span id="sharesValueLabel">${t.sharesValue}</span>: $<span id="sharesValue">${(shares * 60).toFixed(2)}</span> | <span id="incomeLabel">${t.income}</span>: $<span id="income">${income.toFixed(2)}</span> | <span id="referralLabel">${t.referral}</span>: $<span id="referral">${referralRewards.toFixed(2)}</span>)`;
-            document.querySelector("#homeTab #nextUpdateText").innerHTML = `${t.nextUpdate} <span id="nextUpdate">60:00</span>`;
-            document.querySelector("#homeTab #startStopBtn").textContent = isMining ? t.stopMining : t.startMining;
-            document.querySelector("#homeTab #withdrawBtn").textContent = t.withdraw;
-            document.querySelector("#homeTab #transactionHistoryText").textContent = t.transactionHistory;
-            document.querySelector("#homeTab #totalDepositedText").innerHTML = `${t.totalDeposited}<span id="totalDeposited">${totalDeposited.toFixed(2)}</span>`;
-            document.querySelector("#homeTab #totalMiningEarnedText").innerHTML = `${t.totalMiningEarned}<span id="totalMiningEarned">${totalMiningEarned.toFixed(2)}</span>`;
-            document.querySelector("#homeTab #totalReferralEarnedText").innerHTML = `${t.totalReferralEarned}<span id="totalReferralEarned">${totalReferralEarned.toFixed(2)}</span>`;
-            document.querySelector("#homeTab #totalWithdrawalsText").innerHTML = `${t.totalWithdrawals}<span id="totalWithdrawals">${totalWithdrawals.toFixed(2)}</span>`;
-            document.querySelector("#homeTab #progressText").innerHTML = `${t.miningProgress} <span id="progressPercent">0%</span>`;
-            document.querySelector("#homeTab #incomePeriod option[value='hourly']").textContent = t.hourly;
-            document.querySelector("#homeTab #incomePeriod option[value='daily']").textContent = t.daily;
-            document.querySelector("#homeTab #incomePeriod option[value='weekly']").textContent = t.weekly;
-            document.querySelector("#homeTab #incomePeriod option[value='monthly']").textContent = t.monthly;
-            document.querySelector("#boostTab #sharesCost").textContent = t.sharesCost;
-            document.querySelector("#boostTab #buySharesBtn").textContent = t.buyShares;
-            document.querySelector("#referTab #referralLinkText").textContent = t.referralLink;
-            document.querySelector("#referTab #copyLinkBtn").textContent = t.copyLink;
-            document.querySelector("#referTab #referralsText").innerHTML = `${t.referrals} <span id="referralsCount">${referrals}</span>`;
-            document.querySelector("#referTab #referralRewardText").textContent = t.referralReward;
-            document.body.style.direction = selectedLanguage === "ar" ? "rtl" : "ltr";
-        };
-
         // DOM elements
         const miningSharesDisplay = document.getElementById("miningShares");
         const hashPowerDisplay = document.getElementById("hashPower");
@@ -222,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const referralDisplay = document.getElementById("referral");
         const sharesValueDisplay = document.getElementById("sharesValue");
         const estimatedIncomeDisplay = document.getElementById("estimatedIncome");
-        const incomePeriod = document.getElementById("incomePeriod");
+        const incomePeriod | document.getElementById("incomePeriod");
         const miningCircle = document.getElementById("miningCircle");
         const coinPriceLabel = document.getElementById("coinPriceLabel");
         const coinPriceDisplay = document.getElementById("coinPrice");
@@ -259,88 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
             isTelegramEnvironment = true;
         }
 
-        // Bypassing the wallet check for now
-        console.log("Bypassing wallet check for testing purposes");
-        initializeApp();
-
-        // Function to initialize the app
-        function initializeApp() {
-            console.log("initializeApp called");
-            fetchCoinPrices();
-            showInitialTab();
-        }
-
-        // Load user data from Telegram CloudStorage
-        const loadUserData = () => {
-            console.log("loadUserData called");
-            if (!isTelegramEnvironment) {
-                console.log("Not in Telegram environment, skipping CloudStorage load");
-                updateLanguage();
-                return;
-            }
-            window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
-                if (err) {
-                    console.error("Error loading user data:", err);
-                    return;
-                }
-                if (savedData) {
-                    const data = JSON.parse(savedData);
-                    shares = data.shares || 0;
-                    hashPower = shares * 0.1;
-                    balance = data.balance || 0;
-                    income = data.income || 0;
-                    referralRewards = data.referralRewards || 0;
-                    selectedCoin = data.selectedCoin || "TON";
-                    selectedLanguage = data.selectedLanguage || "en";
-                    totalDeposited = data.totalDeposited || 0;
-                    totalMiningEarned = data.totalMiningEarned || 0;
-                    totalReferralEarned = data.totalReferralEarned || 0;
-                    totalWithdrawals = data.totalWithdrawals || 0;
-                    referrals = data.referrals || 0;
-                    isMining = data.isMining || false;
-                    lastUpdateTime = data.lastUpdateTime || Date.now();
-                    console.log("loadUserData: isMining =", isMining, "shares =", shares);
-                    if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
-                    if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
-                    if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
-                    if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
-                    if (incomeDisplay) incomeDisplay.textContent = income.toFixed(2);
-                    if (referralDisplay) referralDisplay.textContent = referralRewards.toFixed(2);
-                    if (sharesValueDisplay) sharesValueDisplay.textContent = (shares * 60).toFixed(2);
-                    if (coinTypeDisplay) coinTypeDisplay.textContent = selectedCoin;
-                    if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
-                    if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
-                    if (totalDepositedDisplay) totalDepositedDisplay.textContent = totalDeposited.toFixed(2);
-                    if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(2);
-                    if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = totalReferralEarned.toFixed(2);
-                    if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = totalWithdrawals.toFixed(2);
-                    if (referralsCount) referralsCount.textContent = referrals;
-                    if (startStopBtn) startStopBtn.textContent = isMining ? translations[selectedLanguage].stopMining : translations[selectedLanguage].startMining;
-                    if (miningCircle) {
-                        if (isMining) miningCircle.classList.add("mining");
-                        else miningCircle.classList.remove("mining");
-                    }
-                    updateEstimatedIncome();
-                    updateLanguage();
-                    generateReferralLink();
-                    if (miningInterval) clearInterval(miningInterval);
-                    miningInterval = setInterval(updateMining, 1000);
-                }
-            });
-        };
-
-        // Save user data to Telegram CloudStorage
-        const saveUserData = () => {
-            console.log("saveUserData called");
-            if (!isTelegramEnvironment) {
-                console.log("Not in Telegram environment, skipping CloudStorage save");
-                return;
-            }
-            const data = { shares, balance, income, referralRewards, selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned, totalReferralEarned, totalWithdrawals, referrals, isMining, lastUpdateTime };
-            window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data));
-        };
-
-        // Fetch coin prices from CoinGecko API
+        // Fetch coin prices from CoinGecko API (moved above initializeApp)
         const fetchCoinPrices = async () => {
             console.log("fetchCoinPrices called");
             try {
@@ -419,6 +303,41 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
+        // Function to update the UI with the selected language
+        const updateLanguage = () => {
+            console.log("updateLanguage called");
+            const t = translations[selectedLanguage];
+            document.getElementById("welcomeText").textContent = t.welcome;
+            document.getElementById("selectCoinText").textContent = t.selectCoin;
+            document.getElementById("selectLanguageText").textContent = t.selectLanguage;
+            document.getElementById("proceedBtn").textContent = t.proceed;
+            document.querySelector("#homeTab h1").textContent = t.dssGreenHash;
+            document.querySelector("#homeTab #coinPriceText").innerHTML = `<span id="coinPriceLabel">${selectedCoin}</span> ${t.priceLabel}<span id="coinPrice">${coinPrices[selectedCoin].toFixed(2)}</span>`;
+            document.querySelector("#homeTab #estimatedIncomeText").innerHTML = `${t.estimatedIncome} <span id="estimatedIncome">${(miningRate).toFixed(8)} ${selectedCoin} (~$${((miningRate) * coinPrices[selectedCoin]).toFixed(2)})</span>`;
+            document.querySelector("#homeTab #balanceText").innerHTML = `${t.balance}<span id="balanceUsd">${balance.toFixed(2)}</span> (~<span id="balance">${(balance / coinPrices[selectedCoin]).toFixed(4)}</span> <span id="coinType">${selectedCoin}</span>)`;
+            document.querySelector("#homeTab #balanceBreakdownText").innerHTML = `(<span id="sharesValueLabel">${t.sharesValue}</span>: $<span id="sharesValue">${(shares * 60).toFixed(2)}</span> | <span id="incomeLabel">${t.income}</span>: $<span id="income">${income.toFixed(2)}</span> | <span id="referralLabel">${t.referral}</span>: $<span id="referral">${referralRewards.toFixed(2)}</span>)`;
+            document.querySelector("#homeTab #nextUpdateText").innerHTML = `${t.nextUpdate} <span id="nextUpdate">60:00</span>`;
+            document.querySelector("#homeTab #startStopBtn").textContent = isMining ? t.stopMining : t.startMining;
+            document.querySelector("#homeTab #withdrawBtn").textContent = t.withdraw;
+            document.querySelector("#homeTab #transactionHistoryText").textContent = t.transactionHistory;
+            document.querySelector("#homeTab #totalDepositedText").innerHTML = `${t.totalDeposited}<span id="totalDeposited">${totalDeposited.toFixed(2)}</span>`;
+            document.querySelector("#homeTab #totalMiningEarnedText").innerHTML = `${t.totalMiningEarned}<span id="totalMiningEarned">${totalMiningEarned.toFixed(2)}</span>`;
+            document.querySelector("#homeTab #totalReferralEarnedText").innerHTML = `${t.totalReferralEarned}<span id="totalReferralEarned">${totalReferralEarned.toFixed(2)}</span>`;
+            document.querySelector("#homeTab #totalWithdrawalsText").innerHTML = `${t.totalWithdrawals}<span id="totalWithdrawals">${totalWithdrawals.toFixed(2)}</span>`;
+            document.querySelector("#homeTab #progressText").innerHTML = `${t.miningProgress} <span id="progressPercent">0%</span>`;
+            document.querySelector("#homeTab #incomePeriod option[value='hourly']").textContent = t.hourly;
+            document.querySelector("#homeTab #incomePeriod option[value='daily']").textContent = t.daily;
+            document.querySelector("#homeTab #incomePeriod option[value='weekly']").textContent = t.weekly;
+            document.querySelector("#homeTab #incomePeriod option[value='monthly']").textContent = t.monthly;
+            document.querySelector("#boostTab #sharesCost").textContent = t.sharesCost;
+            document.querySelector("#boostTab #buySharesBtn").textContent = t.buyShares;
+            document.querySelector("#referTab #referralLinkText").textContent = t.referralLink;
+            document.querySelector("#referTab #copyLinkBtn").textContent = t.copyLink;
+            document.querySelector("#referTab #referralsText").innerHTML = `${t.referrals} <span id="referralsCount">${referrals}</span>`;
+            document.querySelector("#referTab #referralRewardText").textContent = t.referralReward;
+            document.body.style.direction = selectedLanguage === "ar" ? "rtl" : "ltr";
+        };
+
         // Show the initial tab (Home or Landing Page)
         const showInitialTab = () => {
             console.log("showInitialTab called");
@@ -433,13 +352,20 @@ document.addEventListener("DOMContentLoaded", () => {
             window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
                 if (err) {
                     console.error("Error in showInitialTab:", err);
-                    if (landingPage) landingPage.classList.add("active");
+                    console.log("Proceeding to landing page despite CloudStorage error");
+                    if (landingPage) {
+                        landingPage.classList.add("active");
+                        updateLanguage();
+                    }
                     return;
                 }
                 if (savedData) {
                     console.log("User data found, loading Home tab");
                     if (landingPage) landingPage.style.display = "none";
-                    if (navBar) navBar.style.display = "flex";
+                    if (navBar) {
+                        navBar.style.display = "flex";
+                        console.log("Nav bar display set to flex");
+                    }
                     tabContents.forEach(content => {
                         content.classList.remove("active");
                         content.style.display = "none";
@@ -448,6 +374,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (homeTab) {
                         homeTab.style.display = "block";
                         homeTab.classList.add("active");
+                        console.log("Home tab display set to block, class 'active' added");
+                    } else {
+                        console.error("Home tab not found");
                     }
                     navItems.forEach(item => item.classList.remove("active"));
                     if (navItems[0]) navItems[0].classList.add("active");
@@ -464,6 +393,91 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         };
 
+        // Load user data from Telegram CloudStorage
+        const loadUserData = () => {
+            console.log("loadUserData called");
+            if (!isTelegramEnvironment) {
+                console.log("Not in Telegram environment, skipping CloudStorage load");
+                updateLanguage();
+                return;
+            }
+            window.Telegram.WebApp.CloudStorage.getItem("userData", (err, savedData) => {
+                if (err) {
+                    console.error("Error loading user data:", err);
+                    console.log("Proceeding with default values due to CloudStorage error");
+                    updateLanguage();
+                    return;
+                }
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    shares = data.shares || 0;
+                    hashPower = shares * 0.1;
+                    balance = data.balance || 0;
+                    income = data.income || 0;
+                    referralRewards = data.referralRewards || 0;
+                    selectedCoin = data.selectedCoin || "TON";
+                    selectedLanguage = data.selectedLanguage || "en";
+                    totalDeposited = data.totalDeposited || 0;
+                    totalMiningEarned = data.totalMiningEarned || 0;
+                    totalReferralEarned = data.totalReferralEarned || 0;
+                    totalWithdrawals = data.totalWithdrawals || 0;
+                    referrals = data.referrals || 0;
+                    isMining = data.isMining || false;
+                    lastUpdateTime = data.lastUpdateTime || Date.now();
+                    console.log("loadUserData: isMining =", isMining, "shares =", shares);
+                    if (miningSharesDisplay) miningSharesDisplay.textContent = shares;
+                    if (hashPowerDisplay) hashPowerDisplay.textContent = hashPower.toFixed(2);
+                    if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
+                    if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
+                    if (incomeDisplay) incomeDisplay.textContent = income.toFixed(2);
+                    if (referralDisplay) referralDisplay.textContent = referralRewards.toFixed(2);
+                    if (sharesValueDisplay) sharesValueDisplay.textContent = (shares * 60).toFixed(2);
+                    if (coinTypeDisplay) coinTypeDisplay.textContent = selectedCoin;
+                    if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
+                    if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
+                    if (totalDepositedDisplay) totalDepositedDisplay.textContent = totalDeposited.toFixed(2);
+                    if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(2);
+                    if (totalReferralEarnedDisplay) totalReferralEarnedDisplay.textContent = totalReferralEarned.toFixed(2);
+                    if (totalWithdrawalsDisplay) totalWithdrawalsDisplay.textContent = totalWithdrawals.toFixed(2);
+                    if (referralsCount) referralsCount.textContent = referrals;
+                    if (startStopBtn) startStopBtn.textContent = isMining ? translations[selectedLanguage].stopMining : translations[selectedLanguage].startMining;
+                    if (miningCircle) {
+                        if (isMining) miningCircle.classList.add("mining");
+                        else miningCircle.classList.remove("mining");
+                    }
+                    updateEstimatedIncome();
+                    updateLanguage();
+                    generateReferralLink();
+                    if (miningInterval) clearInterval(miningInterval);
+                    miningInterval = setInterval(updateMining, 1000);
+                }
+            });
+        };
+
+        // Save user data to Telegram CloudStorage
+        const saveUserData = () => {
+            console.log("saveUserData called");
+            if (!isTelegramEnvironment) {
+                console.log("Not in Telegram environment, skipping CloudStorage save");
+                return;
+            }
+            const data = { shares, balance, income, referralRewards, selectedCoin, selectedLanguage, totalDeposited, totalMiningEarned, totalReferralEarned, totalWithdrawals, referrals, isMining, lastUpdateTime };
+            window.Telegram.WebApp.CloudStorage.setItem("userData", JSON.stringify(data), (err) => {
+                if (err) {
+                    console.error("Error saving user data:", err);
+                } else {
+                    console.log("User data saved successfully");
+                }
+            });
+        };
+
+        // Function to initialize the app (moved below dependent functions)
+        function initializeApp() {
+            console.log("initializeApp called");
+            fetchCoinPrices();
+            showInitialTab();
+        }
+
         // Clear user data and reset the app
         const clearUserData = () => {
             console.log("clearUserData called");
@@ -476,6 +490,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (err) {
                     console.error("Error clearing user data:", err);
                     showAlert(translations[selectedLanguage].failedClearData);
+                    resetApp();
                     return;
                 }
                 showAlert(translations[selectedLanguage].userDataCleared);
@@ -520,36 +535,66 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         clearUserData();
 
+        // Bypassing the wallet check for now
+        console.log("Bypassing wallet check for testing purposes");
+        initializeApp();
+
         // Event listener for the Proceed button on the landing page
         if (proceedBtn) {
             proceedBtn.addEventListener("click", () => {
-                console.log("proceedBtn clicked");
-                selectedCoin = coinSelection ? coinSelection.value : "TON";
-                selectedLanguage = languageSelection ? languageSelection.value : "en";
-                console.log("Selected coin:", selectedCoin, "Selected language:", selectedLanguage);
-                if (coinTypeDisplay) coinTypeDisplay.textContent = selectedCoin;
-                if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
-                if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
-                if (landingPage) landingPage.style.display = "none";
-                if (navBar) navBar.style.display = "flex";
-                tabContents.forEach(content => {
-                    content.classList.remove("active");
-                    content.style.display = "none";
-                });
-                const homeTab = document.getElementById("homeTab");
-                if (homeTab) {
-                    console.log("Showing Home tab");
-                    homeTab.style.display = "block";
-                    homeTab.classList.add("active");
-                } else {
-                    console.error("Home tab not found");
+                try {
+                    console.log("proceedBtn clicked");
+                    if (!coinSelection || !languageSelection) {
+                        console.error("Coin or language selection dropdown not found");
+                        showAlert("Error: Coin or language selection dropdown not found.");
+                        return;
+                    }
+                    selectedCoin = coinSelection.value || "TON";
+                    selectedLanguage = languageSelection.value || "en";
+                    console.log("Selected coin:", selectedCoin, "Selected language:", selectedLanguage);
+                    if (coinTypeDisplay) coinTypeDisplay.textContent = selectedCoin;
+                    if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
+                    if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
+                    if (landingPage) {
+                        landingPage.style.display = "none";
+                        console.log("Landing page hidden");
+                    } else {
+                        console.error("Landing page element not found");
+                    }
+                    if (navBar) {
+                        navBar.style.display = "flex";
+                        console.log("Nav bar display set to flex");
+                    } else {
+                        console.error("Nav bar element not found");
+                    }
+                    tabContents.forEach(content => {
+                        content.classList.remove("active");
+                        content.style.display = "none";
+                    });
+                    const homeTab = document.getElementById("homeTab");
+                    if (homeTab) {
+                        homeTab.style.display = "block";
+                        homeTab.classList.add("active");
+                        console.log("Home tab display set to block, class 'active' added");
+                    } else {
+                        console.error("Home tab not found");
+                    }
+                    navItems.forEach(item => item.classList.remove("active"));
+                    if (navItems[0]) {
+                        navItems[0].classList.add("active");
+                        console.log("First nav item set to active");
+                    } else {
+                        console.error("Nav items not found");
+                    }
+                    updateLanguage();
+                    saveUserData();
+                    if (progressInterval) clearInterval(progressInterval);
+                    progressInterval = setInterval(updateMining, 1000);
+                    console.log("Proceed button logic completed");
+                } catch (error) {
+                    console.error("Error in proceedBtn event listener:", error);
+                    showAlert("An error occurred while proceeding. Please try again.");
                 }
-                navItems.forEach(item => item.classList.remove("active"));
-                if (navItems[0]) navItems[0].classList.add("active");
-                updateLanguage();
-                saveUserData();
-                if (progressInterval) clearInterval(progressInterval);
-                progressInterval = setInterval(updateMining, 1000);
             });
         }
 
