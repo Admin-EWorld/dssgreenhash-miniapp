@@ -252,14 +252,31 @@ document.addEventListener("DOMContentLoaded", () => {
         const referralsCount = document.getElementById("referralsCount");
 
         // Telegram WebApp initialization
+        let isTelegramEnvironment = false;
         if (window.Telegram && window.Telegram.WebApp) {
             console.log("Telegram WebApp version:", window.Telegram.WebApp.version);
             window.Telegram.WebApp.ready();
+            isTelegramEnvironment = true;
         }
-        if (!window.Telegram.WebApp.initDataUnsafe.user) {
+
+        // Check if the user is authenticated (wallet setup)
+        if (isTelegramEnvironment && !window.Telegram.WebApp.initDataUnsafe.user) {
+            console.log("User not authenticated, prompting for wallet setup");
             showAlert(translations[selectedLanguage].walletPrompt, () => {
                 window.Telegram.WebApp.openTelegramLink("https://t.me/Wallet");
+                // Allow the app to proceed even if the wallet is not set up
+                initializeApp();
             });
+        } else {
+            // If the user is authenticated or not in Telegram environment, proceed with initialization
+            initializeApp();
+        }
+
+        // Function to initialize the app
+        function initializeApp() {
+            console.log("initializeApp called");
+            fetchCoinPrices();
+            showInitialTab();
         }
 
         // Load user data from Telegram CloudStorage
@@ -341,7 +358,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
             }
         };
-        fetchCoinPrices();
 
         // Calculate the hourly mining rate in the selected coin
         const calculateMiningRate = () => {
@@ -482,9 +498,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         };
         clearUserData();
-
-        // Initialize the app by showing the initial tab
-        showInitialTab();
 
         // Event listener for the Proceed button on the landing page
         if (proceedBtn) {
