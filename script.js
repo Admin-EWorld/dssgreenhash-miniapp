@@ -288,39 +288,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Update mining progress, timer, and stats
         const updateMining = () => {
-            console.log("updateMining called, isMining:", isMining, "shares:", shares, "balance:", balance, "income:", income);
-            const now = Date.now();
-            const elapsed = (now - lastUpdateTime) / 1000; // Elapsed time in seconds
-            const remaining = Math.max(0, updateIntervalSeconds - elapsed);
-            const minutes = Math.floor(remaining / 60);
-            const seconds = Math.floor(remaining % 60);
-            if (nextUpdate) nextUpdate.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-            const progress = (elapsed / updateIntervalSeconds) * 100;
-            if (progressPercent) progressPercent.textContent = `${Math.min(100, Math.round(progress))}%`;
-            const radius = 75, circumference = 2 * Math.PI * radius;
-            const progressRing = document.querySelector(".progress-ring-circle");
-            if (progressRing) {
-                progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
-                progressRing.style.strokeDashoffset = circumference - (progress / 100) * circumference;
-            }
+    console.log("updateMining called, isMining:", isMining, "shares:", shares, "balance:", balance, "income:", income);
+    const now = Date.now();
+    const elapsed = (now - lastUpdateTime) / 1000; // Elapsed time in seconds
+    const remaining = Math.max(0, updateIntervalSeconds - elapsed);
+    const minutes = Math.floor(remaining / 60);
+    const seconds = Math.floor(remaining % 60);
+    if (nextUpdate) nextUpdate.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    const progress = (elapsed / updateIntervalSeconds) * 100;
+    if (progressPercent) progressPercent.textContent = `${Math.min(100, Math.round(progress))}%`;
+    const radius = 75, circumference = 2 * Math.PI * radius;
+    const progressRing = document.querySelector(".progress-ring-circle");
+    if (progressRing) {
+        progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressRing.style.strokeDashoffset = circumference - (progress / 100) * circumference;
+    }
+            // Update UI elements every second
+    if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
+    if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
+    if (incomeDisplay) incomeDisplay.textContent = income.toFixed(2);
+    if (sharesValueDisplay) sharesValueDisplay.textContent = (shares * 60).toFixed(2);
+    if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(2);
+    if (referralDisplay) referralDisplay.textContent = referralRewards.toFixed(2);
+            
             if (remaining <= 0) {
-                lastUpdateTime = Date.now();
-                if (isMining && shares > 0) {
-                    const hourlyUsd = (shares * 6) / (30 * 24); // Hourly income in USD
-                    balance += hourlyUsd;
-                    income += hourlyUsd;
-                    totalMiningEarned += hourlyUsd;
-                    if (balanceUsdDisplay) balanceUsdDisplay.textContent = balance.toFixed(2);
-                    if (balanceDisplay) balanceDisplay.textContent = (balance / coinPrices[selectedCoin]).toFixed(4);
-                    if (incomeDisplay) incomeDisplay.textContent = income.toFixed(2);
-                    if (totalMiningEarnedDisplay) totalMiningEarnedDisplay.textContent = totalMiningEarned.toFixed(2);
-                    console.log("Mining update: balance =", balance, "income =", income, "totalMiningEarned =", totalMiningEarned);
-                    saveUserData();
-                } else {
-                    console.log("Mining not active or no shares to mine with");
-                }
-            }
-        };
+        lastUpdateTime = Date.now();
+        if (isMining && shares > 0) {
+            const hourlyUsd = (shares * 6) / (30 * 24); // Hourly income in USD
+            balance += hourlyUsd;
+            income += hourlyUsd;
+            totalMiningEarned += hourlyUsd;
+            console.log("Mining update: balance =", balance, "income =", income, "totalMiningEarned =", totalMiningEarned);
+            saveUserData();
+        } else {
+            console.log("Mining not active or no shares to mine with");
+        }
+    }
+};
 
         // Function to update the UI with the selected language
         const updateLanguage = () => {
@@ -856,16 +860,23 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         if (copyLinkBtn) {
-            copyLinkBtn.addEventListener("click", () => {
-                console.log("copyLinkBtn clicked");
-                const t = translations[selectedLanguage];
-                const link = referralLinkDisplay.textContent;
-                navigator.clipboard.writeText(link).then(() => {
-                    showAlert(t.linkCopied);
-                });
-            });
-        }
+    copyLinkBtn.addEventListener("click", () => {
+        console.log("copyLinkBtn clicked");
+        const t = translations[selectedLanguage];
+        const link = referralLinkDisplay.textContent;
 
+        // Ensure the document is focused
+        copyLinkBtn.focus();
+
+        navigator.clipboard.writeText(link).then(() => {
+            showAlert(t.linkCopied);
+        }).catch(err => {
+            console.error("Failed to copy link:", err);
+            // Fallback: Prompt the user to copy manually
+            showAlert(`Failed to copy link automatically. Please copy this link manually: ${link}`);
+        });
+    });
+}
         // Simulate a referral (for testing purposes)
         const simulateReferral = () => {
             console.log("simulateReferral called");
