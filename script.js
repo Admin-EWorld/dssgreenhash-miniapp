@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let miningInterval, progressInterval;
         let coinPrices = { TON: 4.12, BTC: 60000, USDT: 1 };
         let totalDeposited = 0, totalMiningEarned = 0, totalReferralEarned = 0, totalWithdrawals = 0, referrals = 0;
-        let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 10; // Reduced to 10 seconds for testing
+        let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 60; // Set to 60 seconds for the desired cycle
+        const profitPerSecondPerShare = (6 / (30 * 24 * 60 * 60)); // $6 per share per month, converted to per second
 
         // Translations for different languages
         const translations = {
@@ -290,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const updateMining = () => {
     console.log("updateMining called, isMining:", isMining, "shares:", shares, "balance:", balance, "income:", income);
     const now = Date.now();
-    const elapsed = (now - lastUpdateTime) / 1000; // Elapsed time in seconds
+    const elapsed = (now - lastUpdateTime) / 1000; // Elapsed time in seconds since last cycle start
     const remaining = Math.max(0, updateIntervalSeconds - elapsed);
     const minutes = Math.floor(remaining / 60);
     const seconds = Math.floor(remaining % 60);
@@ -304,10 +305,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const sharesValueDisplay = document.getElementById("sharesValue");
     const totalMiningEarnedDisplay = document.getElementById("totalMiningEarned");
     const referralDisplay = document.getElementById("referral");
+    const estimatedIncomeDisplay = document.getElementById("estimatedIncome");
 
     // Debug logs to check if elements are found
-    console.log("DOM elements - nextUpdate:", nextUpdate, "progressPercent:", progressPercent, "balanceUsdDisplay:", balanceUsdDisplay, "balanceDisplay:", balanceDisplay, "incomeDisplay:", incomeDisplay, "sharesValueDisplay:", sharesValueDisplay, "totalMiningEarnedDisplay:", totalMiningEarnedDisplay, "referralDisplay:", referralDisplay);
+    console.log("DOM elements - nextUpdate:", nextUpdate, "progressPercent:", progressPercent, "balanceUsdDisplay:", balanceUsdDisplay, "balanceDisplay:", balanceDisplay, "incomeDisplay:", incomeDisplay, "sharesValueDisplay:", sharesValueDisplay, "totalMiningEarnedDisplay:", totalMiningEarnedDisplay, "referralDisplay:", referralDisplay, "estimatedIncomeDisplay:", estimatedIncomeDisplay);
 
+    // Update timer and progress
     if (nextUpdate) nextUpdate.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     const progress = (elapsed / updateIntervalSeconds) * 100;
     if (progressPercent) progressPercent.textContent = `${Math.min(100, Math.round(progress))}%`;
@@ -316,6 +319,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (progressRing) {
         progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
         progressRing.style.strokeDashoffset = circumference - (progress / 100) * circumference;
+    }
+
+    // Update mining stats if mining is active
+    if (isMining && shares > 0) {
+        const profitThisSecond = shares * profitPerSecondPerShare; // Profit for this second
+        balance += profitThisSecond;
+        income += profitThisSecond;
+        totalMiningEarned += profitThisSecond;
     }
 
     // Update UI elements every second
@@ -332,18 +343,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (referralDisplay) referralDisplay.textContent = referralRewards.toFixed(2);
     else console.error("referralDisplay not found");
 
+    // Update Estimated Income in real-time
+    if (estimatedIncomeDisplay) {
+        const period = incomePeriod.value;
+        const monthlyUsdPerShare = 6;
+        let usdIncome;
+        if (period === "hourly") usdIncome = (shares * monthlyUsdPerShare) / (30 * 24);
+        else if (period === "daily") usdIncome = (shares * monthlyUsdPerShare) / 30;
+        else if (period === "weekly") usdIncome = (shares * monthlyUsdPerShare) / 30 * 7;
+        else usdIncome = shares * monthlyUsdPerShare;
+        const coinIncome = usdIncome / coinPrices[selectedCoin];
+        estimatedIncomeDisplay.textContent = `${coinIncome.toFixed(8) || 0} ${selectedCoin} (~$${usdIncome.toFixed(2) || 0})`;
+    }
+
+    // Reset at the end of the cycle
     if (remaining <= 0) {
         lastUpdateTime = Date.now();
-        if (isMining && shares > 0) {
-            const hourlyUsd = (shares * 6) / (30 * 24); // Hourly income in USD
-            balance += hourlyUsd;
-            income += hourlyUsd;
-            totalMiningEarned += hourlyUsd;
-            console.log("Mining update: balance =", balance, "income =", income, "totalMiningEarned =", totalMiningEarned);
-            saveUserData();
-        } else {
-            console.log("Mining not active or no shares to mine with");
-        }
+        saveUserData();
     }
 };
 
