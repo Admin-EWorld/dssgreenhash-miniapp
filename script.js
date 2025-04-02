@@ -595,7 +595,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (navBar) navBar.style.display = "none";
             updateLanguage();
         };
-        clearUserData();
+        //clearUserData();
 
         // Bypassing the wallet check for now
         console.log("Bypassing wallet check for testing purposes");
@@ -689,7 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const homeTab = document.getElementById("homeTab");
             if (homeTab && homeTab.classList.contains("active")) {
                 homeTab.style.display = "none";
-                setTimeout(() => { homeTab.style.display = "block"; }, 10);
+                (() => { homeTab.style.display = "block"; }, 10);
             }
         };
 
