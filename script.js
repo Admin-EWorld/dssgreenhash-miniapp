@@ -3,7 +3,7 @@
         // Initialize variables
         let miningRate = 0, hashPower = 0, balance = 0, income = 0, referralRewards = 0, shares = 0, selectedCoin = "TON", selectedLanguage = "en";
         let miningInterval, progressInterval;
-        let coinPrices = { TON: 4.00, BTC: 86500, USDT: 1 };
+        let coinPrices = { TON: 0, BTC: 0, USDT: 0 };
         let totalDeposited = 0, totalMiningEarned = 0, totalReferralEarned = 0, totalWithdrawals = 0, referrals = 0;
         let isMining = false, lastUpdateTime = Date.now(), updateIntervalSeconds = 60; // Set to 60 seconds for the desired cycle
         const profitPerSecondPerShare = (6 / (30 * 24 * 60 * 60)); // $6 per share per month, converted to per second
@@ -240,36 +240,52 @@
         }
 
         // Fetch coin prices from CoinGecko API
-        const fetchCoinPrices = async () => {
-            console.log("fetchCoinPrices called");
-            try {
-                const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=the-open-network,bitcoin,tether&vs_currencies=usd");
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                console.log("CoinGecko API response:", data);
+        const fetchCoinPrices = async (retryCount = 3, delay = 2000) => {
+    console.log("fetchCoinPrices called, retryCount:", retryCount);
+    try {
+        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=the-open-network,bitcoin,tether&vs_currencies=usd");
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("CoinGecko API response:", data);
 
-                // Validate the response data
-                if (!data["the-open-network"] || !data["bitcoin"] || !data["tether"]) {
-                    throw new Error("Invalid CoinGecko API response: Missing expected coin data");
-                }
+        // Validate the response data
+        if (!data["the-open-network"] || !data["bitcoin"] || !data["tether"]) {
+            throw new Error("Invalid CoinGecko API response: Missing expected coin data");
+        }
 
-                coinPrices.TON = data["the-open-network"].usd || coinPrices.TON;
-                coinPrices.BTC = data["bitcoin"].usd || coinPrices.BTC;
-                coinPrices.USDT = data["tether"].usd || coinPrices.USDT;
+        // Update coin prices
+        coinPrices.TON = data["the-open-network"].usd;
+        coinPrices.BTC = data["bitcoin"].usd;
+        coinPrices.USDT = data["tether"].usd;
 
-                if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
-                if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
-                updateEstimatedIncome();
-            } catch (error) {
-                console.error("Error fetching coin prices:", error);
-                // Fallback to default prices
-                if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
-                if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
-            }
-        };
+        // Update UI
+        if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
+        if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
+        updateEstimatedIncome();
 
+        // Update Boost tab share cost equivalents
+        if (shareCostBtcDisplay && shareCostTonDisplay) {
+            const shareCostUsd = 60;
+            shareCostBtcDisplay.textContent = `BTC ${(shareCostUsd / coinPrices.BTC).toFixed(8)}`;
+            shareCostTonDisplay.textContent = `TON ${(shareCostUsd / coinPrices.TON).toFixed(4)}`;
+        }
+    } catch (error) {
+        console.error("Error fetching coin prices:", error);
+        if (retryCount > 0) {
+            console.log(`Retrying fetchCoinPrices, attempts remaining: ${retryCount}`);
+            setTimeout(() => fetchCoinPrices(retryCount - 1, delay * 2), delay);
+        } else {
+            console.error("All retry attempts failed. Using last known prices.");
+            showAlert("Failed to fetch coin prices. Using last known prices.");
+            // Update UI with last known prices
+            if (coinPriceLabel) coinPriceLabel.textContent = selectedCoin;
+            if (coinPriceDisplay) coinPriceDisplay.textContent = coinPrices[selectedCoin].toFixed(2);
+            updateEstimatedIncome();
+        }
+    }
+};
         // Calculate the hourly mining rate in the selected coin
         const calculateMiningRate = () => {
             console.log("calculateMiningRate called");
@@ -561,6 +577,8 @@ document.querySelector("#boostTab #buySharesBtn").textContent = t.buyShares;
         function initializeApp() {
             console.log("initializeApp called");
             fetchCoinPrices();
+            // Fetch coin prices every 5 minutes
+            setInterval(fetchCoinPrices, 300000);
             showInitialTab();
         }
 
