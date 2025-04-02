@@ -578,7 +578,7 @@ document.querySelector("#boostTab #buySharesBtn").textContent = t.buyShares;
             console.log("initializeApp called");
             fetchCoinPrices();
             // Fetch coin prices every 5 minutes
-            setInterval(fetchCoinPrices, 300000);
+            setInterval(fetchCoinPrices, 30000);
             showInitialTab();
         }
 
