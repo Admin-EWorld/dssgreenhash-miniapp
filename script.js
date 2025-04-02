@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const referralDisplay = document.getElementById("referral");
         const sharesValueDisplay = document.getElementById("sharesValue");
         const estimatedIncomeDisplay = document.getElementById("estimatedIncome");
-        const incomePeriod | document.getElementById("incomePeriod");
+        const incomePeriod = document.getElementById("incomePeriod");
         const miningCircle = document.getElementById("miningCircle");
         const coinPriceLabel = document.getElementById("coinPriceLabel");
         const coinPriceDisplay = document.getElementById("coinPrice");
